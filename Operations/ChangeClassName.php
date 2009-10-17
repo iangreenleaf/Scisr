@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * An operation to change the name of a class
+ */
 class Scisr_Operations_ChangeClassName implements PHP_CodeSniffer_Sniff
 {
 
