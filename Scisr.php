@@ -42,3 +42,5 @@ $sniffer = new Scisr_CodeSniffer();
 $sniffer->addListener(new Scisr_Operations_ChangeClassName('Foo', 'Whee'));
 // For now, just run it against a test file
 $sniffer->process(dirname(__FILE__) . '/test.php');
+
+print_r(Scisr_ChangeRegistry::get('storedChanges'));

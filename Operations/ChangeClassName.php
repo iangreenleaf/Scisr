@@ -17,14 +17,23 @@ class Scisr_Operations_ChangeClassName implements PHP_CodeSniffer_Sniff
 
     public function register()
     {
-        return array(T_CLASS);
+        return array(
+            T_CLASS,
+            T_NEW,
+            T_EXTENDS,
+            T_PAAMAYIM_NEKUDOTAYIM,
+            );
     }
 
     public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
         // Find the actual name of the class
-        $classNamePtr = $phpcsFile->findNext(T_STRING, $stackPtr);
+        if ($tokens[$stackPtr]['code'] == T_PAAMAYIM_NEKUDOTAYIM) {
+            $classNamePtr = $phpcsFile->findPrevious(T_STRING, $stackPtr);
+        } else {
+            $classNamePtr = $phpcsFile->findNext(T_STRING, $stackPtr);
+        }
         $tokenInfo = $tokens[$classNamePtr];
         $className = $tokenInfo['content'];
         // If it's the name we're looking for, register it

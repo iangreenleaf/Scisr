@@ -4,6 +4,10 @@
  * A simple test class
  */
 class Foo {
-    function Bar() {
+    function bar() {
     }
 }
+
+$f = new Foo();
+
+$b = Foo::bar();
