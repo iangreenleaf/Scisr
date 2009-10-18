@@ -33,11 +33,9 @@ class RenameClassTest extends PHPUnit_Framework_TestCase
         $sniffer->addListener(new Scisr_Operations_ChangeClassName($oldname, $newname));
         $sniffer->process($this->test_file);
         $changes = Scisr_ChangeRegistry::get('storedChanges');
-        $file = new Scisr_File($this->test_file);
-        foreach ($changes as $change) {
-            $file->addEdit($change['line'], $change['column'], $change['length'], $change['replacement']);
+        foreach ($changes as $file) {
+            $file->process();
         }
-        $file->process();
 
         $this->compareFile($expected);
 

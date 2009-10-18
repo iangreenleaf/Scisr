@@ -43,15 +43,18 @@ class Scisr_ChangeRegistry
      */
     public static function addChange($filename, $line, $column, $length, $replacement)
     {
+        // Get stored changes
         $changes = self::get('storedChanges');
-        if (!is_array($changes)) $changes = array();
-        $changes[] = array(
-            'filename' => $filename,
-            'line' => $line,
-            'column' => $column,
-            'length' => $length,
-            'replacement' => $replacement
-        );
+        if (!is_array($changes)) {
+            $changes = array();
+        }
+        // We just store our pending changes as file objects themselves. If one
+        // doesn't exist yet for this file, create it
+        if (!isset($changes[$filename])) {
+            $changes[$filename] = new Scisr_File($filename);
+        }
+        // Add this edit, and save our changes
+        $changes[$filename]->addEdit($line, $column, $length, $replacement);
         self::set('storedChanges', $changes);
     }
 
