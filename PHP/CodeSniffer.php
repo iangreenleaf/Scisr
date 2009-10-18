@@ -9,6 +9,7 @@
  * @package   PHP_CodeSniffer
  * @author    Greg Sherwood <gsherwood@squiz.net>
  * @author    Marc McIntyre <mmcintyre@squiz.net>
+ * @author    Ian Young <ian.greenleaf@gmail.com>
  * @copyright 2006 Squiz Pty Ltd (ABN 77 084 670 600)
  * @license   http://matrix.squiz.net/developer/tools/php_cs/licence BSD Licence
  * @version   CVS: $Id: CodeSniffer.php 286772 2009-08-03 23:26:32Z squiz $
@@ -289,16 +290,12 @@ class PHP_CodeSniffer
      * @param string|array $files    The files and directories to process. For
      *                               directories, each sub directory will also
      *                               be traversed for source files.
-     * @param string       $standard The set of code sniffs we are testing
-     *                               against.
-     * @param array        $sniffs   The sniff names to restrict the allowed
-     *                               listeners to.
      * @param boolean      $local    If true, don't recurse into directories.
      *
      * @return void
      * @throws PHP_CodeSniffer_Exception If files or standard are invalid.
      */
-    public function process($files, $standard, array $sniffs=array(), $local=false)
+    public function process($files, $local=false)
     {
         if (is_array($files) === false) {
             if (is_string($files) === false || $files === null) {
@@ -308,26 +305,8 @@ class PHP_CodeSniffer
             $files = array($files);
         }
 
-        if (is_string($standard) === false || $standard === null) {
-            throw new PHP_CodeSniffer_Exception('$standard must be a string');
-        }
+        $this->files = array();
 
-        // Reset the members.
-        $this->listeners       = array();
-        $this->files           = array();
-        $this->_tokenListeners = array(
-                                  'file'      => array(),
-                                  'multifile' => array(),
-                                 );
-
-        if (PHP_CODESNIFFER_VERBOSITY > 0) {
-            echo "Registering sniffs in ".basename($standard)." standard... ";
-            if (PHP_CODESNIFFER_VERBOSITY > 2) {
-                echo PHP_EOL;
-            }
-        }
-
-        $this->setTokenListeners($standard, $sniffs);
         if (PHP_CODESNIFFER_VERBOSITY > 0) {
             $numSniffs = count($this->listeners);
             echo "DONE ($numSniffs sniffs registered)".PHP_EOL;
@@ -470,13 +449,17 @@ class PHP_CodeSniffer
      */
     public function populateTokenListeners()
     {
+        $this->_tokenListeners = array(
+                                  'file'      => array(),
+                                  'multifile' => array(),
+                                 );
         // Construct a list of listeners indexed by token being listened for.
-        foreach ($this->listeners as $listenerClass) {
-            $listener = new $listenerClass();
+        foreach ($this->listeners as $listener) {
 
             if (($listener instanceof PHP_CodeSniffer_Sniff) === true) {
                 $tokens = $listener->register();
                 if (is_array($tokens) === false) {
+                    $listenerClass = get_class($listener);
                     $msg = "Sniff $listenerClass register() method must return an array";
                     throw new PHP_CodeSniffer_Exception($msg);
                 }
