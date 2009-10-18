@@ -2,6 +2,9 @@
 require_once 'PHPUnit/Framework.php';
 require_once '../Scisr.php';
 
+/**
+ * @runTestsInSeparateProcesses
+ */
 class RenameClassTest extends PHPUnit_Framework_TestCase
 {
     public function setUp() {
@@ -57,4 +60,29 @@ class Baz {
 EOL;
         $this->renameAndCompare($orig, $expected);
     }
+
+    public function testRenameClassInstantiation() {
+        $orig = <<<EOL
+<?php
+\$myVar = new Foo();
+EOL;
+        $expected = <<<EOL
+<?php
+\$myVar = new Baz();
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
+    public function testRenameClassStaticCall() {
+        $orig = <<<EOL
+<?php
+\$result = Foo::bar();
+EOL;
+        $expected = <<<EOL
+<?php
+\$result = Baz::bar();
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
 }
