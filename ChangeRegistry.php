@@ -20,7 +20,7 @@ class Scisr_ChangeRegistry
      */
     public static function set($name, $value)
     {
-        self::$data[$name] = $value;
+        self::$_data[$name] = $value;
     }
 
     /**
@@ -30,7 +30,7 @@ class Scisr_ChangeRegistry
      */
     public static function get($name)
     {
-        return self::$data[$name];
+        return self::$_data[$name];
     }
 
     /**
@@ -41,9 +41,18 @@ class Scisr_ChangeRegistry
      * @param int $length the length of the original text to be replaced
      * @param string $replacement the text to insert in its place
      */
-    public static function setChange($filename, $line, $column, $length, $replacement)
+    public static function addChange($filename, $line, $column, $length, $replacement)
     {
-        //TODO
+        $changes = self::get('storedChanges');
+        if (!is_array($changes)) $changes = array();
+        $changes[] = array(
+            'filename' => $filename,
+            'line' => $line,
+            'column' => $column,
+            'length' => $length,
+            'replacement' => $replacement
+        );
+        self::set('storedChanges', $changes);
     }
 
 }

@@ -28,7 +28,8 @@ class Scisr_CodeSniffer extends PHP_CodeSniffer
 
     /**
      * Add a listener
-     * @param PHP_CodeSniffer_Sniff the listener to add
+     * @param PHP_CodeSniffer_Sniff the listener to add. Unlike
+     * PHP_CodeSniffer's methods, this one takes an instantiated object.
      */
     public function addListener(PHP_CodeSniffer_Sniff $listener)
     {
@@ -38,7 +39,6 @@ class Scisr_CodeSniffer extends PHP_CodeSniffer
 
 // Fire up the sniffer
 $sniffer = new Scisr_CodeSniffer();
-$sniffer->addListener(new Scisr_Operations_ChangeClassName());
-$sniffer->populateTokenListeners();
+$sniffer->addListener(new Scisr_Operations_ChangeClassName('Foo', 'Whee'));
 // For now, just run it against a test file
-$sniffer->processFile(dirname(__FILE__) . '/test.php');
+$sniffer->process(dirname(__FILE__) . '/test.php');
