@@ -1,5 +1,7 @@
 <?php
 
+// Turn on error reporting
+error_reporting(E_ALL | E_STRICT);
 // Register our autoloader
 spl_autoload_register('scisrAutoload');
 // Include the main CodeSniffer file (this will register its own autoloader as well)
@@ -35,5 +37,42 @@ class Scisr_CodeSniffer extends PHP_CodeSniffer
     {
         $this->listeners[] = $listener;
     }
+}
+
+class Scisr
+{
+
+    /**
+     * @var array
+     */
+    protected $listeners = array();
+
+    public function setRenameClass($oldClass, $newClass)
+    {
+        $this->listeners[] = new Scisr_Operations_ChangeClassName($oldClass, $newClass);
+    }
+
+    public function addFile($filename) {
+        $this->files[] = $filename;
+    }
+
+    public function run()
+    {
+
+        // Run the sniffer
+        $sniffer = new Scisr_CodeSniffer();
+        foreach ($this->listeners as $listener) {
+            $sniffer->addListener($listener);
+        }
+        $sniffer->process($this->files);
+
+        // Now make the actual changes that we've planned
+        $changes = Scisr_ChangeRegistry::get('storedChanges');
+        foreach ($changes as $file) {
+            $file->process();
+        }
+
+    }
+
 }
 

@@ -18,7 +18,6 @@ class Scisr_File {
     public function process() {
         $contents = file($this->filename);
         $handle = fopen($this->filename, "w");
-        $lineNo++;
         foreach ($contents as $i => $line) {
             $lineNo = $i + 1;
             if (isset($this->changes[$lineNo])) {

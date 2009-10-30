@@ -29,13 +29,10 @@ class RenameClassTest extends PHPUnit_Framework_TestCase
     public function renameAndCompare($original, $expected, $oldname='Foo', $newname='Baz') {
         $this->populateFile($original);
 
-        $sniffer = new Scisr_CodeSniffer();
-        $sniffer->addListener(new Scisr_Operations_ChangeClassName($oldname, $newname));
-        $sniffer->process($this->test_file);
-        $changes = Scisr_ChangeRegistry::get('storedChanges');
-        foreach ($changes as $file) {
-            $file->process();
-        }
+        $s = new Scisr();
+        $s->setRenameClass($oldname, $newname);
+        $s->addFile($this->test_file);
+        $s->run();
 
         $this->compareFile($expected);
 
