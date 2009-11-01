@@ -73,6 +73,15 @@ class Scisr
     }
 
     /**
+     * Add multiple files or directories to be parsed
+     * @param array an array of file or directory paths
+     */
+    public function addFiles($fileArray)
+    {
+        array_map(array($this, 'addFile'), $fileArray);
+    }
+
+    /**
      * Perform the requested changes
      */
     public function run()
@@ -87,6 +96,7 @@ class Scisr
 
         // Now make the actual changes that we've planned
         $changes = Scisr_ChangeRegistry::get('storedChanges');
+        //TODO notice if there are no changes
         foreach ($changes as $file) {
             $file->process();
         }
