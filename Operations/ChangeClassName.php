@@ -38,7 +38,13 @@ class Scisr_Operations_ChangeClassName implements PHP_CodeSniffer_Sniff
         $className = $tokenInfo['content'];
         // If it's the name we're looking for, register it
         if ($className == $this->oldName) {
-            Scisr_ChangeRegistry::addChange($phpcsFile->getFileName(), $tokenInfo['line'], $tokenInfo['column'], strlen($tokenInfo['content']), $this->newName);
+            Scisr_ChangeRegistry::addChange(
+                $phpcsFile->getFileName(),
+                $tokenInfo['line'],
+                $tokenInfo['column'],
+                strlen($tokenInfo['content']),
+                $this->newName
+            );
         }
     }
 }

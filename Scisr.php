@@ -39,29 +39,48 @@ class Scisr_CodeSniffer extends PHP_CodeSniffer
     }
 }
 
+/**
+ * The main Scisr controller
+ *
+ * Coordinates the tasks to take place for the given action(s)
+ */
 class Scisr
 {
 
     /**
+     * CodeSniffer listener objects to be used
      * @var array
      */
-    protected $listeners = array();
+    protected $_listeners = array();
 
+    /**
+     * Rename a class
+     * @param string $oldClass the class to be renamed
+     * @param string $newClass the new class name to be given
+     */
     public function setRenameClass($oldClass, $newClass)
     {
-        $this->listeners[] = new Scisr_Operations_ChangeClassName($oldClass, $newClass);
+        $this->_listeners[] = new Scisr_Operations_ChangeClassName($oldClass, $newClass);
     }
 
-    public function addFile($filename) {
+    /**
+     * Add a file or directory to be parsed
+     * @param string $filename the path to the file or directory
+     */
+    public function addFile($filename)
+    {
         $this->files[] = $filename;
     }
 
+    /**
+     * Perform the requested changes
+     */
     public function run()
     {
 
         // Run the sniffer
         $sniffer = new Scisr_CodeSniffer();
-        foreach ($this->listeners as $listener) {
+        foreach ($this->_listeners as $listener) {
             $sniffer->addListener($listener);
         }
         $sniffer->process($this->files);
