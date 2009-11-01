@@ -5,7 +5,7 @@ error_reporting(E_ALL | E_STRICT);
 // Register our autoloader
 spl_autoload_register('scisrAutoload');
 // Include the main CodeSniffer file (this will register its own autoloader as well)
-require_once('PHP/CodeSniffer.php');
+require_once(dirname(__FILE__) . '/PHP/CodeSniffer.php');
 
 /**
  * An autoload function for Scisr
