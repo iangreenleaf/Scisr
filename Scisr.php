@@ -64,6 +64,17 @@ class Scisr
     }
 
     /**
+     * Rename a class method
+     * @param string $class the class that contains the method to be renamed
+     * @param string $oldMethod the method to be renamed
+     * @param string $newMethod the new method name
+     */
+    public function setRenameMethod($class, $oldMethod, $newMethod)
+    {
+        $this->_listeners[] = new Scisr_Operations_ChangeMethodName($class, $oldMethod, $newMethod);
+    }
+
+    /**
      * Add a file or directory to be parsed
      * @param string $filename the path to the file or directory
      */
