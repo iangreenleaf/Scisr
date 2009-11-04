@@ -174,6 +174,22 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    public function testRenameFunctionParameterWithPHPDocType() {
+        $this->markTestIncomplete();
+    }
+
+    public function testRenameClassPropertyCallWithPHPDocType() {
+        $this->markTestIncomplete();
+    }
+
+    public function testRenameClassPropertyCallWithConstructorInstantiation() {
+        $this->markTestIncomplete();
+    }
+
+    public function testRenameUnassignedVariableWithPHPDocTypeHint() {
+        $this->markTestIncomplete();
+    }
+
     public function testRenameMethodStaticCall() {
         $orig = <<<EOL
 <?php
