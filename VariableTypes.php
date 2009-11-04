@@ -37,11 +37,20 @@ EOS;
      */
     public static function registerVariableType($variable, $type, $filename, $scopeOpen) {
         $db = self::getDB();
+
+        // First delete any previous assignments in this scope
+        $delete = <<<EOS
+DELETE FROM VariableTypes WHERE filename = ? AND scopeopen = ? AND variable = ?
+EOS;
+        $delSt = $db->prepare($delete);
+        $delSt->execute(array($filename, $scopeOpen, $variable));
+
+        // Now insert this assignment
         $insert = <<<EOS
 INSERT INTO VariableTypes (filename, scopeopen, variable, type) VALUES (?, ?, ?, ?)
 EOS;
-        $st = $db->prepare($insert);
-        $st->execute(array($filename, $scopeOpen, $variable, $type));
+        $insSt = $db->prepare($insert);
+        $insSt->execute(array($filename, $scopeOpen, $variable, $type));
     }
 
     /**
