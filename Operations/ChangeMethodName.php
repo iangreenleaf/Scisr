@@ -30,12 +30,12 @@ class Scisr_Operations_ChangeMethodName implements PHP_CodeSniffer_Sniff
         $tokens = $phpcsFile->getTokens();
         $methodPtr = $phpcsFile->findNext(T_STRING, $stackPtr);
         $methodInfo = $tokens[$methodPtr];
+        $methodName = $methodInfo['content'];
 
         if ($tokens[$stackPtr]['code'] == T_PAAMAYIM_NEKUDOTAYIM) {
             $classPtr = $phpcsFile->findPrevious(T_STRING, $stackPtr);
             $classInfo = $tokens[$classPtr];
             $className = $classInfo['content'];
-            $methodName = $methodInfo['content'];
             // If it's the name we're looking for, register it
             if ($className == $this->class && $methodName == $this->oldName) {
                 Scisr_ChangeRegistry::addChange(
@@ -47,14 +47,27 @@ class Scisr_Operations_ChangeMethodName implements PHP_CodeSniffer_Sniff
                 );
             }
         } else if ($tokens[$stackPtr]['code'] == T_FUNCTION) {
-            $methodName = $methodInfo['content'];
             // If we found a correctly named method inside the specified class, continue
             if ($methodName == $this->oldName
                 && ($classDefPtr = array_search(T_CLASS, $methodInfo['conditions'])) !== false) {
 
-                $classPtr = $phpcsFile->findNext(T_STRING, $classDefPtr);
-                $classInfo = $tokens[$classPtr];
-                if ($classInfo['content'] == $this->class) {
+                    $classPtr = $phpcsFile->findNext(T_STRING, $classDefPtr);
+                    $classInfo = $tokens[$classPtr];
+                    if ($classInfo['content'] == $this->class) {
+                        Scisr_ChangeRegistry::addChange(
+                            $phpcsFile->getFileName(),
+                            $methodInfo['line'],
+                            $methodInfo['column'],
+                            strlen($methodName),
+                            $this->newName
+                        );
+                    }
+                }
+        } else if ($tokens[$stackPtr]['code'] == T_OBJECT_OPERATOR) {
+            if ($methodName == $this->oldName) {
+                $varPtr = $phpcsFile->findPrevious(T_VARIABLE, $stackPtr);
+                $type = Scisr_VariableTypes::getVariableType($tokens[$varPtr]['content'], $phpcsFile->getFileName(), array_keys($tokens[$varPtr]['conditions']));
+                if ($type == $this->class) {
                     Scisr_ChangeRegistry::addChange(
                         $phpcsFile->getFileName(),
                         $methodInfo['line'],
@@ -64,7 +77,6 @@ class Scisr_Operations_ChangeMethodName implements PHP_CodeSniffer_Sniff
                     );
                 }
             }
-        } else if ($tokens[$stackPtr]['code'] == T_OBJECT_OPERATOR) {
         }
     }
 }
