@@ -174,47 +174,6 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
-    public function testScopeOrder() {
-        $this->markTestSkipped('Apparently CodeSniffer doesn\'t recognize nested functions');
-        $orig = <<<EOL
-<?php
-function quark(\$param) {
-    \$a = new Foo();
-    \$b = new NotFoo();
-    \$c = new NotFoo();
-    \$d = new Foo();
-    function strangeQuark()
-        \$b = new Foo();
-        \$d = new NotFoo();
-        \$a->bar();
-        \$b->bar();
-        \$c->bar();
-        \$d->bar();
-    }
-    return \$f->bar();
-}
-EOL;
-        $expected = <<<EOL
-<?php
-function quark(\$param) {
-    \$a = new Foo();
-    \$b = new NotFoo();
-    \$c = new NotFoo();
-    \$d = new Foo();
-    function strangeQuark()
-        \$b = new Foo();
-        \$d = new NotFoo();
-        \$a->baz();
-        \$b->baz();
-        \$c->bar();
-        \$d->bar();
-    }
-    return \$f->bar();
-}
-EOL;
-        $this->renameAndCompare($orig, $expected);
-    }
-
     public function testRenameMethodStaticCall() {
         $orig = <<<EOL
 <?php
