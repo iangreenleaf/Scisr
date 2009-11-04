@@ -70,6 +70,24 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    public function testRenameWithScopedVariable() {
+        $orig = <<<EOL
+<?php
+function quark(\$param) {
+    \$f = new Foo();
+    return \$f->bar();
+}
+EOL;
+        $expected = <<<EOL
+<?php
+function quark(\$param) {
+    \$f = new Foo();
+    return \$f->baz();
+}
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
     public function testRenameMethodStaticCall() {
         $orig = <<<EOL
 <?php
