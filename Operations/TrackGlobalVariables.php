@@ -23,7 +23,7 @@ class Scisr_Operations_TrackGlobalVariables implements PHP_CodeSniffer_Sniff
         Scisr_VariableTypes::registerGlobalVariable(
             $varToken['content'],
             $phpcsFile->getFileName(),
-            array_keys($varToken['conditions'])
+            $varToken['conditions']
         );
     }
 }

@@ -33,7 +33,7 @@ class Scisr_Operations_TrackVariableTypes implements PHP_CodeSniffer_Sniff
                     $varToken['content'],
                     $className,
                     $phpcsFile->getFileName(),
-                    array_keys($varToken['conditions'])
+                    $varToken['conditions']
                 );
             }
         }
