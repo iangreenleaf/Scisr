@@ -70,6 +70,26 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    public function testRenameMethodInsideOwningClass() {
+        $orig = <<<EOL
+<?php
+class Foo {
+    function quark() {
+        \$this->bar();
+    }
+}
+EOL;
+        $expected = <<<EOL
+<?php
+class Foo {
+    function quark() {
+        \$this->baz();
+    }
+}
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
     public function testRecognizeOverwrittenVariables() {
         $orig = <<<EOL
 <?php
