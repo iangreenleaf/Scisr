@@ -71,6 +71,7 @@ class Scisr
      */
     public function setRenameMethod($class, $oldMethod, $newMethod)
     {
+        $this->_listeners[] = new Scisr_Operations_TrackGlobalVariables();
         $this->_listeners[] = new Scisr_Operations_TrackVariableTypes();
         $this->_listeners[] = new Scisr_Operations_ChangeMethodName($class, $oldMethod, $newMethod);
     }

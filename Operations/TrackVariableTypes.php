@@ -28,18 +28,12 @@ class Scisr_Operations_TrackVariableTypes implements PHP_CodeSniffer_Sniff
         if ($prevToken['code'] == T_EQUAL || $prevToken['code'] == T_AND_EQUAL) {
             $varPtr = $phpcsFile->findPrevious(array(T_WHITESPACE), $prevPtr - 1, null, true);
             $varToken = $tokens[$varPtr];
-            if (count($varToken['conditions']) > 0) {
-               $scopes = array_keys($varToken['conditions']);
-               $scopeOpen = $scopes[count($scopes) - 1];
-            } else {
-               $scopeOpen = 0;
-            }
             if ($varToken['code'] == T_VARIABLE) {
                 Scisr_VariableTypes::registerVariableType(
                     $varToken['content'],
                     $className,
                     $phpcsFile->getFileName(),
-                    $scopeOpen
+                    array_keys($varToken['conditions'])
                 );
             }
         }
