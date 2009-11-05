@@ -110,7 +110,12 @@ class Scisr
 
         // Now make the actual changes that we've planned
         $changes = Scisr_ChangeRegistry::get('storedChanges');
-        //TODO notice if there are no changes
+
+        if (!is_array($changes)) {
+            //TODO give a message?
+            return;
+        }
+
         foreach ($changes as $file) {
             $file->process();
         }
