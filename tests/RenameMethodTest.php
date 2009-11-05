@@ -174,6 +174,28 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    public function testRenameWhenInsideIf() {
+        $orig = <<<EOL
+<?php
+if (true) {
+    \$f = new Foo(true);
+} else {
+    \$f = new Foo(false);
+}
+\$result = \$f->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+if (true) {
+    \$f = new Foo(true);
+} else {
+    \$f = new Foo(false);
+}
+\$result = \$f->baz();
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
     public function testRenameFunctionParameterWithPHPDocType() {
         $this->markTestIncomplete();
     }
