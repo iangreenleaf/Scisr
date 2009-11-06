@@ -61,11 +61,15 @@ EOL;
 <?php
 \$f = new Foo();
 \$result = \$f->bar();
+\$f2 = \$f;
+\$result = \$f2->bar();
 EOL;
         $expected = <<<EOL
 <?php
 \$f = new Foo();
 \$result = \$f->baz();
+\$f2 = \$f;
+\$result = \$f2->baz();
 EOL;
         $this->renameAndCompare($orig, $expected);
     }
@@ -76,6 +80,8 @@ EOL;
 class Foo {
     function quark() {
         \$this->bar();
+        \$foo = \$this;
+        \$foo->bar();
     }
 }
 EOL;
@@ -84,6 +90,8 @@ EOL;
 class Foo {
     function quark() {
         \$this->baz();
+        \$foo = \$this;
+        \$foo->baz();
     }
 }
 EOL;
