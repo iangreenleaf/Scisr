@@ -65,8 +65,17 @@ class Scisr_Operations_ChangeMethodName implements PHP_CodeSniffer_Sniff
                 }
         } else if ($tokens[$stackPtr]['code'] == T_OBJECT_OPERATOR) {
             if ($methodName == $this->oldName) {
+
                 $varPtr = $phpcsFile->findPrevious(T_VARIABLE, $stackPtr);
-                $type = Scisr_VariableTypes::getVariableType($tokens[$varPtr]['content'], $phpcsFile->getFileName(), $tokens[$varPtr]['conditions']);
+
+                if ($tokens[$varPtr]['content'] == '$this'
+                    && ($classDefPtr = array_search(T_CLASS, $methodInfo['conditions'])) !== false) {
+                    $classPtr = $phpcsFile->findNext(T_STRING, $classDefPtr);
+                    $type = $tokens[$classPtr]['content'];
+                } else {
+                    $type = Scisr_VariableTypes::getVariableType($tokens[$varPtr]['content'], $phpcsFile->getFileName(), $tokens[$varPtr]['conditions']);
+                }
+
                 if ($type == $this->class) {
                     Scisr_ChangeRegistry::addChange(
                         $phpcsFile->getFileName(),
