@@ -5,7 +5,7 @@
  *
  * We keep track of which variables are global in which scopes.
  */
-class Scisr_Operations_TrackGlobalVariables implements PHP_CodeSniffer_Sniff
+class Scisr_Operations_TrackGlobalVariables extends Scisr_Operations_AbstractVariableTypeOperation implements PHP_CodeSniffer_Sniff
 {
 
     public function register()
@@ -20,10 +20,6 @@ class Scisr_Operations_TrackGlobalVariables implements PHP_CodeSniffer_Sniff
         $tokens = $phpcsFile->getTokens();
         $varPtr = $phpcsFile->findNext(T_VARIABLE, $stackPtr);
         $varToken = $tokens[$varPtr];
-        Scisr_VariableTypes::registerGlobalVariable(
-            $varToken['content'],
-            $phpcsFile->getFileName(),
-            $varToken['conditions']
-        );
+        $this->setGlobal($varPtr, $phpcsFile);
     }
 }

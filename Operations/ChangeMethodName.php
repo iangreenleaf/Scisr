@@ -3,7 +3,7 @@
 /**
  * An operation to change the name of a class method
  */
-class Scisr_Operations_ChangeMethodName implements PHP_CodeSniffer_Sniff
+class Scisr_Operations_ChangeMethodName extends Scisr_Operations_AbstractVariableTypeOperation implements PHP_CodeSniffer_Sniff
 {
 
     public $oldName;
@@ -68,13 +68,7 @@ class Scisr_Operations_ChangeMethodName implements PHP_CodeSniffer_Sniff
 
                 $varPtr = $phpcsFile->findPrevious(T_VARIABLE, $stackPtr);
 
-                if ($tokens[$varPtr]['content'] == '$this'
-                    && ($classDefPtr = array_search(T_CLASS, $methodInfo['conditions'])) !== false) {
-                    $classPtr = $phpcsFile->findNext(T_STRING, $classDefPtr);
-                    $type = $tokens[$classPtr]['content'];
-                } else {
-                    $type = Scisr_VariableTypes::getVariableType($tokens[$varPtr]['content'], $phpcsFile->getFileName(), $tokens[$varPtr]['conditions']);
-                }
+                    $type = $this->getVariableType($varPtr, $phpcsFile);
 
                 if ($type == $this->class) {
                     Scisr_ChangeRegistry::addChange(
@@ -88,4 +82,5 @@ class Scisr_Operations_ChangeMethodName implements PHP_CodeSniffer_Sniff
             }
         }
     }
+
 }

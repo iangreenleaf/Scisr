@@ -6,7 +6,7 @@
  * When a variable is assigned a value of an instantiated class object, we try 
  * to catch it with this sniff and store it for later reference.
  */
-class Scisr_Operations_TrackVariableTypes implements PHP_CodeSniffer_Sniff
+class Scisr_Operations_TrackVariableTypes extends Scisr_Operations_AbstractVariableTypeOperation implements PHP_CodeSniffer_Sniff
 {
 
     public function register()
@@ -31,20 +31,17 @@ class Scisr_Operations_TrackVariableTypes implements PHP_CodeSniffer_Sniff
         $nextPtr = $phpcsFile->findNext(array(T_WHITESPACE), $stackPtr + 1, null, true);
         $nextToken = $tokens[$nextPtr];
         if ($nextToken['code'] == T_NEW) {
+            // Find the class name
             $classPtr = $phpcsFile->findNext(T_STRING, $nextPtr);
             $classToken = $tokens[$classPtr];
             $className = $classToken['content'];
         } else if ($nextToken['code'] == T_VARIABLE) {
-            $className = Scisr_VariableTypes::getVariableType($nextToken['content'], $phpcsFile->getFileName(), $nextToken['conditions']);
+            // See if the variable whose value we're getting has a type
+            $className = $this->getVariableType($nextPtr, $phpcsFile);
         }
 
         if (isset($className) && $className !== null) {
-            Scisr_VariableTypes::registerVariableType(
-                $varToken['content'],
-                $className,
-                $phpcsFile->getFileName(),
-                $varToken['conditions']
-            );
+            $this->setVariableType($varPtr, $className, $phpcsFile);
         }
     }
 }

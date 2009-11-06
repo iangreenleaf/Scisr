@@ -37,12 +37,10 @@ EOS;
      * @param string $variable the name of the variable (including the dollar sign)
      * @param string $type the name of the class that this variable holds
      * @param string $filename the file we're in
-     * @param array $scopes an array of all the currently active scopes as given by CodeSniffer
+     * @param array $scopeOpen the stack pointer to the beginning of the current scope
      */
-    public static function registerVariableType($variable, $type, $filename, $scopes) {
+    public static function registerVariableType($variable, $type, $filename, $scopeOpen) {
         $db = self::getDB();
-
-        $scopeOpen = self::getScopeOpener($variable, $filename, $scopes);
 
         // First delete any previous assignments in this scope
         $delete = <<<EOS
@@ -63,12 +61,10 @@ EOS;
      * Register a variable as global
      * @param string $variable the name of the variable (including the dollar sign)
      * @param string $filename the file we're in
-     * @param array $scopes an array of all the currently active scopes as given by CodeSniffer
+     * @param array $scopeOpen the stack pointer to the beginning of the current scope
      */
-    public static function registerGlobalVariable($variable, $filename, $scopes) {
+    public static function registerGlobalVariable($variable, $filename, $scopeOpen) {
         $db = self::getDB();
-
-        $scopeOpen = self::getScopeOpener($variable, $filename, $scopes);
 
         // Now insert this assignment
         $insert = <<<EOS
@@ -82,13 +78,11 @@ EOS;
      * Get the type of a variable
      * @param string $variable the name of the variable (including the dollar sign)
      * @param string $filename the file we're in
-     * @param array $scopes an array of all the currently active scopes as given by CodeSniffer
+     * @param array $scopeOpen the stack pointer to the beginning of the current scope
      * @return string|null the class name, or null if we don't know
      */
-    public static function getVariableType($variable, $filename, $scopes) {
+    public static function getVariableType($variable, $filename, $scopeOpen) {
         $db = self::getDB();
-
-        $scopeOpen = self::getScopeOpener($variable, $filename, $scopes);
 
         $select = <<<EOS
 SELECT type FROM VariableTypes WHERE filename = ? AND variable = ? AND scopeopen = ? ORDER BY scopeopen DESC LIMIT 1
@@ -103,18 +97,10 @@ EOS;
      * See if a variable is in the global scope
      * @param string $variable the name of the variable (including the dollar sign)
      * @param string $filename the file we're in
-     * @param array $scopes an array of scope opener pointers
+     * @param array $scopeOpen the stack pointer to the beginning of the current scope
      * @return boolean true if it is global
      */
-    public static function isGlobalVariable($variable, $filename, $scopes) {
-
-        // If we have no scope, we're global without trying
-        if (count($scopes) == 0) {
-            return true;
-        }
-        // Get the lowermost scope
-        $scopeOpen = $scopes[count($scopes) - 1];
-
+    public static function isGlobalVariable($variable, $filename, $scopeOpen) {
         $db = self::getDB();
 
         $select = <<<EOS
@@ -124,39 +110,6 @@ EOS;
         $st->execute(array($filename, $variable, $scopeOpen));
         $result = $st->fetch();
         return $result['COUNT(*)'] > 0;
-    }
-
-    /**
-     * Filter the array of scopes we get from CodeSniffer
-     *
-     * We don't want things like conditionals in our scope list, since for our
-     * purposes we're just ignoring those.
-     *
-     * @param array a list of stack pointers => token types as Codesniffer generates them
-     * @return an array of stack pointers we care about
-     */
-    protected static function filterScopes($scopes) {
-        $acceptScope = create_function('$type', 'return (in_array($type, array(T_CLASS, T_INTERFACE, T_FUNCTION)));');
-        $scopes = array_keys(array_filter($scopes, $acceptScope));
-        return $scopes;
-    }
-
-    /**
-     * Figure out the relevant scope opener
-     * @param string $variable the name of the variable (including the dollar sign)
-     * @param string $filename the file we're in
-     * @param array $scopes an array of all the currently active scopes as given by CodeSniffer
-     * @return int
-     */
-    protected static function getScopeOpener($variable, $filename, $scopes) {
-        $scopes = self::filterScopes($scopes);
-        // We're using 0 for the global scope
-        if (self::isGlobalVariable($variable, $filename, $scopes)) {
-            $scopes = array(0);
-        }
-        // Get the lowermost scope
-        $scopeOpen = $scopes[count($scopes) - 1];
-        return $scopeOpen;
     }
 
 }
