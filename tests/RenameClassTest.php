@@ -80,4 +80,109 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    public function testRenamePhpDocVar() {
+        $orig = <<<EOL
+<?php
+class Bar {
+    /**
+     * This is a class object!
+     * @var Foo
+     */
+    public \$a;
+}
+EOL;
+        $expected = <<<EOL
+<?php
+class Bar {
+    /**
+     * This is a class object!
+     * @var Baz
+     */
+    public \$a;
+}
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
+    public function testRenamePhpDocParam() {
+        $orig = <<<EOL
+<?php
+/**
+ * Do things
+ * @param Foo \$f a function parameter
+ */
+function doThings(\$f) {
+}
+EOL;
+        $expected = <<<EOL
+<?php
+/**
+ * Do things
+ * @param Baz \$f a function parameter
+ */
+function doThings(\$f) {
+}
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
+    public function testRenamePhpDocReturn() {
+        $orig = <<<EOL
+<?php
+/**
+ * Do things
+ * @param int \$a a number
+ * @return Foo this is a return val
+ */
+function doThings(\$a) {
+}
+EOL;
+        $expected = <<<EOL
+<?php
+/**
+ * Do things
+ * @param int \$a a number
+ * @return Baz this is a return val
+ */
+function doThings(\$a) {
+}
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
+    /**
+     * Test a type hint as recommended by Zend Studio
+     */
+    public function testRenameZendTypeHint() {
+        $orig = <<<EOL
+<?php
+/* @var \$f Foo */
+\$f = someFunction();
+EOL;
+        $expected = <<<EOL
+<?php
+/* @var \$f Baz */
+\$f = someFunction();
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
+    /**
+     * Test a type hint as recommended by Komodo Edit
+     */
+    public function testRenameKomodoTypeHint() {
+        $orig = <<<EOL
+<?php
+/* @var Foo */
+\$f = someFunction();
+EOL;
+        $expected = <<<EOL
+<?php
+/* @var Baz */
+\$f = someFunction();
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
+
 }
