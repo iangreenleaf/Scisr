@@ -8,6 +8,7 @@ class Scisr_CommentParser_ChangeTagValues extends PHP_CodeSniffer_CommentParser_
     protected function getAllowedTags() {
         return array(
             'var' => false,
+            'param' => false,
         );
     }
 
@@ -19,6 +20,16 @@ class Scisr_CommentParser_ChangeTagValues extends PHP_CodeSniffer_CommentParser_
             $this->phpcsFile
         );
         $this->_tagElements['var'][] = $element;
+        return $element;
+    }
+
+    protected function parseParam($tokens) {
+        $element = new Scisr_CommentParser_ParameterElement(
+            $this->previousElement,
+            $tokens,
+            $this->phpcsFile
+        );
+        $this->_tagElements['param'][] = $element;
         return $element;
     }
 
