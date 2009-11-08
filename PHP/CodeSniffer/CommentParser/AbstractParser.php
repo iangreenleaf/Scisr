@@ -275,20 +275,6 @@ abstract class PHP_CodeSniffer_CommentParser_AbstractParser
 
                 $tag = substr($word, 1);
 
-                // Filter out @ tags in the comment description.
-                // A real comment tag should have whitespace and a newline before it.
-                if (isset($this->words[($wordPos - 1)]) === false
-                    || trim($this->words[($wordPos - 1)]) !== ''
-                ) {
-                    continue;
-                }
-
-                if (isset($this->words[($wordPos - 2)]) === false
-                    || $this->words[($wordPos - 2)] !== $this->phpcsFile->eolChar
-                ) {
-                    continue;
-                }
-
                 $foundTags[] = $tag;
 
                 if ($prevTagPos !== false) {
@@ -580,7 +566,7 @@ abstract class PHP_CodeSniffer_CommentParser_AbstractParser
      */
     protected function parseTag($tag, $start, $end)
     {
-        $tokens = array_slice($this->words, ($start + 1), ($end - $start));
+        $tokens = array_slice($this->words, $start + ($tag == 'comment' ? 0 : 1), ($end - $start));
 
         $allowedTags     = (self::$_tags + $this->getAllowedTags());
         $allowedTagNames = array_keys($allowedTags);

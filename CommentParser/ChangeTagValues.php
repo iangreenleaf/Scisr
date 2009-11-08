@@ -55,7 +55,11 @@ class Scisr_CommentParser_ChangeTagValues extends PHP_CodeSniffer_CommentParser_
                 if (substr($line, 0, 3) === '/**') {
                     $line = substr($line, 3);
                     $colNum += 3;
-                } else if (substr($line, -2, 2) === '*/') {
+                } else if (substr($line, 0, 2) === '/*') {
+                    $line = substr($line, 2);
+                    $colNum += 2;
+                }
+                if (substr($line, -2, 2) === '*/') {
                     $line = substr($line, 0, -2);
                 } else if ($line{0} === '*') {
                     $line = substr($line, 1);

@@ -298,7 +298,7 @@ abstract class PHP_CodeSniffer_CommentParser_AbstractDocElement implements PHP_C
     {
         if ($this->previousElement === null) {
             // First element is on line one.
-            return 1;
+            return 0;
         } else {
             $previousContent = $this->previousElement->getRawContent();
             $previousLine    = $this->previousElement->getLine();
