@@ -109,6 +109,7 @@ EOL;
 <?php
 /**
  * Do things
+ * @param Bar \$b a function parameter
  * @param Foo \$f a function parameter
  */
 function doThings(\$f) {
@@ -118,6 +119,7 @@ EOL;
 <?php
 /**
  * Do things
+ * @param Bar \$b a function parameter
  * @param Baz \$f a function parameter
  */
 function doThings(\$f) {
