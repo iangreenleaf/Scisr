@@ -61,6 +61,7 @@ class Scisr
     public function setRenameClass($oldClass, $newClass)
     {
         $this->_listeners[] = new Scisr_Operations_ChangeClassName($oldClass, $newClass);
+        $this->_listeners[] = new Scisr_Operations_ChangeClassNameComments($oldClass, $newClass);
     }
 
     /**

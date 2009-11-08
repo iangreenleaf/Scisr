@@ -212,7 +212,7 @@ abstract class PHP_CodeSniffer_CommentParser_AbstractParser
      * @return void
      * @see _parseWords()
      */
-    private function _parse($comment)
+    protected function _parse($comment)
     {
         // Firstly, remove the comment tags and any stars from the left side.
         $lines = explode($this->phpcsFile->eolChar, $comment);
@@ -257,7 +257,7 @@ abstract class PHP_CodeSniffer_CommentParser_AbstractParser
      *                                                       number of occurances of
      *                                                       a tag is found.
      */
-    private function _parseWords()
+    protected function _parseWords()
     {
         $allowedTags     = (self::$_tags + $this->getAllowedTags());
         $allowedTagNames = array_keys($allowedTags);
