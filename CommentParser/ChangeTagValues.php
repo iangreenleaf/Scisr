@@ -9,6 +9,7 @@ class Scisr_CommentParser_ChangeTagValues extends PHP_CodeSniffer_CommentParser_
         return array(
             'var' => false,
             'param' => false,
+            'return' => true,
         );
     }
 
@@ -30,6 +31,17 @@ class Scisr_CommentParser_ChangeTagValues extends PHP_CodeSniffer_CommentParser_
             $this->phpcsFile
         );
         $this->_tagElements['param'][] = $element;
+        return $element;
+    }
+
+    protected function parseReturn($tokens) {
+        $element = new Scisr_CommentParser_PairElement(
+            $this->previousElement,
+            $tokens,
+            'return',
+            $this->phpcsFile
+        );
+        $this->_tagElements['return'][] = $element;
         return $element;
     }
 

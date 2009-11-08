@@ -63,6 +63,10 @@ class Scisr_Operations_ChangeClassNameComments implements PHP_CodeSniffer_Sniff
         $this->findWordChanges($param, array('type'), $commentToken, $columns);
     }
 
+    protected function processReturn($param, $commentToken, $columns) {
+        $this->findWordChanges($param, array('value'), $commentToken, $columns);
+    }
+
     protected function findWordChanges($docElement, $wordTypes, $commentToken, $columns) {
         $subElements = $docElement->getSubElementValues();
         $line = $commentToken['line'] + $docElement->getLine();
