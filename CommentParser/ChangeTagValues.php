@@ -14,7 +14,7 @@ class Scisr_CommentParser_ChangeTagValues extends PHP_CodeSniffer_CommentParser_
     }
 
     protected function parseVar($tokens) {
-        $element = new Scisr_CommentParser_SingleElement(
+        $element = new Scisr_CommentParser_VarElement(
             $this->previousElement,
             $tokens,
             'var',
