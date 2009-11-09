@@ -3,7 +3,9 @@
 /**
  * An operation to change the name of a class method
  */
-class Scisr_Operations_ChangeMethodName extends Scisr_Operations_AbstractVariableTypeOperation implements PHP_CodeSniffer_Sniff
+class Scisr_Operations_ChangeMethodName
+    extends Scisr_Operations_AbstractVariableTypeOperation
+    implements PHP_CodeSniffer_Sniff
 {
 
     public $oldName;

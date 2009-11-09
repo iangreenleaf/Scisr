@@ -5,13 +5,15 @@
  *
  * Basically a very rudimentary static model
  */
-class Scisr_VariableTypes {
+class Scisr_VariableTypes
+{
 
     /**
      * Get the DB connection we're using
      * @todo seems like this should go somewhere else
      */
-    public static function getDB() {
+    public static function getDB()
+    {
         return new PDO('sqlite::memory:', null, null, array(PDO::ATTR_PERSISTENT => true));
     }
 
@@ -20,7 +22,8 @@ class Scisr_VariableTypes {
      *
      * Sets up the DB table we are going to use
      */
-    public static function init() {
+    public static function init()
+    {
         $db = self::getDB();
         $create = <<<EOS
 CREATE TABLE VariableTypes(filename text, scopeopen integer, variable text, type text);
@@ -39,7 +42,8 @@ EOS;
      * @param string $filename the file we're in
      * @param array $scopeOpen the stack pointer to the beginning of the current scope
      */
-    public static function registerVariableType($variable, $type, $filename, $scopeOpen) {
+    public static function registerVariableType($variable, $type, $filename, $scopeOpen)
+    {
         $db = self::getDB();
 
         // First delete any previous assignments in this scope
@@ -63,7 +67,8 @@ EOS;
      * @param string $filename the file we're in
      * @param array $scopeOpen the stack pointer to the beginning of the current scope
      */
-    public static function registerGlobalVariable($variable, $filename, $scopeOpen) {
+    public static function registerGlobalVariable($variable, $filename, $scopeOpen)
+    {
         $db = self::getDB();
 
         // Now insert this assignment
@@ -81,7 +86,8 @@ EOS;
      * @param array $scopeOpen the stack pointer to the beginning of the current scope
      * @return string|null the class name, or null if we don't know
      */
-    public static function getVariableType($variable, $filename, $scopeOpen) {
+    public static function getVariableType($variable, $filename, $scopeOpen)
+    {
         $db = self::getDB();
 
         $select = <<<EOS
@@ -100,7 +106,8 @@ EOS;
      * @param array $scopeOpen the stack pointer to the beginning of the current scope
      * @return boolean true if it is global
      */
-    public static function isGlobalVariable($variable, $filename, $scopeOpen) {
+    public static function isGlobalVariable($variable, $filename, $scopeOpen)
+    {
         $db = self::getDB();
 
         $select = <<<EOS

@@ -8,7 +8,8 @@
  * "@var $name Class". So we catch that case during parsing and handle it 
  * specially.
  */
-class Scisr_CommentParser_VarElement extends Scisr_CommentParser_SingleElement {
+class Scisr_CommentParser_VarElement extends Scisr_CommentParser_SingleElement
+{
 
     /**
      * If true, this var element is in the special form used for Zend type hints
@@ -35,7 +36,8 @@ class Scisr_CommentParser_VarElement extends Scisr_CommentParser_SingleElement {
         parent::processSubElement($name, $content, $whitespaceBefore);
     }
 
-    public function getSubElementValues() {
+    public function getSubElementValues()
+    {
         // If we've encountered the special form, we have two elements instead of one
         if ($this->_specialForm === true) {
             return array(

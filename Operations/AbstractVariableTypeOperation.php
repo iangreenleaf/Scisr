@@ -16,7 +16,8 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
      * @param int $varPtr  The variable's position in the token stack
      * @return string|null the class name, or null if we don't know
      */
-    protected function getVariableType($varPtr, $phpcsFile) {
+    protected function getVariableType($varPtr, $phpcsFile)
+    {
         $tokens = $phpcsFile->getTokens();
         $varInfo = $tokens[$varPtr];
         if ($varInfo['content'] == '$this'
@@ -41,7 +42,8 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
      * @param int $varPtr  The variable's position in the token stack
      * @param string $type the name of the class that this variable holds
      */
-    protected function setVariableType($varPtr, $type, $phpcsFile) {
+    protected function setVariableType($varPtr, $type, $phpcsFile)
+    {
         $tokens = $phpcsFile->getTokens();
         $varInfo = $tokens[$varPtr];
         $scopeOpen = $this->getScopeOpener($varPtr, $phpcsFile);
@@ -57,7 +59,8 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
      * @param array a list of stack pointers => token types as Codesniffer generates them
      * @return an array of stack pointers we care about
      */
-    protected static function filterScopes($scopes) {
+    protected static function filterScopes($scopes)
+    {
         $acceptScope = create_function('$type', 'return (in_array($type, array(T_CLASS, T_INTERFACE, T_FUNCTION)));');
         $scopes = array_keys(array_filter($scopes, $acceptScope));
         return $scopes;
@@ -68,7 +71,8 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
      * @param string $variable the name of the variable (including the dollar sign)
      * @param string $filename the file we're in
      */
-    protected function setGlobal($varPtr, $phpcsFile) {
+    protected function setGlobal($varPtr, $phpcsFile)
+    {
         $tokens = $phpcsFile->getTokens();
         $varInfo = $tokens[$varPtr];
         $scopeOpen = $this->getScopeOpener($varPtr, $phpcsFile);
@@ -81,7 +85,8 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
      * @param int $varPtr  The variable's position in the token stack
      * @return int the stack pointer that opens the scope for this variable
      */
-    private function getScopeOpener($varPtr, $phpcsFile) {
+    private function getScopeOpener($varPtr, $phpcsFile)
+    {
         $tokens = $phpcsFile->getTokens();
         $varInfo = $tokens[$varPtr];
 
@@ -102,7 +107,8 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
      * @param array $scopes an array of scope opener pointers (not as received from CodeSniffer)
      * @return boolean true if the variable is global
      */
-    private function isGlobal($name, $filename, $scopes) {
+    private function isGlobal($name, $filename, $scopes)
+    {
 
         // If we have no scope, we're global without trying
         if (count($scopes) == 0) {

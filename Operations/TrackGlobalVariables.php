@@ -5,7 +5,9 @@
  *
  * We keep track of which variables are global in which scopes.
  */
-class Scisr_Operations_TrackGlobalVariables extends Scisr_Operations_AbstractVariableTypeOperation implements PHP_CodeSniffer_Sniff
+class Scisr_Operations_TrackGlobalVariables
+    extends Scisr_Operations_AbstractVariableTypeOperation
+    implements PHP_CodeSniffer_Sniff
 {
 
     public function register()

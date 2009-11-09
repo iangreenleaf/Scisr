@@ -8,8 +8,8 @@ class Scisr_Operations_ChangeClassNameComments implements PHP_CodeSniffer_Sniff
 
     public $oldName;
     public $newName;
-    protected $phpcsFile;
-    protected $lastParsed = 0;
+    protected $_phpcsFile;
+    protected $_lastParsed = 0;
 
     public function __construct($oldName, $newName)
     {
@@ -28,15 +28,15 @@ class Scisr_Operations_ChangeClassNameComments implements PHP_CodeSniffer_Sniff
     public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
     {
         // If we've already parsed this comment, pass
-        if ($phpcsFile == $this->phpcsFile && $stackPtr < $this->lastParsed) {
+        if ($phpcsFile == $this->_phpcsFile && $stackPtr < $this->_lastParsed) {
             return;
         }
 
-        $this->phpcsFile = $phpcsFile;
+        $this->_phpcsFile = $phpcsFile;
         $tokens = $phpcsFile->getTokens();
         // Find the end of the comment block
         $endPtr = $phpcsFile->findNext($tokens[$stackPtr]['code'], $stackPtr + 1, null, true);
-        $this->lastParsed = $endPtr;
+        $this->_lastParsed = $endPtr;
         // Get the whole comment text
         $comment = $phpcsFile->getTokensAsString($stackPtr, $endPtr - $stackPtr + 1);
         $this->parser = new Scisr_CommentParser_ChangeTagValues($comment, $phpcsFile);
@@ -55,19 +55,23 @@ class Scisr_Operations_ChangeClassNameComments implements PHP_CodeSniffer_Sniff
         }
     }
 
-    protected function processVar($var, $commentToken, $columns) {
+    protected function processVar($var, $commentToken, $columns)
+    {
         $this->findWordChanges($var, array('content'), $commentToken, $columns);
     }
 
-    protected function processParam($param, $commentToken, $columns) {
+    protected function processParam($param, $commentToken, $columns)
+    {
         $this->findWordChanges($param, array('type'), $commentToken, $columns);
     }
 
-    protected function processReturn($param, $commentToken, $columns) {
+    protected function processReturn($param, $commentToken, $columns)
+    {
         $this->findWordChanges($param, array('value'), $commentToken, $columns);
     }
 
-    protected function findWordChanges($docElement, $wordTypes, $commentToken, $columns) {
+    protected function findWordChanges($docElement, $wordTypes, $commentToken, $columns)
+    {
         $subElements = $docElement->getSubElementValues();
         $line = $commentToken['line'] + $docElement->getLine();
         $i = 0;
@@ -77,7 +81,7 @@ class Scisr_Operations_ChangeClassNameComments implements PHP_CodeSniffer_Sniff
                 $column = $columns[$i];
                 // Now register the change
                 Scisr_ChangeRegistry::addChange(
-                    $this->phpcsFile->getFileName(),
+                    $this->_phpcsFile->getFileName(),
                     $line,
                     $column,
                     strlen($this->oldName),

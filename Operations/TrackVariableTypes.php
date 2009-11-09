@@ -6,7 +6,9 @@
  * When a variable is assigned a value of an instantiated class object, we try 
  * to catch it with this sniff and store it for later reference.
  */
-class Scisr_Operations_TrackVariableTypes extends Scisr_Operations_AbstractVariableTypeOperation implements PHP_CodeSniffer_Sniff
+class Scisr_Operations_TrackVariableTypes
+    extends Scisr_Operations_AbstractVariableTypeOperation
+    implements PHP_CodeSniffer_Sniff
 {
 
     public function register()

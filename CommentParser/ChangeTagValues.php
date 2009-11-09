@@ -5,7 +5,8 @@ class Scisr_CommentParser_ChangeTagValues extends PHP_CodeSniffer_CommentParser_
 
     protected $_tagElements = array();
 
-    protected function getAllowedTags() {
+    protected function getAllowedTags()
+    {
         return array(
             'var' => false,
             'param' => false,
@@ -13,7 +14,8 @@ class Scisr_CommentParser_ChangeTagValues extends PHP_CodeSniffer_CommentParser_
         );
     }
 
-    protected function parseVar($tokens) {
+    protected function parseVar($tokens)
+    {
         $element = new Scisr_CommentParser_VarElement(
             $this->previousElement,
             $tokens,
@@ -24,7 +26,8 @@ class Scisr_CommentParser_ChangeTagValues extends PHP_CodeSniffer_CommentParser_
         return $element;
     }
 
-    protected function parseParam($tokens) {
+    protected function parseParam($tokens)
+    {
         $element = new Scisr_CommentParser_ParameterElement(
             $this->previousElement,
             $tokens,
@@ -34,7 +37,8 @@ class Scisr_CommentParser_ChangeTagValues extends PHP_CodeSniffer_CommentParser_
         return $element;
     }
 
-    protected function parseReturn($tokens) {
+    protected function parseReturn($tokens)
+    {
         $element = new Scisr_CommentParser_PairElement(
             $this->previousElement,
             $tokens,
@@ -50,7 +54,8 @@ class Scisr_CommentParser_ChangeTagValues extends PHP_CodeSniffer_CommentParser_
      *
      * Returns a list of tag names => arrays of elements processed for that tag
      */
-    public function getTagElements() {
+    public function getTagElements()
+    {
         return $this->_tagElements;
     }
 
@@ -59,7 +64,8 @@ class Scisr_CommentParser_ChangeTagValues extends PHP_CodeSniffer_CommentParser_
      *
      * Returns a list of tag names => arrays of column numbers for elements of that tag
      */
-    public function getTagElementColumns() {
+    public function getTagElementColumns()
+    {
         return $this->_tagColumns;
     }
 
@@ -113,7 +119,8 @@ class Scisr_CommentParser_ChangeTagValues extends PHP_CodeSniffer_CommentParser_
     }//end _parse()
 
     // Overridden to track column numbers
-    protected function parseTag($tag, $start, $end) {
+    protected function parseTag($tag, $start, $end)
+    {
         parent::parseTag($tag, $start, $end);
         // Save column numbers for all non-empty members
         $cols = array();
