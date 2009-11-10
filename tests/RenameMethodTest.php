@@ -37,6 +37,28 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    public function testDontRenameSimilarMethodCallsInClass() {
+        $orig = <<<EOL
+<?php
+class Foo {
+    protected \$x;
+    function quark() {
+        \$this->x->bar();
+    }
+}
+EOL;
+        $expected = <<<EOL
+<?php
+class Foo {
+    protected \$x;
+    function quark() {
+        \$this->x->bar();
+    }
+}
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
     public function testRenameMethodInstantiatedCall() {
         $orig = <<<EOL
 <?php

@@ -72,7 +72,7 @@ class Scisr_Operations_ChangeMethodName
         } else if ($tokens[$stackPtr]['code'] == T_OBJECT_OPERATOR) {
             // If the object we're operating on is of the correct type, continue
 
-            $varPtr = $phpcsFile->findPrevious(T_VARIABLE, $stackPtr);
+            $varPtr = $phpcsFile->findPrevious(array(T_VARIABLE, T_STRING), $stackPtr);
 
             $type = $this->getVariableType($varPtr, $phpcsFile);
 
