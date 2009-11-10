@@ -77,6 +77,58 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    public function testRenameMethodInstantiatedClassProperty() {
+        $orig = <<<EOL
+<?php
+class Quack {
+    protected \$f;
+    function quark() {
+        \$this->f = new Foo();
+        \$this->f->bar();
+    }
+}
+EOL;
+        $expected = <<<EOL
+<?php
+class Quack {
+    protected \$f;
+    function quark() {
+        \$this->f = new Foo();
+        \$this->f->baz();
+    }
+}
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
+    public function testRenameClassPropertyCallWithConstructorInstantiation() {
+        $orig = <<<EOL
+<?php
+class Quack {
+    protected \$f;
+    function __construct() {
+        \$this->f = new Foo();
+    }
+    function quark() {
+        \$this->f->bar();
+    }
+}
+EOL;
+        $expected = <<<EOL
+<?php
+class Quack {
+    protected \$f;
+    function __construct() {
+        \$this->f = new Foo();
+    }
+    function quark() {
+        \$this->f->baz();
+    }
+}
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
     public function testRenameMethodInsideOwningClass() {
         $orig = <<<EOL
 <?php
@@ -227,20 +279,118 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
-    public function testRenameFunctionParameterWithPHPDocType() {
+    public function testRenameMethodReturnValueWithPHPDocType() {
         $this->markTestIncomplete();
+    }
+
+    public function testRenameFunctionReturnValueWithPHPDocType() {
+        $this->markTestIncomplete();
+    }
+
+    public function testRenameFunctionParameterWithPHPDocType() {
+        $orig = <<<EOL
+<?php
+/**
+ * @param Foo \$f take a parameter
+ */
+function quark(\$f) {
+    \$f->bar();
+}
+EOL;
+        $expected = <<<EOL
+<?php
+/**
+ * @param Foo \$f take a parameter
+ */
+function quark(\$f) {
+    \$f->baz();
+}
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
+    public function testRenameMethodParameterWithPHPDocType() {
+        $orig = <<<EOL
+<?php
+class Foo {
+    /**
+     * @param Foo \$f take a parameter
+     */
+    function quark(\$f) {
+        \$f->bar();
+    }
+}
+EOL;
+        $expected = <<<EOL
+<?php
+class Foo {
+    /**
+     * @param Foo \$f take a parameter
+     */
+    function quark(\$f) {
+        \$f->baz();
+    }
+}
+EOL;
+        $this->renameAndCompare($orig, $expected);
     }
 
     public function testRenameClassPropertyCallWithPHPDocType() {
-        $this->markTestIncomplete();
+        $orig = <<<EOL
+<?php
+class Foo {
+    /**
+     * Some class property
+     * @var Foo
+     */
+    protected \$f;
+    function quark() {
+        \$this->f->bar();
+    }
+}
+EOL;
+        $expected = <<<EOL
+<?php
+class Foo {
+    /**
+     * Some class property
+     * @var Foo
+     */
+    protected \$f;
+    function quark() {
+        \$this->f->baz();
+    }
+}
+EOL;
+        $this->renameAndCompare($orig, $expected);
     }
 
-    public function testRenameClassPropertyCallWithConstructorInstantiation() {
-        $this->markTestIncomplete();
+    public function testRenameUnassignedVariableWithZendTypeHint() {
+        $orig = <<<EOL
+<?php
+/* @var \$f Foo */
+\$result = \$f->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+/* @var \$f Foo */
+\$result = \$f->baz();
+EOL;
+        $this->renameAndCompare($orig, $expected);
     }
 
-    public function testRenameUnassignedVariableWithPHPDocTypeHint() {
-        $this->markTestIncomplete();
+    public function testRenameUnassignedVariableWithKomodoTypeHint() {
+        $orig = <<<EOL
+<?php
+/* @var Foo */
+\$result = \$f->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+/* @var Foo */
+\$result = \$f->baz();
+EOL;
+        $this->renameAndCompare($orig, $expected);
     }
 
     public function testRenameMethodStaticCall() {
