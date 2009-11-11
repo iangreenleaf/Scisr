@@ -92,6 +92,9 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
      * @param PHP_CodeSniffer_File $phpcsFile The file the variable is in
      * @param int $varPtr  The variable's position in the token stack
      * @return int the stack pointer that opens the scope for this variable
+     * @todo this is actually returning the "owner" of the scope, not the scope 
+     * opener. Need to figure out if this is okay or not, if not change it here 
+     * and everywhere else that looks, if so name this better.
      */
     private function getScopeOpener($varPtr, $phpcsFile)
     {

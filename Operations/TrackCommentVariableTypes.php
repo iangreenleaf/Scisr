@@ -51,22 +51,18 @@ class Scisr_Operations_TrackCommentVariableTypes
     protected function processVar($var, $commentPtr, $phpcsFile)
     {
         if (($varName = $var->getVarName()) === null) {
-            $varPtr = $this->getNextVariablePtr($commentPtr, $phpcsFile);
+            $varPtr = $phpcsFile->findNext(T_VARIABLE, $commentPtr);
             $this->setVariableType($varPtr, $var->getContent(), $phpcsFile);
         } else {
             $this->setVariableType($commentPtr, $var->getContent(), $phpcsFile, $varName);
         }
     }
 
-    protected function getNextVariablePtr($stackPtr, $phpcsFile)
+    protected function processParam($param, $commentPtr, $phpcsFile)
     {
-        $varPtr = $phpcsFile->findNext(T_VARIABLE, $stackPtr);
-        return $varPtr;
-    }
-
-    protected function processParam($param, $commentToken, $columns)
-    {
-        //TODO
+        $tokens = $phpcsFile->getTokens();
+        $funcPtr = $phpcsFile->findNext(T_FUNCTION, $commentPtr);
+        Scisr_VariableTypes::registerVariableType($param->getVarName(), $param->getType(), $phpcsFile->getFileName(), $funcPtr);
     }
 
     protected function processReturn($param, $commentToken, $columns)
