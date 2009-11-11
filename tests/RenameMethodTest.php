@@ -383,11 +383,13 @@ EOL;
         $orig = <<<EOL
 <?php
 /* @var Foo */
+\$f = getClass();
 \$result = \$f->bar();
 EOL;
         $expected = <<<EOL
 <?php
 /* @var Foo */
+\$f = getClass();
 \$result = \$f->baz();
 EOL;
         $this->renameAndCompare($orig, $expected);

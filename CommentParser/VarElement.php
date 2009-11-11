@@ -49,4 +49,17 @@ class Scisr_CommentParser_VarElement extends Scisr_CommentParser_SingleElement
         }
     }
 
+    /**
+     * Get the variable name, if it was specified in the comment
+     * @return string|null the variable name, or null
+     */
+    public function getVarName()
+    {
+        if (isset($this->_varName)) {
+            return $this->_varName;
+        } else {
+            return null;
+        }
+    }
+
 }

@@ -41,13 +41,21 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
      * @param PHP_CodeSniffer_File $phpcsFile The file the variable is in
      * @param int $varPtr  The variable's position in the token stack
      * @param string $type the name of the class that this variable holds
+     * @param string $varName the name of the variable. If not provided, will
+     * be determined from $varPtr.
+     * @todo currently, $varPtr is slightly misdocumented - the PHPDoc stuff
+     * sometimes passes not the var pointer, just something that's close enough,
+     * and we count on this function not getting confused
      */
-    protected function setVariableType($varPtr, $type, $phpcsFile)
+    protected function setVariableType($varPtr, $type, $phpcsFile, $varName=null)
     {
-        $tokens = $phpcsFile->getTokens();
-        $varInfo = $tokens[$varPtr];
+        if ($varName === null) {
+            $tokens = $phpcsFile->getTokens();
+            $varInfo = $tokens[$varPtr];
+            $varName = $varInfo['content'];
+        }
         $scopeOpen = $this->getScopeOpener($varPtr, $phpcsFile);
-        Scisr_VariableTypes::registerVariableType($varInfo['content'], $type, $phpcsFile->getFileName(), $scopeOpen);
+        Scisr_VariableTypes::registerVariableType($varName, $type, $phpcsFile->getFileName(), $scopeOpen);
     }
 
     /**

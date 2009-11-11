@@ -74,6 +74,7 @@ class Scisr
     {
         $this->_listeners[] = new Scisr_Operations_TrackGlobalVariables();
         $this->_listeners[] = new Scisr_Operations_TrackVariableTypes();
+        $this->_listeners[] = new Scisr_Operations_TrackCommentVariableTypes();
         $this->_listeners[] = new Scisr_Operations_ChangeMethodName($class, $oldMethod, $newMethod);
     }
 
