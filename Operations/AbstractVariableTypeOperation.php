@@ -14,12 +14,19 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
      * Get the type of a variable
      * @param PHP_CodeSniffer_File $phpcsFile The file the variable is in
      * @param int $varPtr  The variable's position in the token stack
+     * @param string $varName the name of the variable. If not provided, will
+     * be determined from $varPtr.
      * @return string|null the class name, or null if we don't know
      */
-    protected function getVariableType($varPtr, $phpcsFile)
+    protected function getVariableType($varPtr, $phpcsFile, $varName=null)
     {
         $tokens = $phpcsFile->getTokens();
         $varInfo = $tokens[$varPtr];
+
+        if ($varName === null) {
+            $varName = $varInfo['content'];
+        }
+
         if ($varInfo['content'] == '$this'
             && ($classDefPtr = array_search(T_CLASS, $varInfo['conditions'])) !== false
         ) {
@@ -29,7 +36,7 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
         } else {
             // Otherwise just see if it's stored
             $scopeOpen = $this->getScopeOpener($varPtr, $phpcsFile);
-            $type = Scisr_VariableTypes::getVariableType($varInfo['content'], $phpcsFile->getFileName(), $scopeOpen);
+            $type = Scisr_VariableTypes::getVariableType($varName, $phpcsFile->getFileName(), $scopeOpen);
         }
 
         return $type;
@@ -130,4 +137,51 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
 
         return Scisr_VariableTypes::isGlobalVariable($name, $filename, $scopeOpen);
     }
+
+    /**
+     * Resolve a set of variable tokens to the most typed object we can
+     * @param int $startPtr a pointer to the first token
+     * @param int $endPtr a pointer to the last token
+     * @param PHP_CodeSniffer_File $phpcsFile
+     * @return string a type name or a partially-resolved string, such as
+     * "Foo->unknownVar->property".
+     */
+    protected function resolveFullVariableType($startPtr, $endPtr, $phpcsFile) {
+        $tokens = $phpcsFile->getTokens();
+        $soFar = '';
+        $currPtr = $startPtr;
+        // Parse through the token set
+        while($currPtr <= $endPtr) {
+            $currToken = $tokens[$currPtr];
+            // Ignore whitespace
+            if ($currToken['code'] == T_WHITESPACE) {
+                $currPtr++;
+                continue;
+            }
+            // Add the token to our string
+            $soFar .= $currToken['content'];
+            // See if the string resolves to a type now
+            $type = $this->getVariableType($startPtr, $phpcsFile, $soFar);
+            if ($type !== null) {
+                $soFar = $type;
+            }
+            $currPtr++;
+        }
+        return $soFar;
+    }
+
+    /**
+     * Get the start position of a variable declaration
+     * @param int $varPtr a pointer to the end of the variable tokens
+     * @param array $tokens the token stack
+     * @return int a pointer to the first token that makes up this variable
+     * @todo whitespace is an imperfect marker
+     */
+    protected function getStartOfVar($varPtr, $tokens) {
+        while($tokens[$varPtr]['code'] != T_WHITESPACE) {
+            $varPtr--;
+        }
+        return $varPtr;
+    }
+
 }

@@ -73,8 +73,8 @@ class Scisr_Operations_ChangeMethodName
             // If the object we're operating on is of the correct type, continue
 
             $varPtr = $phpcsFile->findPrevious(array(T_VARIABLE, T_STRING), $stackPtr);
-
-            $type = $this->getVariableType($varPtr, $phpcsFile);
+            $varPtr = $this->getStartOfVar($varPtr, $tokens);
+            $type = $this->resolveFullVariableType($varPtr, $stackPtr - 1, $phpcsFile);
 
             if ($type == $this->class) {
                 Scisr_ChangeRegistry::addChange(

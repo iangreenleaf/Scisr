@@ -21,13 +21,13 @@ class Scisr_Operations_TrackVariableTypes
 
     public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
     {
+        $varName = null;
         $tokens = $phpcsFile->getTokens();
         $varPtr = $phpcsFile->findPrevious(array(T_WHITESPACE), $stackPtr - 1, null, true);
-        $varToken = $tokens[$varPtr];
 
-        // If we are not assigning the class to a variable, quit
-        if ($varToken['code'] != T_VARIABLE) {
-            return;
+        if ($tokens[$varPtr]['code'] != T_VARIABLE) {
+            $varPtr = $this->getStartOfVar($varPtr, $tokens);
+            $varName = $this->resolveFullVariableType($varPtr, $stackPtr - 1, $phpcsFile);
         }
 
         $nextPtr = $phpcsFile->findNext(array(T_WHITESPACE), $stackPtr + 1, null, true);
@@ -43,7 +43,8 @@ class Scisr_Operations_TrackVariableTypes
         }
 
         if (isset($className) && $className !== null) {
-            $this->setVariableType($varPtr, $className, $phpcsFile);
+            $this->setVariableType($varPtr, $className, $phpcsFile, $varName);
         }
     }
+
 }
