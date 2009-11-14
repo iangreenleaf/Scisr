@@ -1,6 +1,8 @@
 <?php
 
+// The scope in which we store qualified class types
 define('SCISR_SCOPE_CLASS', 0);
+// The scope in which we store global variable types
 define('SCISR_SCOPE_GLOBAL', 0);
 
 /**
@@ -16,7 +18,7 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
     /**
      * Get the type of a variable
      * @param PHP_CodeSniffer_File $phpcsFile The file the variable is in
-     * @param int $varPtr  The variable's position in the token stack
+     * @param int $varPtr The position in the stack in which our variable has scope
      * @param string $varName the name of the variable. If not provided, will
      * be determined from $varPtr.
      * @return string|null the class name, or null if we don't know
@@ -37,10 +39,9 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
             $classPtr = $phpcsFile->findNext(T_STRING, $classDefPtr);
             $type = $tokens[$classPtr]['content'];
             return $type;
-
         }
 
-        $scopeOpen = $this->getScopeOpener($varPtr, $phpcsFile, $varName);
+        $scopeOpen = $this->getScopeOwner($varPtr, $phpcsFile, $varName);
 
         return Scisr_VariableTypes::getVariableType($varName, $phpcsFile->getFileName(), $scopeOpen);
 
@@ -49,13 +50,10 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
     /**
      * Set the type of a variable
      * @param PHP_CodeSniffer_File $phpcsFile The file the variable is in
-     * @param int $varPtr  The variable's position in the token stack
+     * @param int $varPtr The position in the stack in which our variable has scope
      * @param string $type the name of the class that this variable holds
      * @param string $varName the name of the variable. If not provided, will
      * be determined from $varPtr.
-     * @todo currently, $varPtr is slightly misdocumented - the PHPDoc stuff
-     * sometimes passes not the var pointer, just something that's close enough,
-     * and we count on this function not getting confused
      */
     protected function setVariableType($varPtr, $type, $phpcsFile, $varName=null)
     {
@@ -65,7 +63,7 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
             $varName = $varInfo['content'];
         }
 
-        $scopeOpen = $this->getScopeOpener($varPtr, $phpcsFile, $varName);
+        $scopeOpen = $this->getScopeOwner($varPtr, $phpcsFile, $varName);
         Scisr_VariableTypes::registerVariableType($varName, $type, $phpcsFile->getFileName(), $scopeOpen);
     }
 
@@ -87,27 +85,25 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
 
     /**
      * Set a variable as global
-     * @param string $variable the name of the variable (including the dollar sign)
-     * @param string $filename the file we're in
+     * @param int $varPtr The position in the stack in which our variable has scope
+     * @param PHP_CodeSniffer_File $phpcsFile The file the variable is in
      */
     protected function setGlobal($varPtr, $phpcsFile)
     {
         $tokens = $phpcsFile->getTokens();
         $varName = $tokens[$varPtr]['content'];
-        $scopeOpen = $this->getScopeOpener($varPtr, $phpcsFile, $varName);
+        $scopeOpen = $this->getScopeOwner($varPtr, $phpcsFile, $varName);
         Scisr_VariableTypes::registerGlobalVariable($varName, $phpcsFile->getFileName(), $scopeOpen);
     }
 
     /**
      * Figure out the relevant scope opener
      * @param PHP_CodeSniffer_File $phpcsFile The file the variable is in
-     * @param int $varPtr  The variable's position in the token stack
+     * @param int $varPtr The position in the stack in which our variable has scope
+     * @param string $varName the name of the variable.
      * @return int the stack pointer that opens the scope for this variable
-     * @todo this is actually returning the "owner" of the scope, not the scope 
-     * opener. Need to figure out if this is okay or not, if not change it here 
-     * and everywhere else that looks, if so name this better.
      */
-    private function getScopeOpener($varPtr, $phpcsFile, $varName)
+    private function getScopeOwner($varPtr, $phpcsFile, $varName)
     {
         $tokens = $phpcsFile->getTokens();
         $varInfo = $tokens[$varPtr];
