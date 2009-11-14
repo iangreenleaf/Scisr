@@ -40,12 +40,7 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
 
         }
 
-        // If we're dealing with a fully qualified variable, put it in the global scope
-        if ($varName{0} != '$') {
-            $scopeOpen = SCISR_SCOPE_CLASS;
-        } else {
-            $scopeOpen = $this->getScopeOpener($varPtr, $phpcsFile);
-        }
+        $scopeOpen = $this->getScopeOpener($varPtr, $phpcsFile, $varName);
 
         return Scisr_VariableTypes::getVariableType($varName, $phpcsFile->getFileName(), $scopeOpen);
 
@@ -70,12 +65,7 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
             $varName = $varInfo['content'];
         }
 
-        // If we're dealing with a fully qualified variable, put it in the global scope
-        if ($varName{0} != '$') {
-            $scopeOpen = SCISR_SCOPE_CLASS;
-        } else {
-            $scopeOpen = $this->getScopeOpener($varPtr, $phpcsFile);
-        }
+        $scopeOpen = $this->getScopeOpener($varPtr, $phpcsFile, $varName);
         Scisr_VariableTypes::registerVariableType($varName, $type, $phpcsFile->getFileName(), $scopeOpen);
     }
 
@@ -103,9 +93,9 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
     protected function setGlobal($varPtr, $phpcsFile)
     {
         $tokens = $phpcsFile->getTokens();
-        $varInfo = $tokens[$varPtr];
-        $scopeOpen = $this->getScopeOpener($varPtr, $phpcsFile);
-        Scisr_VariableTypes::registerGlobalVariable($varInfo['content'], $phpcsFile->getFileName(), $scopeOpen);
+        $varName = $tokens[$varPtr]['content'];
+        $scopeOpen = $this->getScopeOpener($varPtr, $phpcsFile, $varName);
+        Scisr_VariableTypes::registerGlobalVariable($varName, $phpcsFile->getFileName(), $scopeOpen);
     }
 
     /**
@@ -117,18 +107,23 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
      * opener. Need to figure out if this is okay or not, if not change it here 
      * and everywhere else that looks, if so name this better.
      */
-    private function getScopeOpener($varPtr, $phpcsFile)
+    private function getScopeOpener($varPtr, $phpcsFile, $varName)
     {
         $tokens = $phpcsFile->getTokens();
         $varInfo = $tokens[$varPtr];
 
         $scopes = self::filterScopes($varInfo['conditions']);
 
-        if ($this->isGlobal($varInfo['content'], $phpcsFile->getFileName(), $scopes)) {
-            $scopes = array(SCISR_SCOPE_GLOBAL);
+        if ($varName{0} != '$') {
+            // If we're dealing with a fully qualified variable, put it in the global scope
+            $scopeOpen = SCISR_SCOPE_CLASS;
+        } else if ($this->isGlobal($varName, $phpcsFile->getFileName(), $scopes)) {
+            // If the variable was declared global, use that
+            $scopeOpen = SCISR_SCOPE_GLOBAL;
+        } else {
+            // Get the lowermost scope
+            $scopeOpen = $scopes[count($scopes) - 1];
         }
-        // Get the lowermost scope
-        $scopeOpen = $scopes[count($scopes) - 1];
         return $scopeOpen;
     }
 
