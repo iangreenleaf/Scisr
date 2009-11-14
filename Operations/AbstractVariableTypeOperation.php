@@ -1,5 +1,8 @@
 <?php
 
+define('SCISR_SCOPE_CLASS', 0);
+define('SCISR_SCOPE_GLOBAL', 0);
+
 /**
  * An abstract operation class that helps you deal with variable types
  *
@@ -27,19 +30,24 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
             $varName = $varInfo['content'];
         }
 
-        if ($varInfo['content'] == '$this'
+        // Special case: $this inside a class
+        if ($varName == '$this'
             && ($classDefPtr = array_search(T_CLASS, $varInfo['conditions'])) !== false
         ) {
-            // If our variable is $this, get the containing class
             $classPtr = $phpcsFile->findNext(T_STRING, $classDefPtr);
             $type = $tokens[$classPtr]['content'];
-        } else {
-            // Otherwise just see if it's stored
-            $scopeOpen = $this->getScopeOpener($varPtr, $phpcsFile);
-            $type = Scisr_VariableTypes::getVariableType($varName, $phpcsFile->getFileName(), $scopeOpen);
+            return $type;
+
         }
 
-        return $type;
+        // If we're dealing with a fully qualified variable, put it in the global scope
+        if ($varName{0} != '$') {
+            $scopeOpen = SCISR_SCOPE_CLASS;
+        } else {
+            $scopeOpen = $this->getScopeOpener($varPtr, $phpcsFile);
+        }
+
+        return Scisr_VariableTypes::getVariableType($varName, $phpcsFile->getFileName(), $scopeOpen);
 
     }
 
@@ -61,7 +69,13 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
             $varInfo = $tokens[$varPtr];
             $varName = $varInfo['content'];
         }
-        $scopeOpen = $this->getScopeOpener($varPtr, $phpcsFile);
+
+        // If we're dealing with a fully qualified variable, put it in the global scope
+        if ($varName{0} != '$') {
+            $scopeOpen = SCISR_SCOPE_CLASS;
+        } else {
+            $scopeOpen = $this->getScopeOpener($varPtr, $phpcsFile);
+        }
         Scisr_VariableTypes::registerVariableType($varName, $type, $phpcsFile->getFileName(), $scopeOpen);
     }
 
@@ -109,9 +123,9 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
         $varInfo = $tokens[$varPtr];
 
         $scopes = self::filterScopes($varInfo['conditions']);
-        // We're using 0 for the global scope
+
         if ($this->isGlobal($varInfo['content'], $phpcsFile->getFileName(), $scopes)) {
-            $scopes = array(0);
+            $scopes = array(SCISR_SCOPE_GLOBAL);
         }
         // Get the lowermost scope
         $scopeOpen = $scopes[count($scopes) - 1];
