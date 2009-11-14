@@ -36,12 +36,13 @@ abstract class Scisr_Operations_AbstractTrackVariableTypeOperation
         $this->parser->parse();
 
         $elements = $this->parser->getTagElements();
+        $columns = $this->parser->getTagElementColumns();
 
         foreach ($elements as $tagName => $tagArray) {
             $method = array($this, 'process' . ucfirst($tagName));
             if (is_callable($method)) {
                 foreach ($tagArray as $i => $tag) {
-                    call_user_func($method, $tag, $stackPtr, $phpcsFile);
+                    call_user_func($method, $tag, $stackPtr, $phpcsFile, $columns[$tagName][$i]);
                 }
             }
         }

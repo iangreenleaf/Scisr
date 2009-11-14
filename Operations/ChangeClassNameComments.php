@@ -17,24 +17,26 @@ class Scisr_Operations_ChangeClassNameComments
         $this->newName = $newName;
     }
 
-    protected function processVar($var, $commentToken, $columns)
+    protected function processVar($var, $commentPtr, $phpcsFile, $columns)
     {
-        $this->findWordChanges($var, array('content'), $commentToken, $columns);
+        $this->findWordChanges($var, array('content'), $commentPtr, $phpcsFile, $columns);
     }
 
-    protected function processParam($param, $commentToken, $columns)
+    protected function processParam($param, $commentPtr, $phpcsFile, $columns)
     {
-        $this->findWordChanges($param, array('type'), $commentToken, $columns);
+        $this->findWordChanges($param, array('type'), $commentPtr, $phpcsFile, $columns);
     }
 
-    protected function processReturn($param, $commentToken, $columns)
+    protected function processReturn($param, $commentPtr, $phpcsFile, $columns)
     {
-        $this->findWordChanges($param, array('value'), $commentToken, $columns);
+        $this->findWordChanges($param, array('value'), $commentPtr, $phpcsFile, $columns);
     }
 
-    protected function findWordChanges($docElement, $wordTypes, $commentToken, $columns)
+    protected function findWordChanges($docElement, $wordTypes, $commentPtr, $phpcsFile, $columns)
     {
         $subElements = $docElement->getSubElementValues();
+        $tokens = $phpcsFile->getTokens();
+        $commentToken = $tokens[$commentPtr];
         $line = $commentToken['line'] + $docElement->getLine();
         $i = 0;
         foreach ($subElements as $name => $value) {
