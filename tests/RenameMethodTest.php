@@ -101,6 +101,32 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    public function testRenameMethodInstantiatedClassPropertyFromOutsideOfClass() {
+        $orig = <<<EOL
+<?php
+class Quack {
+    public \$f;
+    function quark() {
+        \$this->f = new Foo();
+    }
+}
+\$q = new Quack();
+\$q->f->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+class Quack {
+    public \$f;
+    function quark() {
+        \$this->f = new Foo();
+    }
+}
+\$q = new Quack();
+\$q->f->baz();
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
     public function testRenameClassPropertyCallWithConstructorInstantiation() {
         $orig = <<<EOL
 <?php
