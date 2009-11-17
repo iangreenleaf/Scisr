@@ -191,6 +191,66 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    public function testDontRenameClassNameInCommentsWhenNotAggressive() {
+        $orig = <<<EOL
+<?php
+/**
+ * This variable has something to do with Foo.
+ * But it doesn't concern NotFoo.
+ */
+\$f = someFunction();
+// Yo dawg I heard you liked Foo so I got you some Foo
+\$g = 1;
+EOL;
+        $expected = <<<EOL
+<?php
+/**
+ * This variable has something to do with Foo.
+ * But it doesn't concern NotFoo.
+ */
+\$f = someFunction();
+// Yo dawg I heard you liked Foo so I got you some Foo
+\$g = 1;
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
+    public function testRenameClassNameInStringWhenAggressive() {
+        $orig = <<<EOL
+<?php
+\$a = "this string concerns Foo";
+\$b = "Foo as \$x does Foo this \$arr['one']";
+\$c = 'this Foo too';
+\$d = "but don't touch NotFoo"
+EOL;
+        $expected = <<<EOL
+<?php
+\$a = "this string concerns Baz";
+\$b = "Baz as \$x does Baz this \$arr['one']";
+\$c = 'this Baz too';
+\$d = "but don't touch NotFoo"
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
+    public function testDontRenameClassNameInStringWhenNotAggressive() {
+        $orig = <<<EOL
+<?php
+\$a = "this string concerns Foo";
+\$b = "Foo as \$x does Foo this \$arr['one']";
+\$c = 'this Foo too';
+\$d = "but don't touch NotFoo"
+EOL;
+        $expected = <<<EOL
+<?php
+\$a = "this string concerns Foo";
+\$b = "Foo as \$x does Foo this \$arr['one']";
+\$c = 'this Foo too';
+\$d = "but don't touch NotFoo"
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
     /**
      * If we have multiple sniffs that will register a change (for example, the
      * PHPDoc parser + the regular word matcher when we're in aggressive mode),

@@ -68,6 +68,7 @@ class Scisr
         $this->_listeners[] = new Scisr_Operations_ChangeClassName($oldClass, $newClass);
         $this->_listeners[] = new Scisr_Operations_ChangeClassNameComments($oldClass, $newClass);
         $this->_listeners[] = new Scisr_Operations_ChangeCommentWords($oldClass, $newClass);
+        $this->_listeners[] = new Scisr_Operations_ChangeStringWords($oldClass, $newClass);
     }
 
     /**
