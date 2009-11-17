@@ -167,5 +167,76 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    public function testRenameClassNameInCommentsWhenAggressive() {
+        $orig = <<<EOL
+<?php
+/**
+ * This variable has something to do with Foo.
+ * But it doesn't concern NotFoo.
+ */
+\$f = someFunction();
+// Yo dawg I heard you liked Foo so I got you some Foo
+\$g = 1;
+EOL;
+        $expected = <<<EOL
+<?php
+/**
+ * This variable has something to do with Baz.
+ * But it doesn't concern NotFoo.
+ */
+\$f = someFunction();
+// Yo dawg I heard you liked Baz so I got you some Baz
+\$g = 1;
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
+    /**
+     * If we have multiple sniffs that will register a change (for example, the
+     * PHPDoc parser + the regular word matcher when we're in aggressive mode),
+     * we want to make sure they only (effectively) make the change once. We
+     * test this by changing to a word of different length.
+     */
+    public function testDontDoubleRename() {
+        $orig = <<<EOL
+<?php
+/**
+ * @return Quark this is a return val
+ */
+function someFunction() { }
+EOL;
+        $expected = <<<EOL
+<?php
+/**
+ * @return Foo this is a return val
+ */
+function someFunction() { }
+EOL;
+        $this->renameAndCompare($orig, $expected, 'Quark', 'Foo');
+    }
+
+    /**
+     * When there are two pending changes on the same line, the first one
+     * will affect the offset of the second. We test this by changing to a
+     * word of different length.
+     * @todo this isn't really a rename-class test, it's more of a Scisr_File test
+     */
+    public function testOffsetChangedByOtherChange() {
+        $orig = <<<EOL
+<?php
+/**
+ * @return Quark this is a return Quark
+ */
+function someFunction() { }
+EOL;
+        $expected = <<<EOL
+<?php
+/**
+ * @return Foo this is a return Foo
+ */
+function someFunction() { }
+EOL;
+        $this->renameAndCompare($orig, $expected, 'Quark', 'Foo');
+    }
 
 }
