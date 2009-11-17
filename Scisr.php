@@ -48,7 +48,12 @@ class Scisr
 {
 
     /**
-     * CodeSniffer listener objects to be used
+     * CodeSniffer listener objects to be used during the first, read-only pass
+     * @var array
+     */
+    protected $_firstPassListeners = array();
+    /**
+     * CodeSniffer listener objects to be used during the main processing pass
      * @var array
      */
     protected $_listeners = array();
@@ -72,9 +77,9 @@ class Scisr
      */
     public function setRenameMethod($class, $oldMethod, $newMethod)
     {
-        $this->_listeners[] = new Scisr_Operations_TrackGlobalVariables();
-        $this->_listeners[] = new Scisr_Operations_TrackVariableTypes();
-        $this->_listeners[] = new Scisr_Operations_TrackCommentVariableTypes();
+        $this->_firstPassListeners[] = new Scisr_Operations_TrackGlobalVariables();
+        $this->_firstPassListeners[] = new Scisr_Operations_TrackVariableTypes();
+        $this->_firstPassListeners[] = new Scisr_Operations_TrackCommentVariableTypes();
         $this->_listeners[] = new Scisr_Operations_ChangeMethodName($class, $oldMethod, $newMethod);
     }
 
@@ -102,6 +107,15 @@ class Scisr
     public function run()
     {
         Scisr_VariableTypes::init();
+
+        // If we need to, make a read-only pass to populate our type information
+        if (count($this->_firstPassListeners) > 0) {
+            $sniffer = new Scisr_CodeSniffer();
+            foreach ($this->_firstPassListeners as $listener) {
+                $sniffer->addListener($listener);
+            }
+            $sniffer->process($this->files);
+        }
 
         // Run the sniffer
         $sniffer = new Scisr_CodeSniffer();
