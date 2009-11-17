@@ -127,6 +127,32 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    public function testRenameMethodWithCallBeforeDeclaration() {
+        $orig = <<<EOL
+<?php
+\$q = new Quack();
+\$q->f->bar();
+class Quack {
+    public \$f;
+    function quark() {
+        \$this->f = new Foo();
+    }
+}
+EOL;
+        $expected = <<<EOL
+<?php
+\$q = new Quack();
+\$q->f->baz();
+class Quack {
+    public \$f;
+    function quark() {
+        \$this->f = new Foo();
+    }
+}
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
     public function testRenameClassPropertyCallWithConstructorInstantiation() {
         $orig = <<<EOL
 <?php
@@ -310,6 +336,10 @@ EOL;
     }
 
     public function testRenameFunctionReturnValueWithPHPDocType() {
+        $this->markTestIncomplete();
+    }
+
+    public function testRenameFunctionReturnValueWithCallBeforeDeclaration() {
         $this->markTestIncomplete();
     }
 
