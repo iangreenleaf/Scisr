@@ -52,7 +52,15 @@ class Scisr_File
             if (isset($this->changes[$lineNo])) {
                 // Track the net column change caused by edits to this line so far
                 $lineOffsetDelta = 0;
+                // Track the (offset-adjusted) last column modified to prevent edit conflicts
+                $lastChanged = 0;
                 foreach ($this->changes[$lineNo] as $col => $edit) {
+                    if ($col <= $lastChanged) {
+                        // I don't expect this to ever happen unless a developer makes a mistake,
+                        // so we'll just abort messily
+                        $err = "We've encountered conflicting edit requests. Cannot continue.";
+                        throw new Exception($err);
+                    }
                     $col += $lineOffsetDelta;
                     $length = $edit[0];
                     $replacement = $edit[1];
@@ -60,6 +68,8 @@ class Scisr_File
                     $lineOffsetDelta += strlen($replacement) - $length;
                     // Make the change
                     $line = substr_replace($line, $replacement, $col - 1, $length);
+                    // Update to the last column this edit affected
+                    $lastChanged = $col + $length - 1;
                 }
             }
             // Write the resulting line to the file, whether or not it was modified
