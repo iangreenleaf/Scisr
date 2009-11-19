@@ -151,12 +151,13 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
      * @return string a type name or a partially-resolved string, such as
      * "Foo->unknownVar->property".
      */
-    protected function resolveFullVariableType($startPtr, $endPtr, $phpcsFile) {
+    protected function resolveFullVariableType($startPtr, $endPtr, $phpcsFile)
+    {
         $tokens = $phpcsFile->getTokens();
         $soFar = '';
         $currPtr = $startPtr;
         // Parse through the token set
-        while($currPtr <= $endPtr) {
+        while ($currPtr <= $endPtr) {
             $currToken = $tokens[$currPtr];
             // Ignore whitespace
             if ($currToken['code'] == T_WHITESPACE) {
@@ -182,8 +183,9 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
      * @return int a pointer to the first token that makes up this variable
      * @todo whitespace is an imperfect marker
      */
-    protected function getStartOfVar($varPtr, $tokens) {
-        while($tokens[$varPtr]['code'] != T_WHITESPACE) {
+    protected function getStartOfVar($varPtr, $tokens)
+    {
+        while ($tokens[$varPtr]['code'] != T_WHITESPACE) {
             $varPtr--;
         }
         return $varPtr;

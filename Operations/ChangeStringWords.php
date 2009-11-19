@@ -3,7 +3,8 @@
 /**
  * Change a word in PHP strings
  */
-class Scisr_Operations_ChangeStringWords extends Scisr_Operations_AbstractPatternMatchOperation 
+class Scisr_Operations_ChangeStringWords
+    extends Scisr_Operations_AbstractPatternMatchOperation
 {
 
     public function register()

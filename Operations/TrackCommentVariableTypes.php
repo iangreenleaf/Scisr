@@ -22,7 +22,12 @@ class Scisr_Operations_TrackCommentVariableTypes
     {
         $tokens = $phpcsFile->getTokens();
         $funcPtr = $phpcsFile->findNext(T_FUNCTION, $commentPtr);
-        Scisr_VariableTypes::registerVariableType($param->getVarName(), $param->getType(), $phpcsFile->getFileName(), $funcPtr);
+        Scisr_VariableTypes::registerVariableType(
+            $param->getVarName(),
+            $param->getType(),
+            $phpcsFile->getFileName(),
+            $funcPtr
+        );
     }
 
     protected function processReturn($param, $commentToken, $columns)
