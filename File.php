@@ -50,9 +50,15 @@ class Scisr_File
         foreach ($contents as $i => $line) {
             $lineNo = $i + 1;
             if (isset($this->changes[$lineNo])) {
+                // Track the net column change caused by edits to this line so far
+                $lineOffsetDelta = 0;
                 foreach ($this->changes[$lineNo] as $col => $edit) {
+                    $col += $lineOffsetDelta;
                     $length = $edit[0];
                     $replacement = $edit[1];
+                    // Update the net offset with the change caused by this edit
+                    $lineOffsetDelta += strlen($replacement) - $length;
+                    // Make the change
                     $line = substr_replace($line, $replacement, $col - 1, $length);
                 }
             }
