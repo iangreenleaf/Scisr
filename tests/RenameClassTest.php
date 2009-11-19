@@ -275,28 +275,4 @@ EOL;
         $this->renameAndCompare($orig, $expected, 'Quark', 'Foo');
     }
 
-    /**
-     * When there are two pending changes on the same line, the first one
-     * will affect the offset of the second. We test this by changing to a
-     * word of different length.
-     * @todo this isn't really a rename-class test, it's more of a Scisr_File test
-     */
-    public function testOffsetChangedByOtherChange() {
-        $orig = <<<EOL
-<?php
-/**
- * @return Quark this is a return Quark
- */
-function someFunction() { }
-EOL;
-        $expected = <<<EOL
-<?php
-/**
- * @return Foo this is a return Foo
- */
-function someFunction() { }
-EOL;
-        $this->renameAndCompare($orig, $expected, 'Quark', 'Foo');
-    }
-
 }
