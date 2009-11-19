@@ -57,6 +57,20 @@ class Scisr
      * @var array
      */
     protected $_listeners = array();
+    /**
+     * The output object to handle our messages
+     * @var Scisr_Output
+     */
+    protected $_output;
+
+    public function __construct($output=null)
+    {
+        $this->setAggressive(false);
+        if ($output === null) {
+            $output = new Scisr_NullOutput();
+        }
+        $this->_output = $output;
+    }
 
     /**
      * Rename a class
@@ -103,6 +117,11 @@ class Scisr
         array_map(array($this, 'addFile'), $fileArray);
     }
 
+    public function setAggressive($aggressive)
+    {
+        Scisr_ChangeRegistry::set('aggressiveMode', $aggressive);
+    }
+
     /**
      * Perform the requested changes
      */
@@ -126,19 +145,47 @@ class Scisr
         }
         $sniffer->process($this->files);
 
-        // Now make the actual changes that we've planned
+        // Get the changes that have been registered
         $changes = Scisr_ChangeRegistry::get('storedChanges');
-
         if (!is_array($changes)) {
-            //TODO give a message?
-            return;
+            $changes = array();
         }
 
+        // Display a summary line
+        $numFiles = count($changes);
+        $msg = "Changed $numFiles files";
+        $this->sendOutput($msg);
+
+        // Now make the actual changes
         foreach ($changes as $file) {
             $file->process();
         }
 
+        // If we have any notifications, display them
+        $warnings = Scisr_ChangeRegistry::get('storedNotifications');
+        if (is_array($warnings) && count($warnings) > 0) {
+            // Display a summary
+            $numFiles = count($warnings);
+            $numWarnings = array_sum(array_map('count', $warnings));
+            $msg = "Found $numWarnings possible changes in $numFiles files that were not applied:";
+            $this->sendOutput($msg);
+            // Now display each line where we found changes
+            foreach ($warnings as $filename => $lines) {
+                $lines = array_unique($lines);
+                foreach ($lines as $lineNo) {
+                    $this->sendOutput("$filename:$lineNo");
+                }
+            }
+        }
     }
 
+    /**
+     * Send output to the user.
+     * @param string $message the message to send
+     */
+    public function sendOutput($message)
+    {
+        $this->_output->outputString($message);
+    }
 }
 

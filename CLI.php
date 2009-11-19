@@ -3,13 +3,13 @@
 /**
  * Handles command line interaction for Scisr
  */
-class Scisr_CLI
+class Scisr_CLI implements Scisr_Output
 {
 
     public function __construct()
     {
         $this->getopts = new Console_Getopt();
-        $this->scisr = new Scisr();
+        $this->scisr = new Scisr($this);
     }
 
     /**
@@ -55,5 +55,10 @@ class Scisr_CLI
 
         $this->scisr->run();
 
+    }
+
+    public function outputString($message)
+    {
+        echo trim($message) . "\n";
     }
 }

@@ -7,10 +7,13 @@ require_once 'SingleFileTest.php';
 class RenameClassTest extends Scisr_SingleFileTest
 {
 
-    public function renameAndCompare($original, $expected, $oldname='Foo', $newname='Baz') {
+    public function renameAndCompare($original, $expected, $oldname='Foo', $newname='Baz', $aggressive=false) {
         $this->populateFile($original);
 
         $s = new Scisr();
+        if ($aggressive) {
+            $s->setAggressive(true);
+        }
         $s->setRenameClass($oldname, $newname);
         $s->addFile($this->test_file);
         $s->run();
@@ -188,7 +191,7 @@ EOL;
 // Yo dawg I heard you liked Baz so I got you some Baz
 \$g = 1;
 EOL;
-        $this->renameAndCompare($orig, $expected);
+        $this->renameAndCompare($orig, $expected, 'Foo', 'Baz', true);
     }
 
     public function testDontRenameClassNameInCommentsWhenNotAggressive() {
@@ -230,7 +233,7 @@ EOL;
 \$c = 'this Baz too';
 \$d = "but don't touch NotFoo"
 EOL;
-        $this->renameAndCompare($orig, $expected);
+        $this->renameAndCompare($orig, $expected, 'Foo', 'Baz', true);
     }
 
     public function testDontRenameClassNameInStringWhenNotAggressive() {

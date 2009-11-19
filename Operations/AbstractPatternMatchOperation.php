@@ -39,7 +39,8 @@ abstract class Scisr_Operations_AbstractPatternMatchOperation implements PHP_Cod
                 $tokenInfo['line'],
                 $tokenInfo['column'] + $offset,
                 strlen($this->oldString),
-                $this->newString
+                $this->newString,
+                true
             );
         }
     }
