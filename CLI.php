@@ -1,4 +1,5 @@
 <?php
+require_once(dirname(__FILE__) . '/Console/Getopt.php');
 
 /**
  * Handles command line interaction for Scisr
@@ -44,17 +45,35 @@ class Scisr_CLI implements Scisr_Output
         }
     }
 
-    public function process()
+    /**
+     * For testing use only. Dependency injection.
+     * @ignore
+     * @param Scisr
+     */
+    public function setScisr($scisr) {
+        $this->scisr = $scisr;
+    }
+
+    /**
+     * Process the CLI arguments and run Scisr
+     * @param array $args the command arguments - for use in testing only
+     */
+    public function process($args=null)
     {
+        // Turn off strict error reporting for Console_Getopt
+        error_reporting(E_ERROR);
         // Get options from the command line
-        $args = $this->getopts->readPHPArgv();
+        if ($args === null) {
+            $args = $this->getopts->readPHPArgv();
+        }
         // Remove our own filename
         array_shift($args);
         // Send to the options handler
         $this->parseOpts($args);
-
+        // Turn strict error reporting back on
+        error_reporting(E_ALL | E_STRICT);
+        // Run Scisr
         $this->scisr->run();
-
     }
 
     public function outputString($message)

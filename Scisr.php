@@ -47,6 +47,10 @@ class Scisr_CodeSniffer extends PHP_CodeSniffer
 class Scisr
 {
 
+    const MODE_TIMID = 0;
+    const MODE_CONSERVATIVE = 1;
+    const MODE_AGGRESSIVE = 2;
+
     /**
      * CodeSniffer listener objects to be used during the first, read-only pass
      * @var array
@@ -65,7 +69,7 @@ class Scisr
 
     public function __construct($output=null)
     {
-        $this->setAggressive(false);
+        $this->setEditMode(self::MODE_CONSERVATIVE);
         if ($output === null) {
             $output = new Scisr_NullOutput();
         }
@@ -117,9 +121,30 @@ class Scisr
         array_map(array($this, 'addFile'), $fileArray);
     }
 
-    public function setAggressive($aggressive)
+    /**
+     * Set how destructive we are editing
+     * @param int one of the following class constants:
+     *   + MODE_TIMID: Make no changes to the files, just report possible changes
+     *   + MODE_CONSERVATIVE: Make changes we are relatively sure are correct.
+     *     Warn about possible changes we aren't sure about.
+     *   + MODE_AGGRESSIVE: Make any changes we find.
+     */
+    public function setEditMode($mode)
     {
-        Scisr_ChangeRegistry::set('aggressiveMode', $aggressive);
+        switch ($mode) {
+        case self::MODE_TIMID:
+            Scisr_ChangeRegistry::set('aggressive', false);
+            Scisr_ChangeRegistry::set('timid', true);
+            break;
+        case self::MODE_CONSERVATIVE:
+            Scisr_ChangeRegistry::set('aggressive', false);
+            Scisr_ChangeRegistry::set('timid', false);
+            break;
+        case self::MODE_AGGRESSIVE:
+            Scisr_ChangeRegistry::set('aggressive', true);
+            Scisr_ChangeRegistry::set('timid', false);
+            break;
+        }
     }
 
     /**

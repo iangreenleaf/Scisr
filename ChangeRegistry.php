@@ -46,7 +46,9 @@ class Scisr_ChangeRegistry
      */
     public static function addChange($filename, $line, $column, $length, $replacement, $tentative=false)
     {
-        if ($tentative && self::get('aggressiveMode') !== true) {
+        if ($tentative && self::get('aggressive') !== true
+            || self::get('timid') === true
+        ) {
             return self::addNotification($filename, $line);
         }
 
