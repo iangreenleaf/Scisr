@@ -259,6 +259,7 @@ EOL;
      * PHPDoc parser + the regular word matcher when we're in aggressive mode),
      * we want to make sure they only (effectively) make the change once. We
      * test this by changing to a word of different length.
+     * @todo move this to a functional suite
      */
     public function testDontDoubleRename() {
         $orig = <<<EOL
