@@ -37,7 +37,7 @@ class CLITest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider aggressiveOptProvider
+     * @dataProvider timidOptProvider
      */
     public function testSetTimid($args) {
         $mock = $this->getMock('Scisr');
