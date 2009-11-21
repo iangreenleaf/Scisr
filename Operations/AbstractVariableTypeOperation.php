@@ -57,11 +57,23 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
      */
     protected function setVariableType($varPtr, $type, $phpcsFile, $varName=null)
     {
+        $tokens = $phpcsFile->getTokens();
+        $varInfo = $tokens[$varPtr];
+
         if ($varName === null) {
-            $tokens = $phpcsFile->getTokens();
-            $varInfo = $tokens[$varPtr];
             $varName = $varInfo['content'];
         }
+
+        $scopes = array_keys($varInfo['conditions']);
+        $owningScopePtr = array_pop($scopes);
+        // Special case: property declaration inside a class
+        // Change the variable name to match the way it will be referenced
+        if ($owningScopePtr !== null && $tokens[$owningScopePtr]['code'] == T_CLASS) {
+            $classPtr = $phpcsFile->findNext(T_STRING, $owningScopePtr);
+            $className = $tokens[$classPtr]['content'];
+            $varName = $className . '->' . substr($varName, 1);
+        }
+
 
         $scopeOpen = $this->getScopeOwner($varPtr, $phpcsFile, $varName);
         Scisr_VariableTypes::registerVariableType($varName, $type, $phpcsFile->getFileName(), $scopeOpen);
