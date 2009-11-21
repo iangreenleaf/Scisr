@@ -42,6 +42,12 @@ class Scisr_CLI implements Scisr_Output
             $newName = array_shift($params);
             $this->scisr->setRenameClass($oldName, $newName);
             break;
+        case 'rename-method':
+            $class = array_shift($params);
+            $oldName = array_shift($params);
+            $newName = array_shift($params);
+            $this->scisr->setRenameMethod($class, $oldName, $newName);
+            break;
         }
     }
 
