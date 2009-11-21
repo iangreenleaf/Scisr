@@ -13,6 +13,12 @@ class Scisr_File
      * @var string
      */
     public $filename;
+    /**
+     * Stores the pending changes to this file.
+     * A 2D array by line number, then column number
+     * @var array
+     */
+    public $changes = array();
 
     /**
      * Create a new Scisr_File
@@ -44,6 +50,13 @@ class Scisr_File
      */
     public function process()
     {
+        // Sort by columns and then by lines
+        foreach ($this->changes as $key => &$array) {
+            ksort($array);
+        }
+        ksort($this->changes);
+
+        // Get the file contents and open it for writing
         $contents = file($this->filename);
         $handle = fopen($this->filename, "w");
         // Loop through the file contents, making changes
