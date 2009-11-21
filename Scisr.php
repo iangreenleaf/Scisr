@@ -154,20 +154,23 @@ class Scisr
     {
         Scisr_VariableTypes::init();
 
+        $sniffer = new Scisr_CodeSniffer();
+
         // If we need to, make a read-only pass to populate our type information
         if (count($this->_firstPassListeners) > 0) {
-            $sniffer = new Scisr_CodeSniffer();
             foreach ($this->_firstPassListeners as $listener) {
                 $sniffer->addListener($listener);
             }
             $sniffer->process($this->files);
         }
 
-        // Run the sniffer
-        $sniffer = new Scisr_CodeSniffer();
+        // NOTE: We do want to keep all the first-pass listeners for this pass.
+        // This will ensure that the types are fully populated, but are also
+        // populated with the most relevant type assignment when multiples exist.
         foreach ($this->_listeners as $listener) {
             $sniffer->addListener($listener);
         }
+        // Run the sniffer
         $sniffer->process($this->files);
 
         // Get the changes that have been registered
