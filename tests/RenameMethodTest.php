@@ -231,6 +231,32 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    public function testDontCountVariablesOverwrittenLater() {
+        $orig = <<<EOL
+<?php
+\$a = new Foo();
+\$b = new NotFoo();
+
+\$a->bar();
+\$b->bar();
+
+\$a = new NotFoo();
+\$b = new Foo();
+EOL;
+        $expected = <<<EOL
+<?php
+\$a = new Foo();
+\$b = new NotFoo();
+
+\$a->baz();
+\$b->bar();
+
+\$a = new NotFoo();
+\$b = new Foo();
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
     public function testRenameWithScopedVariable() {
         $orig = <<<EOL
 <?php
