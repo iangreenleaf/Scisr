@@ -365,7 +365,7 @@ class Quark {
      * A method that does something
      * @return Foo
      */
-    public function getObj() {
+    public function getObj(\$param=null) {
         // STUB
     }
     public function doSomething() {
@@ -375,9 +375,11 @@ class Quark {
 }
 
 \$q = new Quark();
-\$f = \$q->getObj();
-\$f->bar();
-Quark::bar();
+\$f1 = \$q->getObj();
+\$f2 = \$q->getObj(\$somevar);
+\$f1->bar();
+\$f2->bar();
+Quark::getObj()->bar();
 EOL;
         $expected = <<<EOL
 <?php
@@ -386,7 +388,7 @@ class Quark {
      * A method that does something
      * @return Foo
      */
-    public function getObj() {
+    public function getObj(\$param=null) {
         // STUB
     }
     public function doSomething() {
@@ -396,9 +398,11 @@ class Quark {
 }
 
 \$q = new Quark();
-\$f = \$q->getObj();
-\$f->baz();
-Quark::baz();
+\$f1 = \$q->getObj();
+\$f2 = \$q->getObj(\$somevar);
+\$f1->baz();
+\$f2->baz();
+Quark::getObj()->baz();
 EOL;
         $this->renameAndCompare($orig, $expected);
     }

@@ -66,14 +66,17 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
 
         $scopes = array_keys($varInfo['conditions']);
         $owningScopePtr = array_pop($scopes);
-        // Special case: property declaration inside a class
+        // Special case: property or method declaration inside a class
         // Change the variable name to match the way it will be referenced
         if ($owningScopePtr !== null && $tokens[$owningScopePtr]['code'] == T_CLASS) {
             $classPtr = $phpcsFile->findNext(T_STRING, $owningScopePtr);
             $className = $tokens[$classPtr]['content'];
-            $varName = $className . '->' . substr($varName, 1);
+            // If it's a property, strip off the $ symbol
+            if (substr($varName, 0, 1) == '$') {
+               $varName = substr($varName, 1);
+            }
+            $varName = $className . '->' . $varName;
         }
-
 
         $scopeOpen = $this->getScopeOwner($varPtr, $phpcsFile, $varName);
         Scisr_VariableTypes::registerVariableType($varName, $type, $phpcsFile->getFileName(), $scopeOpen);
@@ -171,8 +174,8 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
         // Parse through the token set
         while ($currPtr <= $endPtr) {
             $currToken = $tokens[$currPtr];
-            // Ignore whitespace
-            if ($currToken['code'] == T_WHITESPACE) {
+            // Ignore whitespace and semicolons
+            if ($currToken['code'] == T_WHITESPACE || $currToken['code'] == T_SEMICOLON) {
                 $currPtr++;
                 continue;
             }
@@ -199,6 +202,21 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
     {
         while ($tokens[$varPtr]['code'] != T_WHITESPACE) {
             $varPtr--;
+        }
+        return $varPtr;
+    }
+
+    /**
+     * Get the end position of a variable declaration
+     * @param int $varPtr a pointer to the start of the variable tokens
+     * @param array $tokens the token stack
+     * @return int a pointer to the first token that makes up this variable
+     * @todo whitespace is an imperfect marker
+     */
+    protected function getEndOfVar($varPtr, $tokens)
+    {
+        while ($tokens[$varPtr]['code'] != T_WHITESPACE && $tokens[$varPtr]['code'] != T_SEMICOLON) {
+            $varPtr++;
         }
         return $varPtr;
     }

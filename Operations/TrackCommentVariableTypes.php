@@ -30,9 +30,18 @@ class Scisr_Operations_TrackCommentVariableTypes
         );
     }
 
-    protected function processReturn($param, $commentToken, $columns)
+    protected function processReturn($return, $commentPtr, $phpcsFile)
     {
-        //TODO
+        $tokens = $phpcsFile->getTokens();
+        $funcPtr = $phpcsFile->findNext(T_FUNCTION, $commentPtr);
+        $funcNamePtr = $phpcsFile->findNext(T_STRING, $funcPtr);
+        // We identify this as a function type by the () on the end
+        $funcName = $tokens[$funcNamePtr]['content'] . '()';
+        // If we're a class method, qualify the function name
+        if ($classDefPtr = array_search(T_CLASS, $tokens[$funcNamePtr]['conditions'])) {
+            $classPtr = $phpcsFile->findNext(T_STRING, $classDefPtr);
+        }
+        $this->setVariableType($funcNamePtr, $return->getValue(), $phpcsFile, $funcName);
     }
 
 }

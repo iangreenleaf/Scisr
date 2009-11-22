@@ -37,9 +37,9 @@ class Scisr_Operations_TrackVariableTypes
             $classPtr = $phpcsFile->findNext(T_STRING, $nextPtr);
             $classToken = $tokens[$classPtr];
             $className = $classToken['content'];
-        } else if ($nextToken['code'] == T_VARIABLE) {
-            // See if the variable whose value we're getting has a type
-            $className = $this->getVariableType($nextPtr, $phpcsFile);
+        } else if ($nextToken['code'] == T_VARIABLE || $nextToken['code'] == T_STRING) {
+            $endPtr = $this->getEndOfVar($nextPtr, $tokens);
+            $className = $this->resolveFullVariableType($nextPtr, $endPtr, $phpcsFile);
         }
 
         if (isset($className) && $className !== null) {

@@ -27,9 +27,9 @@ class Scisr_Operations_ChangeClassNameComments
         $this->findWordChanges($param, array('type'), $commentPtr, $phpcsFile, $columns);
     }
 
-    protected function processReturn($param, $commentPtr, $phpcsFile, $columns)
+    protected function processReturn($return, $commentPtr, $phpcsFile, $columns)
     {
-        $this->findWordChanges($param, array('value'), $commentPtr, $phpcsFile, $columns);
+        $this->findWordChanges($return, array('value'), $commentPtr, $phpcsFile, $columns);
     }
 
     protected function findWordChanges($docElement, $wordTypes, $commentPtr, $phpcsFile, $columns)
