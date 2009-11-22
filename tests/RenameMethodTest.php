@@ -358,15 +358,109 @@ EOL;
     }
 
     public function testRenameMethodReturnValueWithPHPDocType() {
-        $this->markTestIncomplete();
+        $orig = <<<EOL
+<?php
+class Quark {
+    /**
+     * A method that does something
+     * @return Foo
+     */
+    public function getObj() {
+        // STUB
+    }
+    public function doSomething() {
+        \$eff = \$this->getObj();
+        \$eff->bar();
+    }
+}
+
+\$q = new Quark();
+\$f = \$q->getObj();
+\$f->bar();
+Quark::bar();
+EOL;
+        $expected = <<<EOL
+<?php
+class Quark {
+    /**
+     * A method that does something
+     * @return Foo
+     */
+    public function getObj() {
+        // STUB
+    }
+    public function doSomething() {
+        \$eff = \$this->getObj();
+        \$eff->baz();
+    }
+}
+
+\$q = new Quark();
+\$f = \$q->getObj();
+\$f->baz();
+Quark::baz();
+EOL;
+        $this->renameAndCompare($orig, $expected);
     }
 
     public function testRenameFunctionReturnValueWithPHPDocType() {
-        $this->markTestIncomplete();
+        $orig = <<<EOL
+<?php
+/**
+ * A function that does something
+ * @return Foo
+ */
+function getObj() {
+    // STUB
+}
+
+\$f = getObj();
+\$result = \$f->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+/**
+ * A function that does something
+ * @return Foo
+ */
+function getObj() {
+    // STUB
+}
+
+\$f = getObj();
+\$result = \$f->baz();
+EOL;
+        $this->renameAndCompare($orig, $expected);
     }
 
     public function testRenameFunctionReturnValueWithCallBeforeDeclaration() {
-        $this->markTestIncomplete();
+        $orig = <<<EOL
+<?php
+\$f = getObj();
+\$result = \$f->bar();
+
+/**
+ * A function that does something
+ * @return Foo
+ */
+function getObj() {
+    // STUB
+}
+EOL;
+        $expected = <<<EOL
+<?php
+\$f = getObj();
+\$result = \$f->baz();
+
+/**
+ * A function that does something
+ * @return Foo
+ */
+function getObj() {
+    // STUB
+}
+EOL;
+        $this->renameAndCompare($orig, $expected);
     }
 
     public function testRenameFunctionParameterWithPHPDocType() {
@@ -487,6 +581,14 @@ EOL;
 \$result = Foo::baz();
 EOL;
         $this->renameAndCompare($orig, $expected);
+    }
+
+    public function testGetPropertyTypeFromIncludedFile() {
+        $this->markTestIncomplete();
+    }
+
+    public function testGetPropertyTypeFromRequiredFile() {
+        $this->markTestIncomplete();
     }
 
 }
