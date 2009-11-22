@@ -50,12 +50,14 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
     /**
      * Set the type of a variable
      * @param PHP_CodeSniffer_File $phpcsFile The file the variable is in
-     * @param int $varPtr The position in the stack in which our variable has scope
+     * @param int $varPtr a pointer to the beginning of the variable
      * @param string $type the name of the class that this variable holds
      * @param string $varName the name of the variable. If not provided, will
      * be determined from $varPtr.
+     * @param int $scopeOpen a pointer to the element owning the variable's scope.
+     * If not provided, will be determined from $varPtr.
      */
-    protected function setVariableType($varPtr, $type, $phpcsFile, $varName=null)
+    protected function setVariableType($varPtr, $type, $phpcsFile, $varName=null, $scopeOpen=null)
     {
         $tokens = $phpcsFile->getTokens();
         $varInfo = $tokens[$varPtr];
@@ -64,21 +66,24 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
             $varName = $varInfo['content'];
         }
 
-        $scopes = array_keys($varInfo['conditions']);
-        $owningScopePtr = array_pop($scopes);
+        if ($scopeOpen === null) {
+            $scopeOpen = $this->getScopeOwner($varPtr, $phpcsFile, $varName);
+        }
+
         // Special case: property or method declaration inside a class
         // Change the variable name to match the way it will be referenced
-        if ($owningScopePtr !== null && $tokens[$owningScopePtr]['code'] == T_CLASS) {
-            $classPtr = $phpcsFile->findNext(T_STRING, $owningScopePtr);
-            $className = $tokens[$classPtr]['content'];
+        if ($scopeOpen !== null && $tokens[$scopeOpen]['code'] == T_CLASS) {
+            $classNamePtr = $phpcsFile->findNext(T_STRING, $scopeOpen);
+            $className = $tokens[$classNamePtr]['content'];
             // If it's a property, strip off the $ symbol
             if (substr($varName, 0, 1) == '$') {
                $varName = substr($varName, 1);
             }
             $varName = $className . '->' . $varName;
+            // Recalculate the owning scope in case it has changed
+            $scopeOpen = $this->getScopeOwner($varPtr, $phpcsFile, $varName);
         }
 
-        $scopeOpen = $this->getScopeOwner($varPtr, $phpcsFile, $varName);
         Scisr_VariableTypes::registerVariableType($varName, $type, $phpcsFile->getFileName(), $scopeOpen);
     }
 

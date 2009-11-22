@@ -10,24 +10,35 @@ class Scisr_Operations_TrackCommentVariableTypes
 
     protected function processVar($var, $commentPtr, $phpcsFile)
     {
-        if (($varName = $var->getVarName()) === null) {
-            $varPtr = $phpcsFile->findNext(T_VARIABLE, $commentPtr);
-            $this->setVariableType($varPtr, $var->getContent(), $phpcsFile);
-        } else {
-            $this->setVariableType($commentPtr, $var->getContent(), $phpcsFile, $varName);
-        }
+        $varPtr = $phpcsFile->findNext(T_VARIABLE, $commentPtr);
+        $this->setVariableType($varPtr, $var->getContent(), $phpcsFile, $var->getVarName());
     }
 
     protected function processParam($param, $commentPtr, $phpcsFile)
     {
         $tokens = $phpcsFile->getTokens();
         $funcPtr = $phpcsFile->findNext(T_FUNCTION, $commentPtr);
-        Scisr_VariableTypes::registerVariableType(
-            $param->getVarName(),
-            $param->getType(),
-            $phpcsFile->getFileName(),
-            $funcPtr
-        );
+
+        // Find the bounds of the function argument list
+        $funcOpenParen = $tokens[$funcPtr]['parenthesis_opener'];
+        $funcCloseParen = $tokens[$funcPtr]['parenthesis_closer'];
+
+        // Loop through the function arguments, looking for the given variable
+        $varPtr = $funcOpenParen + 1;
+        while ($varPtr > $funcOpenParen && $varPtr < $funcCloseParen) {
+            if ($tokens[$varPtr]['content'] == $param->getVarName()) {
+                $varFound = true;
+                break;
+            }
+            $varPtr++;
+        }
+
+        // If we didn't find the variable, just point to the comment instead
+        if (!$varFound) {
+            $varPtr = $commentPtr;
+        }
+
+        $this->setVariableType($varPtr, $param->getType(), $phpcsFile, $param->getVarName(), $funcPtr);
     }
 
     protected function processReturn($return, $commentPtr, $phpcsFile)
@@ -37,10 +48,6 @@ class Scisr_Operations_TrackCommentVariableTypes
         $funcNamePtr = $phpcsFile->findNext(T_STRING, $funcPtr);
         // We identify this as a function type by the () on the end
         $funcName = $tokens[$funcNamePtr]['content'] . '()';
-        // If we're a class method, qualify the function name
-        if ($classDefPtr = array_search(T_CLASS, $tokens[$funcNamePtr]['conditions'])) {
-            $classPtr = $phpcsFile->findNext(T_STRING, $classDefPtr);
-        }
         $this->setVariableType($funcNamePtr, $return->getValue(), $phpcsFile, $funcName);
     }
 

@@ -492,22 +492,22 @@ EOL;
     public function testRenameMethodParameterWithPHPDocType() {
         $orig = <<<EOL
 <?php
-class Foo {
+class Quark {
     /**
      * @param Foo \$f take a parameter
      */
-    function quark(\$f) {
+    function quack(\$f) {
         \$f->bar();
     }
 }
 EOL;
         $expected = <<<EOL
 <?php
-class Foo {
+class Quark {
     /**
      * @param Foo \$f take a parameter
      */
-    function quark(\$f) {
+    function quack(\$f) {
         \$f->baz();
     }
 }
@@ -518,26 +518,26 @@ EOL;
     public function testRenameClassPropertyCallWithPHPDocType() {
         $orig = <<<EOL
 <?php
-class Foo {
+class Quark {
     /**
      * Some class property
      * @var Foo
      */
     protected \$f;
-    function quark() {
+    function quack() {
         \$this->f->bar();
     }
 }
 EOL;
         $expected = <<<EOL
 <?php
-class Foo {
+class Quark {
     /**
      * Some class property
      * @var Foo
      */
     protected \$f;
-    function quark() {
+    function quack() {
         \$this->f->baz();
     }
 }
@@ -592,6 +592,10 @@ EOL;
     }
 
     public function testGetPropertyTypeFromRequiredFile() {
+        $this->markTestIncomplete();
+    }
+
+    public function testFunctionParameterWithDefault() {
         $this->markTestIncomplete();
     }
 
