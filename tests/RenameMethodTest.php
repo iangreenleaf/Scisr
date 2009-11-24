@@ -437,6 +437,82 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    public function testDontConfuseMethodAndFunctionReturnTypes() {
+        $orig = <<<EOL
+<?php
+/**
+ * @return Zork
+ */
+function getObj() {
+}
+/**
+ * @return Foo
+ */
+function getObj2() {
+}
+class Quark {
+    /**
+     * @return Foo
+     */
+    public function getObj(\$param=null) {
+        // STUB
+    }
+    /**
+     * @return Zork
+     */
+    public function getObj2() {
+        // STUB
+    }
+}
+
+\$a = getObj();
+\$b = getObj2();
+\$c = Quark::getObj();
+\$d = Quark::getObj2();
+\$a->bar();
+\$b->bar();
+\$c->bar();
+\$d->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+/**
+ * @return Zork
+ */
+function getObj() {
+}
+/**
+ * @return Foo
+ */
+function getObj2() {
+}
+class Quark {
+    /**
+     * @return Foo
+     */
+    public function getObj(\$param=null) {
+        // STUB
+    }
+    /**
+     * @return Zork
+     */
+    public function getObj2() {
+        // STUB
+    }
+}
+
+\$a = getObj();
+\$b = getObj2();
+\$c = Quark::getObj();
+\$d = Quark::getObj2();
+\$a->bar();
+\$b->baz();
+\$c->baz();
+\$d->bar();
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
     public function testRenameFunctionReturnValueWithCallBeforeDeclaration() {
         $orig = <<<EOL
 <?php
