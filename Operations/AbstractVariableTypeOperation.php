@@ -84,7 +84,20 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
             $scopeOpen = $this->getScopeOwner($varPtr, $phpcsFile, $varName);
         }
 
-        Scisr_VariableTypes::registerVariableType($varName, $type, $phpcsFile->getFileName(), $scopeOpen);
+        // If a type has already been set for this variable that is more 
+        // specific than this type, we don't overwrite it
+        $existing = Scisr_VariableTypes::checkVariableDefinition($phpcsFile->getFileName(), $varPtr);
+        if ($existing !== null && $existing != $type) {
+            $existingArray = explode('->', $existing);
+            $existingSpecificity = count($existingArray) + preg_match('/(^\$)|(\(\)$)/', $existingArray[0]);
+            $typeArray = explode('->', $type);
+            $typeSpecificity = count($typeArray) + preg_match('/(^\$)|(\(\)$)/', $typeArray[0]);
+            if ($typeSpecificity > $existingSpecificity) {
+                return;
+            }
+        }
+
+        Scisr_VariableTypes::registerVariableType($varName, $type, $phpcsFile->getFileName(), $scopeOpen, $varPtr);
     }
 
     /**

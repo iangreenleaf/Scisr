@@ -26,7 +26,7 @@ class Scisr_VariableTypes
     {
         $db = self::getDB();
         $create = <<<EOS
-CREATE TABLE VariableTypes(filename text, scopeopen integer, variable text, type text);
+CREATE TABLE VariableTypes(filename text, scopeopen integer, variable text, type text, variable_pointer integer);
 EOS;
         $db->exec($create);
         $create = <<<EOS
@@ -41,8 +41,9 @@ EOS;
      * @param string $type the name of the class that this variable holds
      * @param string $filename the file we're in
      * @param array $scopeOpen the stack pointer to the beginning of the current scope
+     * @param int $varPtr a pointer to the beginning of the variable
      */
-    public static function registerVariableType($variable, $type, $filename, $scopeOpen)
+    public static function registerVariableType($variable, $type, $filename, $scopeOpen, $varPtr)
     {
         $db = self::getDB();
 
@@ -55,10 +56,10 @@ EOS;
 
         // Now insert this assignment
         $insert = <<<EOS
-INSERT INTO VariableTypes (filename, scopeopen, variable, type) VALUES (?, ?, ?, ?)
+INSERT INTO VariableTypes (filename, scopeopen, variable, type, variable_pointer) VALUES (?, ?, ?, ?, ?)
 EOS;
         $insSt = $db->prepare($insert);
-        $insSt->execute(array($filename, $scopeOpen, $variable, $type));
+        $insSt->execute(array($filename, $scopeOpen, $variable, $type, $varPtr));
     }
 
     /**
@@ -77,6 +78,30 @@ INSERT INTO GlobalVariables (filename, scopeopen, variable) VALUES (?, ?, ?)
 EOS;
         $insSt = $db->prepare($insert);
         $insSt->execute(array($filename, $scopeOpen, $variable));
+    }
+
+    /**
+     * See if a type has already been registered for this particular place in 
+     * the stack.
+     * @param string $filename the file we're in
+     * @param int $varPtr a pointer to the beginning of the variable
+     * @return string|null the type name registered at this location, or null if none
+     */
+    public static function checkVariableDefinition($filename, $varPtr)
+    {
+        $db = self::getDB();
+
+        $sql = <<<EOS
+SELECT type FROM VariableTypes WHERE filename = ? AND variable_pointer = ?
+EOS;
+        $st = $db->prepare($sql);
+        $st->execute(array($filename, $varPtr));
+        $result = $st->fetch();
+        if ($result === false) {
+            return null;
+        } else {
+            return $result['type'];
+        }
     }
 
     /**
