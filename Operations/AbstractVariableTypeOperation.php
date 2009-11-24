@@ -143,7 +143,7 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
 
         $scopes = self::filterScopes($varInfo['conditions']);
 
-        if ($varName{0} != '$') {
+        if ($varName{0} != '$' && preg_match('/^[^->]*\(\)/', $varName) === 0) {
             // If we're dealing with a fully qualified variable, put it in the global scope
             $scopeOpen = SCISR_SCOPE_CLASS;
         } else if ($this->isGlobal($varName, $phpcsFile->getFileName(), $scopes)) {
