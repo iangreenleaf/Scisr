@@ -192,19 +192,27 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
         // Parse through the token set
         while ($currPtr <= $endPtr) {
             $currToken = $tokens[$currPtr];
-            // Ignore whitespace and semicolons
             if ($currToken['code'] == T_WHITESPACE || $currToken['code'] == T_SEMICOLON) {
+                // Ignore whitespace and semicolons
                 $currPtr++;
-                continue;
+            } else if ($currToken['code'] == T_OPEN_PARENTHESIS) {
+                // Skip the function arguments
+                $soFar .= $currToken['content'];
+                $currPtr = $currToken['parenthesis_closer'];
+            } else if ($currToken['code'] == T_PAAMAYIM_NEKUDOTAYIM) {
+                // We normalize static invocations for simplicity
+                $soFar .= '->';
+                $currPtr++;
+            } else {
+                // Add the token to our string
+                $soFar .= $currToken['content'];
+                // See if the string resolves to a type now
+                $type = $this->getVariableType($startPtr, $phpcsFile, $soFar);
+                if ($type !== null) {
+                    $soFar = $type;
+                }
+                $currPtr++;
             }
-            // Add the token to our string
-            $soFar .= $currToken['content'];
-            // See if the string resolves to a type now
-            $type = $this->getVariableType($startPtr, $phpcsFile, $soFar);
-            if ($type !== null) {
-                $soFar = $type;
-            }
-            $currPtr++;
         }
         return $soFar;
     }
