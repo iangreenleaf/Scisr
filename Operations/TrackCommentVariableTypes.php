@@ -46,8 +46,8 @@ class Scisr_Operations_TrackCommentVariableTypes
         $tokens = $phpcsFile->getTokens();
         $funcPtr = $phpcsFile->findNext(T_FUNCTION, $commentPtr);
         $funcNamePtr = $phpcsFile->findNext(T_STRING, $funcPtr);
-        // We identify this as a function type by the () on the end
-        $funcName = $tokens[$funcNamePtr]['content'] . '()';
+        // We identify this as a function type by prepending a '*' to the name
+        $funcName = '*' . $tokens[$funcNamePtr]['content'];
         $this->setVariableType($funcNamePtr, $return->getValue(), $phpcsFile, $funcName);
     }
 

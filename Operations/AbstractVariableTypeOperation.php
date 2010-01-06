@@ -89,9 +89,9 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
         $existing = Scisr_VariableTypes::checkVariableDefinition($phpcsFile->getFileName(), $varPtr);
         if ($existing !== null && $existing != $type) {
             $existingArray = explode('->', $existing);
-            $existingSpecificity = count($existingArray) + preg_match('/(^\$)|(\(\)$)/', $existingArray[0]);
+            $existingSpecificity = count($existingArray) + preg_match('/^\$|^\*/', $existingArray[0]);
             $typeArray = explode('->', $type);
-            $typeSpecificity = count($typeArray) + preg_match('/(^\$)|(\(\)$)/', $typeArray[0]);
+            $typeSpecificity = count($typeArray) + preg_match('/^\$|^\*/', $typeArray[0]);
             if ($typeSpecificity > $existingSpecificity) {
                 return;
             }
@@ -143,7 +143,7 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
 
         $scopes = self::filterScopes($varInfo['conditions']);
 
-        if ($varName{0} != '$' && preg_match('/^[^->]*\(\)/', $varName) === 0) {
+        if ($varName{0} != '$' && $varName{0} != '*') {
             // If we're dealing with a fully qualified variable, put it in the global scope
             $scopeOpen = SCISR_SCOPE_CLASS;
         } else if ($this->isGlobal($varName, $phpcsFile->getFileName(), $scopes)) {
@@ -189,32 +189,55 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
         $tokens = $phpcsFile->getTokens();
         $soFar = '';
         $currPtr = $startPtr;
-        // Parse through the token set
+        do {
+            list($currPtr, $nextChunk) = $this->getNextChunk($currPtr, $endPtr, $tokens);
+            $soFar .= $nextChunk;
+            // See if the string resolves to a type now
+            $type = $this->getVariableType($startPtr, $phpcsFile, $soFar);
+            if ($type !== null) {
+                $soFar = $type;
+            }
+        } while ($currPtr <= $endPtr);
+        return $soFar;
+    }
+
+    private function getNextChunk($currPtr, $endPtr, $tokens) {
+
+        $soFar = '';
         while ($currPtr <= $endPtr) {
+
             $currToken = $tokens[$currPtr];
+
+            // We treat -> as its own chunk because otherwise we are resolving
+            // types with a -> prefixed, which is bad form in general and causes 
+            // problems with method prefixing specifically. Unfortunately, this 
+            // means that the parent function will try to resolve types ending 
+            // in a ->, which should be harmless but isn't ideal.
+            if ($currToken['code'] == T_PAAMAYIM_NEKUDOTAYIM || $currToken['code'] == T_OBJECT_OPERATOR) {
+                // If we are at the beginning, return just the separator
+                if ($soFar == '') {
+                    // We normalize static invocations for simplicity
+                    $soFar .= '->';
+                    $currPtr++;
+                }
+                break;
+            }
+
             if ($currToken['code'] == T_WHITESPACE || $currToken['code'] == T_SEMICOLON) {
                 // Ignore whitespace and semicolons
                 $currPtr++;
             } else if ($currToken['code'] == T_OPEN_PARENTHESIS) {
-                // Skip the function arguments
-                $soFar .= $currToken['content'];
-                $currPtr = $currToken['parenthesis_closer'];
-            } else if ($currToken['code'] == T_PAAMAYIM_NEKUDOTAYIM) {
-                // We normalize static invocations for simplicity
-                $soFar .= '->';
-                $currPtr++;
+                // Mark this as a function
+                $soFar = '*' . $soFar;
+                // Skip the function arguments and parentheses
+                $currPtr = $currToken['parenthesis_closer'] + 1;
             } else {
                 // Add the token to our string
                 $soFar .= $currToken['content'];
-                // See if the string resolves to a type now
-                $type = $this->getVariableType($startPtr, $phpcsFile, $soFar);
-                if ($type !== null) {
-                    $soFar = $type;
-                }
                 $currPtr++;
             }
         }
-        return $soFar;
+        return array($currPtr, $soFar);
     }
 
     /**
