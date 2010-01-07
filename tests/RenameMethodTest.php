@@ -77,6 +77,40 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    public function testRenameMethodInstantiatedInOtherClassProperty() {
+        $orig = <<<EOL
+<?php
+\$a = new Car();
+\$a->my_f = new Foo();
+\$a->my_f->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+\$a = new Car();
+\$a->my_f = new Foo();
+\$a->my_f->baz();
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
+    public function testRenameMethodInstantiatedCallWithNewlines() {
+        $orig = <<<EOL
+<?php
+\$a->f = new Foo();
+\$a->f
+    ->bar()
+    ->quark();
+EOL;
+        $expected = <<<EOL
+<?php
+\$a->f = new Foo();
+\$a->f
+    ->baz()
+    ->quark();
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
     public function testRenameMethodInstantiatedClassProperty() {
         $orig = <<<EOL
 <?php
