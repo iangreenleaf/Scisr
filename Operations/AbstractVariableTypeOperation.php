@@ -252,7 +252,7 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
         while ($tokens[$varPtr]['code'] != T_WHITESPACE) {
             $varPtr--;
         }
-        return $varPtr;
+        return $varPtr + 1;
     }
 
     /**
