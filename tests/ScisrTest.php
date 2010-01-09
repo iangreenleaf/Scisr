@@ -35,7 +35,7 @@ class ScisrTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expectedContents, $contents);
     }
 
-    public function testRenameAndCompareFile() {
+    public function testRenameClassAndCompareFile() {
         $this->populateDir(dirname(__FILE__) . '/_files/cliFixture', $this->test_dir);
 
         $s = new Scisr();
@@ -46,7 +46,7 @@ class ScisrTest extends PHPUnit_Framework_TestCase
         $this->compareFile(dirname(__FILE__) . '/_files/cliFixture-after-rename-class/test.php', $this->test_dir . '/test.php');
     }
 
-    public function testRenameAndCompareDir() {
+    public function testRenameClassAndCompareDir() {
         $this->populateDir(dirname(__FILE__) . '/_files/cliFixture', $this->test_dir);
 
         $s = new Scisr();
@@ -55,6 +55,28 @@ class ScisrTest extends PHPUnit_Framework_TestCase
         $s->run();
 
         $this->compareDir(dirname(__FILE__) . '/_files/cliFixture-after-rename-class', $this->test_dir);
+    }
+
+    public function testRenameFileAndCompareDir() {
+        $this->populateDir(dirname(__FILE__) . '/_files/renameFileFixture', $this->test_dir);
+
+        $s = new Scisr();
+        $s->setRenameFile('stuff.php', 'things.php');
+        $s->addFile($this->test_dir);
+        $s->run();
+
+        $this->compareDir(dirname(__FILE__) . '/_files/renameFileFixture-after-rename-file', $this->test_dir);
+    }
+
+    public function testRenameFileToNewDirAndCompareDir() {
+        $this->populateDir(dirname(__FILE__) . '/_files/renameFileFixture', $this->test_dir);
+
+        $s = new Scisr();
+        $s->setRenameFile('stuff.php', 'otherfolder/things.php');
+        $s->addFile($this->test_dir);
+        $s->run();
+
+        $this->compareDir(dirname(__FILE__) . '/_files/renameFileFixture-after-rename-file-new-dir', $this->test_dir);
     }
 
     public function testChangedFileNotification() {

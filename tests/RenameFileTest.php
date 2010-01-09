@@ -43,4 +43,25 @@ class RenameFileTest extends Scisr_SingleFileTest
         );
     }
 
+    /**
+     * @dataProvider partialMatchProvider
+     */
+    public function testDontRenamePartialMatches($orig) {
+        $orig = "<?php\n$orig";
+        $this->renameAndCompare($orig, $orig);
+    }
+
+    public function partialMatchProvider() {
+        return array(
+            array('require_once("Foo.php.old");'),
+            array('require_once("Foo.php/actualfile");'),
+            array('require_once("notmyfolder/Foo.php");'),
+            array('require_once("Foo.php" . ".old");'),
+            array('require_once("notmyfolder/" . "Foo.php");'),
+            array('require_once(SOME_CONSTANT . "Foo.php");'),
+            array('require_once(function_call(2) . "Foo.php");'),
+            array('require_once(function_call("Foo.php"));'),
+        );
+    }
+
 }
