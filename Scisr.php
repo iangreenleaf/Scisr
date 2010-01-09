@@ -136,6 +136,12 @@ class Scisr
      */
     public function addFile($filename)
     {
+        // Get the full absolute path
+        if ($filename{0} != '/') {
+            $base = getcwd();
+            $filename = $base . '/' . $filename;
+        }
+        $filename = realpath($filename);
         $this->files[] = $filename;
     }
 

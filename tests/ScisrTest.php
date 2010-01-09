@@ -9,7 +9,8 @@ require_once '../Scisr.php';
 class ScisrTest extends PHPUnit_Framework_TestCase
 {
     public function setUp() {
-        $this->test_dir = dirname(__FILE__) . '/myTestDir';
+        $this->rel_test_dir = 'myTestDir';
+        $this->test_dir = dirname(__FILE__) . '/' . $this->rel_test_dir;
         mkdir($this->test_dir);
     }
 
@@ -41,6 +42,17 @@ class ScisrTest extends PHPUnit_Framework_TestCase
         $s = new Scisr();
         $s->setRenameClass('Foo', 'Baz');
         $s->addFile($this->test_dir . '/test.php');
+        $s->run();
+
+        $this->compareFile(dirname(__FILE__) . '/_files/cliFixture-after-rename-class/test.php', $this->test_dir . '/test.php');
+    }
+
+    public function testRenameClassAndCompareFileWithRelativeDir() {
+        $this->populateDir(dirname(__FILE__) . '/_files/cliFixture', $this->test_dir);
+
+        $s = new Scisr();
+        $s->setRenameClass('Foo', 'Baz');
+        $s->addFile($this->rel_test_dir . '/test.php');
         $s->run();
 
         $this->compareFile(dirname(__FILE__) . '/_files/cliFixture-after-rename-class/test.php', $this->test_dir . '/test.php');
