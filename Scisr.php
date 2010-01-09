@@ -120,6 +120,17 @@ class Scisr
     }
 
     /**
+     * Rename a file
+     * @param string $oldFilePath the path to the file to be renamed
+     * @param string $newFilePath the new path to give it
+     */
+    public function setRenameFile($oldFilePath, $newFilePath)
+    {
+        $this->_listeners[] = new Scisr_Operations_ChangeFile($oldFilePath, $newFilePath);
+        //Scisr_ChangeRegistry::addRename($oldFilePath, $newFilePath);
+    }
+
+    /**
      * Add a file or directory to be parsed
      * @param string $filename the path to the file or directory
      */

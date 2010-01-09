@@ -117,4 +117,16 @@ class Scisr_ChangeRegistry
         self::set('storedNotifications', $changes);
     }
 
+    /**
+     * Set a file to be renamed
+     * @param string $oldName the path to the file to be renamed
+     * @param string $newName the new path to give it
+     */
+    public static function addRename($oldName, $newName)
+    {
+        $file = self::getFile($oldName);
+        $file->rename($newName);
+        self::setFile($file);
+    }
+
 }

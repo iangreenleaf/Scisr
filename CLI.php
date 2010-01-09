@@ -16,7 +16,6 @@ class Scisr_CLI implements Scisr_Output
     /**
      * Parse command line options
      * @param array $args array of options passed to the program
-     * @todo catch PEAR errors
      */
     protected function parseOpts($args)
     {
@@ -47,6 +46,11 @@ class Scisr_CLI implements Scisr_Output
             $oldName = array_shift($params);
             $newName = array_shift($params);
             $this->scisr->setRenameMethod($class, $oldName, $newName);
+            break;
+        case 'rename-file':
+            $oldName = array_shift($params);
+            $newName = array_shift($params);
+            $this->scisr->setRenameFile($oldName, $newName);
             break;
         }
     }

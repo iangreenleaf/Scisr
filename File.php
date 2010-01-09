@@ -19,6 +19,12 @@ class Scisr_File
      * @var array
      */
     public $changes = array();
+    /**
+     * A new filename.
+     * If not null, indicates this file is to be renamed.
+     * @var string|null
+     */
+    private $newName = null;
 
     /**
      * Create a new Scisr_File
@@ -43,6 +49,17 @@ class Scisr_File
     public function addEdit($line, $column, $length, $replacement)
     {
         $this->changes[$line][$column] = array($length, $replacement);
+    }
+
+    /**
+     * Set a pending file rename
+     *
+     * Will not actually be applied until you run {@link process()}.
+     *
+     * @param string $newName the new name for this file
+     */
+    public function rename($newName) {
+        $this->newName = $newName;
     }
 
     /**
@@ -89,5 +106,11 @@ class Scisr_File
             fwrite($handle, $line);
         }
 
+        // If there's a rename pending, do it
+        //TODO only do it if the file is present
+        if ($this->newName !== null) {
+            echo 'RENAMING ' . $this->filename .' '. $this->newName;
+            //rename($this->filename, $this->newName);
+        }
     }
 }
