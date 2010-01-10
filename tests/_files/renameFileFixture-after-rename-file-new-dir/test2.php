@@ -2,5 +2,5 @@
 /**
  * Another file used for testing
  */
-require_once("things.php");
+require_once("otherfolder/things.php");
 $b = Foo::bar();
