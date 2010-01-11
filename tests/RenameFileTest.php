@@ -85,8 +85,47 @@ class RenameFileTest extends Scisr_SingleFileTest
             array('d1/d2', 'Foo.php', 'Foo.php', 'Bar.php', 'Bar.php'),
             array('d1/d2', 'd1/d2/Foo.php', 'Foo.php', 'd1/d2/Bar.php', 'Bar.php'),
             array('d1', 'd1/d2/Foo.php', 'd2/Foo.php', 'd1/d2/Bar.php', 'd2/Bar.php'),
+            array('d1', 'd1/d2/Foo.php', 'd2/Foo.php', 'd1/Bar.php', 'Bar.php'),
             array('', 'Foo.php', 'd1/d2/Foo.php', 'Bar.php', 'd1/d2/Bar.php'),
             array('', 'd2/Foo.php', 'd1/d2/Foo.php', 'd2/Bar.php', 'd1/d2/Bar.php'),
+            array('', 'Foo.php', 'd1/d2/Foo.php', 'd3/Bar.php', 'd1/d2/d3/Bar.php'),
+        );
+    }
+
+    /**
+     * @dataProvider relativePathProvider
+     */
+    public function testPathRelativeTo($path, $base, $expected) {
+        $o = new Scisr_Operations_ChangeFile('dummy', 'dummy');
+        $this->assertSame($expected, $o->pathRelativeTo($path, $base));
+    }
+
+    public function relativePathProvider() {
+        return array(
+            array('/home/user/foo.php', '/home/user/', 'foo.php'),
+            array('/home/user/foo.php', '/home/user', 'foo.php'),
+            array('/home/user/foo.php', '', '/home/user/foo.php'),
+            array('/home/user/foo.php', '/', 'home/user/foo.php'),
+        );
+    }
+
+    /**
+     * @dataProvider matchPathsProvider
+     */
+    public function testMatchPaths($path, $newPath, $expected) {
+        $phpcsfile = $this->getMock('PHP_CodeSniffer_File', null, array(), '', false);
+        $o = new Scisr_Operations_ChangeFile('dummy', 'dummy');
+        $this->assertSame($expected, $o->matchPaths($path, $newPath, $phpcsfile));
+    }
+
+    public function matchPathsProvider() {
+        return array(
+            array('/home/user/foo.php', 'foo.php', '/home/user/'),
+            array('/home/user/foo.php', 'user/foo.php', '/home/'),
+            array('/home/user/foo.php', '/home/user/foo.php', ''),
+            array('/home/user/foo.php', 'home/user/foo.php', '/'),
+            array('/home/user/foo.php', '/home/admin/foo.php', false),
+            array('/home/user/foo.php', '/user/foo.php', false),
         );
     }
 
