@@ -32,6 +32,11 @@ class Scisr_File
      */
     public function __construct($filename)
     {
+        // Get the full absolute path
+        if ($filename{0} != '/') {
+            $base = getcwd();
+            $filename = $base . '/' . $filename;
+        }
         $this->filename = $filename;
     }
 
