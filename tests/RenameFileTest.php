@@ -64,4 +64,30 @@ class RenameFileTest extends Scisr_SingleFileTest
         );
     }
 
+    /**
+     * @dataProvider partialPathProvider
+     * @todo this test depends on special knowledge of the folder structure of 
+     * our "single file" in Scisr_SingleFileTest which we really shouldn't have
+     * any control over. Let's fix this.
+     */
+    public function testPartialPathRename($dir, $oldCode, $oldArg, $newCode, $newArg) {
+        $baseDir = dirname(__FILE__);
+
+        chdir("$baseDir/$dir");
+        $oldCode = "<?php\nrequire_once('$oldCode');";
+        $newCode = "<?php\nrequire_once('$newCode');";
+        $this->renameAndCompare($oldCode, $newCode, $oldArg, $newArg);
+
+    }
+
+    public function partialPathProvider() {
+        return array(
+            array('d1/d2', 'Foo.php', 'Foo.php', 'Bar.php', 'Bar.php'),
+            array('d1/d2', 'd1/d2/Foo.php', 'Foo.php', 'd1/d2/Bar.php', 'Bar.php'),
+            array('d1', 'd1/d2/Foo.php', 'd2/Foo.php', 'd1/d2/Bar.php', 'd2/Bar.php'),
+            array('', 'Foo.php', 'd1/d2/Foo.php', 'Bar.php', 'd1/d2/Bar.php'),
+            array('', 'd2/Foo.php', 'd1/d2/Foo.php', 'd2/Bar.php', 'd1/d2/Bar.php'),
+        );
+    }
+
 }

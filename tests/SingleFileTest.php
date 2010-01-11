@@ -6,12 +6,16 @@ class Scisr_SingleFileTest extends PHPUnit_Framework_TestCase
 {
 
     public function setUp() {
-        $this->test_file = dirname(__FILE__) . '/myTestFile.php';
+        mkdir(dirname(__FILE__) . '/d1');
+        mkdir(dirname(__FILE__) . '/d1/d2');
+        $this->test_file = dirname(__FILE__) . '/d1/d2/myTestFile.php';
         touch($this->test_file);
     }
 
     public function tearDown() {
         unlink($this->test_file);
+        rmdir(dirname(__FILE__) . '/d1/d2');
+        rmdir(dirname(__FILE__) . '/d1');
     }
 
     public function populateFile($contents) {

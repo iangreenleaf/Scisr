@@ -73,7 +73,7 @@ class ScisrTest extends PHPUnit_Framework_TestCase
         $this->populateDir(dirname(__FILE__) . '/_files/renameFileFixture', $this->test_dir);
 
         $s = new Scisr();
-        $s->setRenameFile('stuff.php', 'things.php');
+        $s->setRenameFile($this->test_dir . '/stuff.php', $this->test_dir . '/things.php');
         $s->addFile($this->test_dir);
         $s->run();
 
