@@ -32,12 +32,23 @@ class Scisr_File
      */
     public function __construct($filename)
     {
-        // Get the full absolute path
+        $this->filename = self::getAbsolutePath($filename);
+    }
+
+    /**
+     * Calculate the absolute path for a file
+     * @param string $filename a relative or absolute path to a file
+     * @return string the absolute path to the file
+     * @todo calculate something similar to realpath()
+     */
+    public static function getAbsolutePath($filename)
+    {
+        // If it's not an absolute path already, calculate it from our current dir
         if ($filename{0} != '/') {
             $base = getcwd();
             $filename = $base . '/' . $filename;
         }
-        $this->filename = $filename;
+        return $filename;
     }
 
     /**
