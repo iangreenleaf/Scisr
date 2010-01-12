@@ -37,7 +37,9 @@ class RenameFileTest extends Scisr_SingleFileTest
             array('include("Foo.php");'),
             array('require_once("Foo.php");'),
             array('include_once("Foo.php");'),
+            array('require_once ("Foo.php");'),
             array('require_once "Foo.php";'),
+            array('require_once"Foo.php";'),
             array("require_once('Foo.php');"),
             array('require_once(    "Foo.php"   );'),
         );
@@ -61,6 +63,27 @@ class RenameFileTest extends Scisr_SingleFileTest
             array('require_once(SOME_CONSTANT . "Foo.php");'),
             array('require_once(function_call(2) . "Foo.php");'),
             array('require_once(function_call("Foo.php"));'),
+        );
+    }
+
+    /**
+     * @dataProvider concatStringsProvider
+     * @todo test for notifications, here or elsewhere
+     */
+    public function testConcatStrings($orig, $expected) {
+        $orig = "<?php\n$orig";
+        $expected = "<?php\n$expected";
+        // On normal mode, we only warn
+        $this->renameAndCompare($orig, $orig);
+        // But on aggressive mode, we go for it!
+        $this->renameAndCompare($orig, $expected, 'Foo.php', 'Bar.php', true);
+    }
+
+    public function concatStringsProvider() {
+        return array(
+            array('require_once("Foo".".php");', 'require_once("Bar.php");'),
+            array('require_once( "Foo" .   ".php"  );', 'require_once( "Bar.php"  );'),
+            array('require_once( "" ."Foo" . "" .".php"."");', 'require_once( "Bar.php");'),
         );
     }
 
