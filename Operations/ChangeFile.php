@@ -125,8 +125,11 @@ class Scisr_Operations_ChangeFile implements PHP_CodeSniffer_Sniff
      */
     public function matchPaths($expectedPath, $actualPath, $phpcsFile)
     {
+        // If it's an absolute path, it must match exactly
+        if ($actualPath{0} == '/') {
+            return (($expectedPath == $actualPath) ? '' : false);
+        }
         // A simple test: see if the actual matches the end of the expected path
-        //return strstr($expectedPath, $actualPath, true);
         if (strstr($expectedPath, $actualPath) == $actualPath) {
             $base = substr($expectedPath, 0, strpos($expectedPath, $actualPath));
             return $base;
