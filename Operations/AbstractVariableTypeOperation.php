@@ -259,7 +259,7 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
      * Get the end position of a variable declaration
      * @param int $varPtr a pointer to the start of the variable tokens
      * @param array $tokens the token stack
-     * @return int a pointer to the first token that makes up this variable
+     * @return int a pointer to the last token that makes up this variable
      * @todo whitespace is an imperfect marker
      */
     protected function getEndOfVar($varPtr, $tokens)
@@ -267,7 +267,7 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
         while ($tokens[$varPtr]['code'] != T_WHITESPACE && $tokens[$varPtr]['code'] != T_SEMICOLON) {
             $varPtr++;
         }
-        return $varPtr;
+        return $varPtr - 1;
     }
 
 }
