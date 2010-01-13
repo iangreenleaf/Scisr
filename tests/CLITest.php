@@ -125,4 +125,21 @@ class CLITest extends PHPUnit_Framework_TestCase
         $c->process($args);
     }
 
+    public function testRenameFile() {
+        $mock = $this->getMock('Scisr');
+        $mock->expects($this->once())
+            ->method('setRenameFile')
+            ->with($this->equalTo('mydir/foo.php'), $this->equalTo('mydir/newdir/bar.php'));
+        $mock->expects($this->once())
+            ->method('addFiles')
+            ->with($this->equalTo(array('mydir')));
+        $mock->expects($this->once())
+            ->method('run')
+            ->will($this->returnValue(true));
+        $args = array('scisr_executable', 'rename-file', 'mydir/foo.php', 'mydir/newdir/bar.php', 'mydir');
+        $c = new Scisr_CLI();
+        $c->setScisr($mock);
+        $c->process($args);
+    }
+
 }
