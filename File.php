@@ -75,7 +75,7 @@ class Scisr_File
      * @param string $newName the new name for this file
      */
     public function rename($newName) {
-        $this->newName = $newName;
+        $this->newName = self::getAbsolutePath($newName);
     }
 
     /**
@@ -123,10 +123,8 @@ class Scisr_File
         }
 
         // If there's a rename pending, do it
-        //TODO only do it if the file is present
         if ($this->newName !== null) {
-            echo 'RENAMING ' . $this->filename .' '. $this->newName;
-            //rename($this->filename, $this->newName);
+            rename($this->filename, $this->newName);
         }
     }
 }
