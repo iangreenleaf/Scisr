@@ -14,9 +14,39 @@ class AbstractVariableTypeTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider variableProvider
+     * @param string $code the code to tokenize
+     * @param string $startContent the token content to start our var
+     * @param string $endContent the token content to end our var
+     * @param int $endPtrOffset a number of pointers past $endContent where our
+     * variable actually ends. A hack to get around hard-to-identify endings
+     * like parentheses.
      */
-    public function testGetStartOfVar($code, $startContent, $endContent) {
-        $this->markTestIncomplete('Incomplete until we stop having errors');
+    public function testGetEndOfVar($code, $startContent, $endContent, $endPtrOffset=0) {
+        // Tokenize the code
+        $tokenizer = new PHP_CodeSniffer_Tokenizers_PHP();
+        $tokens = $tokenizer->tokenizeString($code);
+        // Find the pointer to the end token
+        foreach ($tokens as $ptr => $token) {
+            if ($token['content'] == $startContent) {
+                $startPtr = $ptr;
+            }
+            if ($token['content'] == $endContent) {
+                $expectedEndPtr = $ptr;
+            }
+        }
+        $expectedEndPtr += $endPtrOffset;
+        // Fire up the tester
+        $tester = new AbstractVariableTypeTester();
+        $endPtr = $tester->exposeGetEndOfVar($startPtr, $tokens);
+
+        $this->assertEquals($expectedEndPtr, $endPtr);
+    }
+
+    /**
+     * @dataProvider variableProvider
+     * @see testGetEndOfVar
+     */
+    public function testGetStartOfVar($code, $startContent, $endContent, $endPtrOffset=0) {
         // Tokenize the code
         $tokenizer = new PHP_CodeSniffer_Tokenizers_PHP();
         $tokens = $tokenizer->tokenizeString($code);
@@ -26,6 +56,7 @@ class AbstractVariableTypeTest extends PHPUnit_Framework_TestCase
                 $endPtr = $ptr;
             }
         }
+        $endPtr += $endPtrOffset;
         // Fire up the tester
         $tester = new AbstractVariableTypeTester();
         $startPtr = $tester->exposeGetStartOfVar($endPtr, $tokens);
@@ -38,18 +69,34 @@ class AbstractVariableTypeTest extends PHPUnit_Framework_TestCase
         $a[] = array('<?php $a;', '$a', '$a');
         $a[] = array('<?php $b; $a;', '$a', '$a');
         $a[] = array('<?php $b;$a;', '$a', '$a');
+        $a[] = array('<?php $b;$a;', '$b', '$b');
+        $a[] = array('<?php $$a;', '$', '$a');
         $a[] = array("<?php\n\$a;", '$a', '$a');
 
-        // Temporary solution so we can test what we can avoid the
+        // Temporary solution so we can avoid the
         // php-eating-whitespace problem and test what's actually important
         $php = "<?php\n\n";
 
+        $a[] = array($php . ' $a = 1;', '$a', '$a');
+        $a[] = array($php . ' $a->b = 1;', '$a', 'b');
+        $a[] = array($php . ' $a = $b;', '$a', '$a');
+        $a[] = array($php . ' $a=$b;', '$a', '$a');
+
         $a[] = array($php . ' $a->b->c->d;', '$a', 'd');
         $a[] = array($php . ' $a->$b->$$c->d;', '$a', 'd');
-        $a[] = array($php . ' $a->b()->c()->d();', '$a', 'd');
-        $a[] = array($php . " \$a->b()\n\t->c()\n\t->d();", '$a', 'd');
+        $a[] = array($php . ' $a->b()->c()->d();', '$a', 'd', 2);
+        $a[] = array($php . " \$a->b()\n\t->c()\n\t->d();", '$a', 'd', 2);
         $a[] = array($php . ' $a->b->c()->d;', '$a', 'd');
         $a[] = array($php . ' $a->b($foo, 1, "bar", $baz[3])->c->d;', '$a', 'd');
+
+        $a[] = array($php . ' a()->b;', 'a', 'b');
+        $a[] = array($php . ' AClass::a()->b;', 'AClass', 'b');
+
+        $a[] = array($php . ' somefunc($a)->b;', '$a', '$a');
+        $a[] = array($php . ' somefunc($a,$b);', '$a', '$a');
+        $a[] = array($php . ' somefunc($a->b($c)->d,$e);', '$a', 'd');
+        $a[] = array($php . ' array($a,$b);', '$a', '$a');
+        $a[] = array($php . ' array($a,SOMECONST);', '$a', '$a');
         return $a;
     }
 
@@ -66,6 +113,10 @@ class AbstractVariableTypeTester extends Scisr_Operations_AbstractVariableTypeOp
     public function exposeGetStartOfVar($ptr, $tokens)
     {
         return $this->getStartOfVar($ptr, $tokens);
+    }
+    public function exposeGetEndOfVar($ptr, $tokens)
+    {
+        return $this->getEndOfVar($ptr, $tokens);
     }
     public function register() {
         //STUB
