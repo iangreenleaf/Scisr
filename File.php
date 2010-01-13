@@ -91,7 +91,7 @@ class Scisr_File
 
         // Get the file contents and open it for writing
         $contents = file($this->filename);
-        $handle = fopen($this->filename, "w");
+        $output = array();
         // Loop through the file contents, making changes
         foreach ($contents as $i => $line) {
             $lineNo = $i + 1;
@@ -118,9 +118,11 @@ class Scisr_File
                     $lastChanged = $col + $length - 1;
                 }
             }
-            // Write the resulting line to the file, whether or not it was modified
-            fwrite($handle, $line);
+            // Save the resulting line to be written to the file
+            $output[] = $line;
         }
+        // Write all output to the file
+        file_put_contents($this->filename, $output);
 
         // If there's a rename pending, do it
         if ($this->newName !== null) {
