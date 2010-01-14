@@ -244,10 +244,12 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
      */
     protected function getStartOfVar($varPtr, $tokens)
     {
-        while ($tokens[$varPtr]['code'] != T_WHITESPACE) {
-            $varPtr--;
+        $startPtr = $this->traverseVar('stepBackward', T_CLOSE_PARENTHESIS, $varPtr, $tokens);
+        // If our ending token is a close paren, hop over to the opener
+        if ($tokens[$startPtr]['code'] == T_CLOSE_PARENTHESIS) {
+            $startPtr = $tokens[$startPtr]['parenthesis_opener'];
         }
-        return $varPtr + 1;
+        return $startPtr;
     }
 
     /**
@@ -258,20 +260,32 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
      */
     protected function getEndOfVar($varPtr, $tokens)
     {
+        $endPtr = $this->traverseVar('stepForward', T_OPEN_PARENTHESIS, $varPtr, $tokens);
+        // If our ending token is a open paren, hop over to the closer
+        if ($tokens[$endPtr]['code'] == T_OPEN_PARENTHESIS) {
+            $endPtr = $tokens[$endPtr]['parenthesis_closer'];
+        }
+        return $endPtr;
+    }
+
+    /**
+     * @param string $traverseMethod the name of this class method to move over 
+     * the token stack
+     * @param int $acceptParen a token constant representing which type of 
+     * parentheses to accept
+     * @return int a pointer the the place in the stack that we halted
+     */
+    private function traverseVar($traverseMethod, $acceptParen, $varPtr, $tokens)
+    {
         // Tokens we expect to see in a variable
-        $accept = array(T_VARIABLE, T_STRING, T_OPEN_PARENTHESIS, T_OBJECT_OPERATOR, T_PAAMAYIM_NEKUDOTAYIM);
+        $accept = array(T_VARIABLE, T_STRING, T_OBJECT_OPERATOR, T_PAAMAYIM_NEKUDOTAYIM, $acceptParen);
         // Technically initialization isn't necessary, but it prevents an error
         // if we happen to call this on something that isn't a recognized var
         $prevPtr = $varPtr;
         // Look until we find a token that's not accepted
         while (in_array($tokens[$varPtr]['code'], $accept)) {
             $prevPtr = $varPtr;
-            $varPtr = $this->stepForward($varPtr, $tokens, array(T_WHITESPACE));
-        }
-        // If our ending token is a open paren, hop over to the closer
-        if ($tokens[$prevPtr]['code'] == T_OPEN_PARENTHESIS) {
-            // Skip the function arguments and parentheses
-            $prevPtr = $tokens[$prevPtr]['parenthesis_closer'];
+            $varPtr = $this->$traverseMethod($varPtr, $tokens, array(T_WHITESPACE));
         }
         return $prevPtr;
     }
@@ -282,7 +296,8 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
      * @param array $tokens the token stack
      * @param array $ignore an array of token codes to be ignored
      * @return int a pointer to the next token, ignoring any given types and 
-     * skipping over parenthesized statements
+     * skipping over parenthesized statements (this will halt on the open 
+     * parenthesis, but not on the matching close parenthesis)
      */
     private function stepForward($currPtr, $tokens, $ignore)
     {
@@ -291,6 +306,27 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
                 $currPtr = $tokens[$currPtr]['parenthesis_closer'];
             }
             $currPtr++;
+        } while (in_array($tokens[$currPtr]['code'], $ignore));
+
+        return $currPtr;
+    }
+
+    /**
+     * Step backward in the token stack.
+     * @param int $currPtr the beginning position in the stack
+     * @param array $tokens the token stack
+     * @param array $ignore an array of token codes to be ignored
+     * @return int a pointer to the previous token, ignoring any given types and 
+     * skipping over parenthesized statements (this will halt on the close 
+     * parenthesis, but not on the matching open parenthesis)
+     */
+    private function stepBackward($currPtr, $tokens, $ignore)
+    {
+        do {
+            if ($tokens[$currPtr]['code'] == T_CLOSE_PARENTHESIS) {
+                $currPtr = $tokens[$currPtr]['parenthesis_opener'];
+            }
+            $currPtr--;
         } while (in_array($tokens[$currPtr]['code'], $ignore));
 
         return $currPtr;

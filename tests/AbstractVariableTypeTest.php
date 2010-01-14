@@ -22,10 +22,7 @@ class AbstractVariableTypeTest extends PHPUnit_Framework_TestCase
      * like parentheses.
      */
     public function testGetEndOfVar($code, $startContent, $endContent, $endPtrOffset=0) {
-        // Tokenize the code
-        new PHP_CodeSniffer();
-        $tokenizer = new PHP_CodeSniffer_Tokenizers_PHP();
-        $tokens = PHP_CodeSniffer_File::tokenizeString($code, $tokenizer);
+        $tokens = $this->getTokens($code);
         // Find the pointer to the end token
         foreach ($tokens as $ptr => $token) {
             if ($token['content'] == $startContent) {
@@ -48,10 +45,7 @@ class AbstractVariableTypeTest extends PHPUnit_Framework_TestCase
      * @see testGetEndOfVar
      */
     public function testGetStartOfVar($code, $startContent, $endContent, $endPtrOffset=0) {
-        $this->markTestIncomplete();
-        // Tokenize the code
-        $tokenizer = new PHP_CodeSniffer_Tokenizers_PHP();
-        $tokens = $tokenizer->tokenizeString($code);
+        $tokens = $this->getTokens($code);
         // Find the pointer to the end token
         foreach ($tokens as $ptr => $token) {
             if ($token['content'] == $endContent) {
@@ -64,6 +58,17 @@ class AbstractVariableTypeTest extends PHPUnit_Framework_TestCase
         $startPtr = $tester->exposeGetStartOfVar($endPtr, $tokens);
 
         $this->assertEquals($startContent, $tokens[$startPtr]['content']);
+    }
+
+    /**
+     * Tokenize a string, PHP_CodeSniffer style
+     * @param string $code the code to be tokenized
+     * @return array an array of tokens, complete with all the extra information PHPCS provides
+     */
+    private function getTokens($code) {
+        new PHP_CodeSniffer();
+        $tokenizer = new PHP_CodeSniffer_Tokenizers_PHP();
+        return PHP_CodeSniffer_File::tokenizeString($code, $tokenizer);
     }
 
     public function variableProvider() {
