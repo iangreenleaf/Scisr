@@ -1606,6 +1606,9 @@ class PHP_CodeSniffer
         case '@':
             $newToken['type'] = 'T_ASPERAND';
             break;
+        case '$':
+            $newToken['type'] = 'T_DOLLAR';
+            break;
         default:
             $newToken['type'] = 'T_NONE';
             break;

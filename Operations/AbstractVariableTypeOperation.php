@@ -278,7 +278,7 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
     private function traverseVar($traverseMethod, $acceptParen, $varPtr, $tokens)
     {
         // Tokens we expect to see in a variable
-        $accept = array(T_VARIABLE, T_STRING, T_OBJECT_OPERATOR, T_PAAMAYIM_NEKUDOTAYIM, $acceptParen);
+        $accept = array(T_VARIABLE, T_STRING, T_OBJECT_OPERATOR, T_PAAMAYIM_NEKUDOTAYIM, T_DOLLAR, $acceptParen);
         // Technically initialization isn't necessary, but it prevents an error
         // if we happen to call this on something that isn't a recognized var
         $prevPtr = $varPtr;
