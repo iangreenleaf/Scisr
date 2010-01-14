@@ -218,24 +218,20 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
                 if ($soFar == '') {
                     // We normalize static invocations for simplicity
                     $soFar .= '->';
-                    $currPtr++;
+                    $currPtr = $this->stepForward($currPtr, $tokens, array(T_WHITESPACE));
                 }
                 break;
             }
 
-            if ($currToken['code'] == T_WHITESPACE || $currToken['code'] == T_SEMICOLON) {
-                // Ignore whitespace and semicolons
-                $currPtr++;
-            } else if ($currToken['code'] == T_OPEN_PARENTHESIS) {
+            if ($currToken['code'] == T_OPEN_PARENTHESIS) {
                 // Mark this as a function
                 $soFar = '*' . $soFar;
-                // Skip the function arguments and parentheses
-                $currPtr = $currToken['parenthesis_closer'] + 1;
             } else {
                 // Add the token to our string
                 $soFar .= $currToken['content'];
-                $currPtr++;
             }
+            $currPtr = $this->stepForward($currPtr, $tokens, array(T_WHITESPACE));
+
         }
         return array($currPtr, $soFar);
     }
@@ -281,7 +277,12 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
     }
 
     /**
-     * @todo use this for chunking too
+     * Step forward in the token stack.
+     * @param int $currPtr the beginning position in the stack
+     * @param array $tokens the token stack
+     * @param array $ignore an array of token codes to be ignored
+     * @return int a pointer to the next token, ignoring any given types and 
+     * skipping over parenthesized statements
      */
     private function stepForward($currPtr, $tokens, $ignore)
     {
