@@ -624,7 +624,12 @@ class PHP_CodeSniffer_File
     {
         // Work out which sniff generated the warning.
         $parts = explode('_', $this->_activeListener);
-        $sniff = $parts[0].'.'.$parts[2].'.'.$parts[3];
+        // Remove "Sniffs" from the name
+        $pos = array_search('Sniffs', $parts);
+        if ($pos !== false) {
+            unset($parts[$pos]);
+        }
+        $sniff = implode('.', $parts);
 
         if ($stackPtr === null) {
             $lineNum = 1;

@@ -6,7 +6,7 @@ require_once '../Scisr.php';
  * @runTestsInSeparateProcesses
  * @todo This test case uses shell commands. Rework with some recursive PHP funcs.
  */
-class ScisrTest extends PHPUnit_Framework_TestCase
+class ScisrMultipleFileTest extends PHPUnit_Framework_TestCase
 {
     public function setUp() {
         $this->rel_test_dir = 'myTestDir';
