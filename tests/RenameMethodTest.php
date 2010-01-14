@@ -578,6 +578,14 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    public function testRenameFunctionParameterWithTypeHint() {
+        $this->markTestIncomplete();
+    }
+
+    public function testRenameMethodParameterWithTypeHint() {
+        $this->markTestIncomplete();
+    }
+
     public function testRenameFunctionParameterWithPHPDocType() {
         $orig = <<<EOL
 <?php
