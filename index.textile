@@ -5,8 +5,15 @@ github_name: Scisr
 current_version: 0.1.0
 nav:
   - name: About
+    link: "about"
   - name: Usage
+    link: "usage"
   - name: Installation
+    link: "installation"
+  - name: Report Bugs / Request Features
+    link: "bugs"
+  - name: License
+    link: "license"
 ---
 
 h2(#about). About
@@ -53,4 +60,16 @@ h2(#installation). Installation
 
 # "Download Scisr":http://github.com/youngian/{{ page.github_name }}/archives/master.
 # You can run Scisr right from the folder where you unpacked it. Or, if you'd prefer, you can move @scisr.php@ to somewhere in your executable path, and move everything else to a PHP include directory.
+
+h2(#bugs). Report Bugs / Request Features
+
+If you find a bug or would like to request a feature, please "open an issue through GitHub":http://github.com/youngian/{{ page.github_name }}/issues.
+
+h2(#license). License
+
+Scisr is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Scisr is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+For more details, see "http://www.gnu.org/licenses/gpl.html":http://www.gnu.org/licenses/gpl.html.
 

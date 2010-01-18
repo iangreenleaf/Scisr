@@ -13,7 +13,7 @@
 
 	<ul id="nav">
 		{% for nav in page.nav %}
-		<li><a href="#{{ nav.name | downcase }}">{{ nav.name }}</a></li>
+		<li><a href="#{{ nav.link | downcase }}">{{ nav.name }}</a></li>
 		{% endfor %}
 	</ul>
 
