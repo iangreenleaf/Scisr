@@ -1,9 +1,52 @@
 ---
 layout: default
 title: Scisr, a refactoring tool for PHP
+github_name: Scisr
+current_version: 0.1.0
 ---
 
 h2. About
 
 <span class="title-acronym">Sc</span>isr is an <span class="title-acronym">i</span>mperfect but <span class="title-acronym">s</span>imple <span class="title-acronym">r</span>efactorer. It is written in and for PHP.
+
+_Scisr is imperfect._ Because PHP is weakly and dynamically typed, a refactorer will never make the right decision in every imaginable case. Scisr accepts this limitation and settles for trying to do the thing that is most likely to be right. When in doubt, Scisr errs on the side of caution.
+
+_Scisr is simple._ Scisr doesn't tell you how to structure your work. Scisr assumes you doing smart things like using a version control system and testing the changes Scisr makes, but it doesn't try to dictate those parts of the process. Scisr sticks to doing what Scisr does best.
+
+h2. Usage
+
+h3. Rename a class
+
+{% highlight bash %}
+$ scisr.php rename-class OldName NewName [files]
+{% endhighlight %}
+
+h3. Rename a class method
+
+{% highlight bash %}
+$ scisr.php rename-method OwningClassName oldMethodName newMethodName [files]
+{% endhighlight %}
+
+h3. Rename a file
+
+{% highlight bash %}
+$ scisr.php rename-file old/file_name new/dir/new_file_name [files]
+{% endhighlight %}
+
+h3. General
+
+The last arguments to @scisr.php@ are any number of directory or file names. These designate the code to be refactored.
+
+Additional options:
+
+{% highlight bash %}
+    -t, --timid                 Do not make changes to the files, just list filenames with line numbers.
+    -a, --aggressive            Make changes even when we're not sure they're correct.
+{% endhighlight %}
+
+
+h2. Installation
+
+# "Download Scisr":http://github.com/youngian/{{ page.github_name }}/archives/master.
+# You can run Scisr right from the folder where you unpacked it. Or, if you'd prefer, you can move @scisr.php@ to somewhere in your executable path, and move everything else to a PHP include directory.
 
