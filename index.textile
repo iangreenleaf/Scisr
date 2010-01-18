@@ -1,0 +1,9 @@
+---
+layout: default
+title: Scisr, a refactoring tool for PHP
+---
+
+h2. About
+
+<span class="title-acronym">Sc</span>isr is an <span class="title-acronym">i</span>mperfect but <span class="title-acronym">s</span>imple <span class="title-acronym">r</span>efactorer. It is written in and for PHP.
+
