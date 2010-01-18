@@ -11,6 +11,12 @@
 	<div id="latest_version">{{ page.current_version }}</div>
 	{% endif %}
 
+	<ul id="nav">
+		{% for nav in page.nav %}
+		<li><a href="#{{ nav.name | downcase }}">{{ nav.name }}</a></li>
+		{% endfor %}
+	</ul>
+
     {{ content }}
   </body>
 </html>

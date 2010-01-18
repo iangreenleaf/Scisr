@@ -3,9 +3,13 @@ layout: default
 title: Scisr, a refactoring tool for PHP
 github_name: Scisr
 current_version: 0.1.0
+nav:
+  - name: About
+  - name: Usage
+  - name: Installation
 ---
 
-h2. About
+h2(#about). About
 
 <span class="title-acronym">Sc</span>isr is an <span class="title-acronym">i</span>mperfect but <span class="title-acronym">s</span>imple <span class="title-acronym">r</span>efactorer. It is written in and for PHP.
 
@@ -13,7 +17,7 @@ _Scisr is imperfect._ Because PHP is weakly and dynamically typed, a refactorer 
 
 _Scisr is simple._ Scisr doesn't tell you how to structure your work. Scisr assumes you doing smart things like using a version control system and testing the changes Scisr makes, but it doesn't try to dictate those parts of the process. Scisr sticks to doing what Scisr does best.
 
-h2. Usage
+h2(#usage). Usage
 
 h3. Rename a class
 
@@ -45,7 +49,7 @@ Additional options:
 {% endhighlight %}
 
 
-h2. Installation
+h2(#installation). Installation
 
 # "Download Scisr":http://github.com/youngian/{{ page.github_name }}/archives/master.
 # You can run Scisr right from the folder where you unpacked it. Or, if you'd prefer, you can move @scisr.php@ to somewhere in your executable path, and move everything else to a PHP include directory.
