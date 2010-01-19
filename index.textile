@@ -10,7 +10,7 @@ nav:
     link: "usage"
   - name: Installation
     link: "installation"
-  - name: Report Bugs / Request Features
+  - name: Bugs & Suggestions
     link: "bugs"
   - name: License
     link: "license"
