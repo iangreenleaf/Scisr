@@ -1732,11 +1732,13 @@ class PHP_CodeSniffer_File
      *   0 => array(
      *         'name'              => '$var',  // The variable name.
      *         'pass_by_reference' => false,   // Passed by reference.
-     *         'type_hint'         => string,  // Type hint for array or custom type
      *        )
      * </code>
      *
-     * Parameters with default values have and additional array indice of
+     * Parameters with type hints have an additional array indice of 'type_hint'
+     * with the value of a pointer to the type hint for array or custom type as an int.
+     *
+     * Parameters with default values have an additional array indice of
      * 'default' with the value of the default as a string.
      *
      * @param int $stackPtr The position in the stack of the T_FUNCTION token
@@ -1760,7 +1762,7 @@ class PHP_CodeSniffer_File
         $defaultStart    = null;
         $paramCount      = 0;
         $passByReference = false;
-        $typeHint        = '';
+        $typeHint        = null;
 
         for ($i = ($opener + 1); $i <= $closer; $i++) {
             // Check to see if this token has a parenthesis opener. If it does
@@ -1782,7 +1784,7 @@ class PHP_CodeSniffer_File
                 $currVar = $i;
                 break;
             case T_ARRAY_HINT:
-                $typeHint = $this->_tokens[$i]['content'];
+                $typeHint = $i;
                 break;
             case T_STRING:
                 // This is a string, so it may be a type hint, but it could
@@ -1795,7 +1797,7 @@ class PHP_CodeSniffer_File
                     }
                 }
 
-                $typeHint = $this->_tokens[$i]['content'];
+                $typeHint = $i;
                 break;
             case T_CLOSE_PARENTHESIS:
             case T_COMMA:
@@ -1817,12 +1819,14 @@ class PHP_CodeSniffer_File
                 }
 
                 $vars[$paramCount]['pass_by_reference'] = $passByReference;
-                $vars[$paramCount]['type_hint']         = $typeHint;
+                if ($typeHint !== null) {
+                    $vars[$paramCount]['type_hint']     = $typeHint;
+                }
 
                 // Reset the vars, as we are about to process the next parameter.
                 $defaultStart    = null;
                 $passByReference = false;
-                $typeHint        = '';
+                $typeHint        = null;
 
                 $paramCount++;
                 break;
