@@ -1730,8 +1730,8 @@ class PHP_CodeSniffer_File
      *
      * <code>
      *   0 => array(
-     *         'name'              => '$var',  // The variable name.
-     *         'pass_by_reference' => false,   // Passed by reference.
+     *         'var'              => int,  // A pointer to the variable
+     *         'pass_by_reference' => boolean,   // Passed by reference.
      *        )
      * </code>
      *
@@ -1808,7 +1808,7 @@ class PHP_CodeSniffer_File
                 }
 
                 $vars[$paramCount]         = array();
-                $vars[$paramCount]['name'] = $this->_tokens[$currVar]['content'];
+                $vars[$paramCount]['var'] = $currVar;
 
                 if ($defaultStart !== null) {
                     $vars[$paramCount]['default']
