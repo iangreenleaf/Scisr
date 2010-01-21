@@ -717,8 +717,4 @@ EOL;
         $this->markTestIncomplete();
     }
 
-    public function testFunctionParameterWithDefault() {
-        $this->markTestIncomplete();
-    }
-
 }
