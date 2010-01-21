@@ -99,7 +99,7 @@ class Scisr
      */
     public function setRenameClass($oldClass, $newClass)
     {
-        $this->_listeners[] = new Scisr_Operations_ChangeClassName($oldClass, $newClass);
+        $this->_listeners[] = new Scisr_Operations_RenameClass($oldClass, $newClass);
         $this->_listeners[] = new Scisr_Operations_ChangeClassNameComments($oldClass, $newClass);
         $this->_listeners[] = new Scisr_Operations_ChangeCommentWords($oldClass, $newClass);
         $this->_listeners[] = new Scisr_Operations_ChangeStringWords($oldClass, $newClass);
@@ -116,7 +116,7 @@ class Scisr
         $this->_firstPassListeners[] = new Scisr_Operations_TrackGlobalVariables();
         $this->_firstPassListeners[] = new Scisr_Operations_TrackVariableTypes();
         $this->_firstPassListeners[] = new Scisr_Operations_TrackCommentVariableTypes();
-        $this->_listeners[] = new Scisr_Operations_ChangeMethodName($class, $oldMethod, $newMethod);
+        $this->_listeners[] = new Scisr_Operations_RenameMethod($class, $oldMethod, $newMethod);
     }
 
     /**
