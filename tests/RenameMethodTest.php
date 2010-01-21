@@ -94,7 +94,6 @@ EOL;
     }
 
     public function testRenameMethodInstantiatedCallWithNewlines() {
-        $this->markTestIncomplete('Incomplete until we stop having errors');
         $orig = <<<EOL
 <?php
 \$a->f = new Foo();
@@ -391,6 +390,10 @@ if (true) {
 EOL;
         $this->renameAndCompare($orig, $expected);
     }
+
+	public function testRenameFunctionParamWithTypeHint() {
+		$this->markTestIncomplete();
+	}
 
     public function testRenameMethodReturnValueWithPHPDocType() {
         $orig = <<<EOL

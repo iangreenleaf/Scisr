@@ -64,6 +64,10 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+	public function testRenameFunctionParamTypeHint() {
+		$this->markTestIncomplete();
+	}
+
     public function testRenamePhpDocVar() {
         $orig = <<<EOL
 <?php
