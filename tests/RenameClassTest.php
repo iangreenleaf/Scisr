@@ -64,9 +64,37 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
-	public function testRenameFunctionParamTypeHint() {
-		$this->markTestIncomplete();
-	}
+    public function testRenameFunctionParamTypeHint() {
+        $orig = <<<EOL
+<?php
+function bar(Foo \$myFoo, Foo \$otherFoo) {
+    // STUB
+}
+EOL;
+        $expected = <<<EOL
+<?php
+function bar(Baz \$myFoo, Baz \$otherFoo) {
+    // STUB
+}
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
+    public function testRenameMethodParamTypeHint() {
+        $orig = <<<EOL
+<?php
+class Quark {
+    protected function bar(NotFoo \$thing, Foo \$froo) { \$froo->doFunc(); }
+}
+EOL;
+        $expected = <<<EOL
+<?php
+class Quark {
+    protected function bar(NotFoo \$thing, Baz \$froo) { \$froo->doFunc(); }
+}
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
 
     public function testRenamePhpDocVar() {
         $orig = <<<EOL
