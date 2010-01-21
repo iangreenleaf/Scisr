@@ -115,6 +115,7 @@ class Scisr
     {
         $this->_firstPassListeners[] = new Scisr_Operations_TrackGlobalVariables();
         $this->_firstPassListeners[] = new Scisr_Operations_TrackVariableTypes();
+        $this->_firstPassListeners[] = new Scisr_Operations_TrackVariableTypeHints();
         $this->_firstPassListeners[] = new Scisr_Operations_TrackCommentVariableTypes();
         $this->_listeners[] = new Scisr_Operations_RenameMethod($class, $oldMethod, $newMethod);
     }

@@ -392,7 +392,47 @@ EOL;
     }
 
 	public function testRenameFunctionParamWithTypeHint() {
-		$this->markTestIncomplete();
+        $orig = <<<EOL
+<?php
+function doStuff(\$f1, Foo \$f2, NotFoo \$f3) {
+    \$f1->bar();
+    \$f2->bar();
+    \$f3->bar();
+}
+EOL;
+        $expected = <<<EOL
+<?php
+function doStuff(\$f1, Foo \$f2, NotFoo \$f3) {
+    \$f1->bar();
+    \$f2->baz();
+    \$f3->bar();
+}
+EOL;
+        $this->renameAndCompare($orig, $expected);
+	}
+
+	public function testRenameMethodParamWithTypeHint() {
+        $orig = <<<EOL
+<?php
+class Quark {
+    function doStuff(\$f1, Foo \$f2, NotFoo \$f3) {
+        \$f1->bar();
+        \$f2->bar();
+        \$f3->bar();
+    }
+}
+EOL;
+        $expected = <<<EOL
+<?php
+class Quark {
+    function doStuff(\$f1, Foo \$f2, NotFoo \$f3) {
+        \$f1->bar();
+        \$f2->baz();
+        \$f3->bar();
+    }
+}
+EOL;
+        $this->renameAndCompare($orig, $expected);
 	}
 
     public function testRenameMethodReturnValueWithPHPDocType() {
