@@ -37,6 +37,7 @@ class RenameFileSystemTest extends Scisr_Tests_MultipleFileTestCase
 	 * @dataProvider includesRenameProvider
 	 */
     public function testRenameFileAltersIncludes($oldName, $newName, $expectedDir) {
+		$this->markTestIncomplete('Feature is not yet implemented');
         $this->populateDir(dirname(__FILE__) . '/_files/renameFileIncludesFixture', $this->test_dir);
         chdir($this->test_dir);
 
@@ -53,6 +54,7 @@ class RenameFileSystemTest extends Scisr_Tests_MultipleFileTestCase
 	}
 
     public function testRenameFileAltersIncludesSwitchPlaces() {
+		$this->markTestIncomplete('Feature is not yet implemented');
         $this->populateDir(dirname(__FILE__) . '/_files/renameFileIncludesFixture', $this->test_dir);
         chdir($this->test_dir);
 
