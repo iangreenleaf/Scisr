@@ -201,7 +201,8 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
         return $soFar;
     }
 
-    private function getNextChunk($currPtr, $endPtr, $tokens) {
+    private function getNextChunk($currPtr, $endPtr, $tokens)
+    {
 
         $soFar = '';
         while ($currPtr <= $endPtr) {

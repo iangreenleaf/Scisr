@@ -24,7 +24,7 @@ class Scisr_File
      * If not null, indicates this file is to be renamed.
      * @var string|null
      */
-    private $newName = null;
+    private $_newName = null;
 
     /**
      * Create a new Scisr_File
@@ -74,8 +74,9 @@ class Scisr_File
      *
      * @param string $newName the new name for this file
      */
-    public function rename($newName) {
-        $this->newName = self::getAbsolutePath($newName);
+    public function rename($newName)
+    {
+        $this->_newName = self::getAbsolutePath($newName);
     }
 
     /**
@@ -125,8 +126,8 @@ class Scisr_File
         file_put_contents($this->filename, $output);
 
         // If there's a rename pending, do it
-        if ($this->newName !== null) {
-            rename($this->filename, $this->newName);
+        if ($this->_newName !== null) {
+            rename($this->filename, $this->_newName);
         }
     }
 }
