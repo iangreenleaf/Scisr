@@ -741,12 +741,51 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    /**
+     * @todo messy, clean up
+     */
     public function testGetPropertyTypeFromIncludedFile() {
-        $this->markTestIncomplete();
+        $incFile = dirname($this->test_file) . '/my_included_file.php';
+        //Scisr_FileIncludes::registerFileInclude($this->test_file, $incFile);
+        $orig = <<<EOL
+<?php
+include("$incFile");
+\$f->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+include("$incFile");
+\$f->baz();
+EOL;
+        $this->populateFile($orig);
+
+        $s = new Scisr();
+        $sniffer = new MockSniffer();
+        $sniffer->incFile = $incFile;
+        $sniffer->test_file = $this->test_file;
+        $s->setSniffer($sniffer);
+        $s->setRenameMethod('Foo', 'bar', 'baz');
+        $s->addFile($this->test_file);
+        $s->run();
+
+        $this->compareFile($expected);
     }
 
     public function testGetPropertyTypeFromRequiredFile() {
         $this->markTestIncomplete();
     }
 
+}
+
+/**
+ * @todo document
+ */
+class MockSniffer extends Scisr_CodeSniffer
+{
+    public function process($files, $local=false)
+    {
+        Scisr_FileIncludes::registerFileInclude($this->test_file, $this->incFile);
+        Scisr_VariableTypes::registerVariableType('$f', 'Foo', $this->incFile, 0, 4);
+        parent::process($files, $local);
+    }
 }

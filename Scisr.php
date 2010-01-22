@@ -44,6 +44,14 @@ function scisrAutoload($className)
 class Scisr_CodeSniffer extends PHP_CodeSniffer
 {
 
+    public function __construct($verbosity=0, $tabWidth=0)
+    {
+        // PHP_CodeSniffer messes up the cwd, so restore it after we construct
+        $cwd = getcwd();
+        parent::__construct($verbosity, $tabWidth);
+        chdir($cwd);
+    }
+
     /**
      * Add a listener
      * @param PHP_CodeSniffer_Sniff the listener to add. Unlike
@@ -82,6 +90,11 @@ class Scisr
      * @var Scisr_Output
      */
     protected $_output;
+    /**
+     * Our codesniffer instance
+     * @var Scisr_CodeSniffer
+     */
+    private $sniffer;
 
     public function __construct($output=null)
     {
@@ -90,6 +103,17 @@ class Scisr
             $output = new Scisr_NullOutput();
         }
         $this->_output = $output;
+        $this->sniffer = new Scisr_CodeSniffer();
+    }
+
+    /**
+     * For testing use only. Dependency injection.
+     * @ignore
+     * @param Scisr_CodeSniffer
+     */
+    public function setSniffer($sniffer)
+    {
+        $this->sniffer = $sniffer;
     }
 
     /**
@@ -193,8 +217,9 @@ class Scisr
     public function run()
     {
         Scisr_VariableTypes::init();
+        Scisr_FileIncludes::init();
 
-        $sniffer = new Scisr_CodeSniffer();
+        $sniffer = $this->sniffer;
 
         // If we need to, make a read-only pass to populate our type information
         if (count($this->_firstPassListeners) > 0) {

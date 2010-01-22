@@ -4,13 +4,13 @@
  * Stores information about variable types
  *
  * Basically a very rudimentary static model
+ * @todo share some functionality with Scisr_FileIncludes
  */
 class Scisr_VariableTypes
 {
 
     /**
      * Get the DB connection we're using
-     * @todo seems like this should go somewhere else
      */
     public static function getDB()
     {
