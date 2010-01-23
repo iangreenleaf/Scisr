@@ -58,6 +58,10 @@ class Scisr_File
     protected static function normalizePath($path)
     {
         $pieces = explode('/', $path);
+        // Filter out empty items
+        $pieces = array_filter($pieces, create_function('$s', 'return ($s !== "");'));
+        // array_filter left us with wonky keys, which will confuse array_splice, so rekey
+        $pieces = array_values($pieces);
         // A for loop is ill-advised because we are changing the contents of the array
         while (true) {
             if ($i = array_search('.', $pieces)) {
@@ -68,8 +72,6 @@ class Scisr_File
                 break;
             }
         }
-        // Filter out empty items
-        $pieces = array_filter($pieces, create_function('$s', 'return ($s !== "");'));
 
         return '/' . implode('/', $pieces);
     }
