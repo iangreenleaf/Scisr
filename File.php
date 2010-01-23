@@ -62,15 +62,12 @@ class Scisr_File
         $pieces = array_filter($pieces, create_function('$s', 'return ($s !== "");'));
         // array_filter left us with wonky keys, which will confuse array_splice, so rekey
         $pieces = array_values($pieces);
-        // A for loop is ill-advised because we are changing the contents of the array
-        while (true) {
-            if ($i = array_search('.', $pieces)) {
-                array_splice($pieces, $i, 1);
-            } else if ($i = array_search('..', $pieces)) {
-                array_splice($pieces, $i - 1, 2);
-            } else {
-                break;
-            }
+        // Now look for . and ..
+        while ($i = array_search('.', $pieces)) {
+            array_splice($pieces, $i, 1);
+        }
+        while ($i = array_search('..', $pieces)) {
+            array_splice($pieces, $i - 1, 2);
         }
 
         return '/' . implode('/', $pieces);
