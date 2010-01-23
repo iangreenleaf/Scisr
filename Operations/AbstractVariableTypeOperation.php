@@ -9,7 +9,7 @@ define('SCISR_SCOPE_GLOBAL', 0);
  * An abstract operation class that helps you deal with variable types
  *
  * This should sit completely between any Scisr Operations and the
- * Scisr_VariableTypes storage class, since that may change formats,
+ * Scisr_Db_VariableTypes storage class, since that may change formats,
  * and this has domain knowledge about CodeSniffer.
  */
 abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_CodeSniffer_Sniff
@@ -47,16 +47,16 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
         $scopeOpen = $this->getScopeOwner($varPtr, $phpcsFile, $varName);
 
         // If we find the type in this file, return it
-        $result = Scisr_VariableTypes::getVariableType($varName, $phpcsFile->getFileName(), $scopeOpen);
+        $result = Scisr_Db_VariableTypes::getVariableType($varName, $phpcsFile->getFileName(), $scopeOpen);
         if ($result !== null) {
             return $result;
         }
         // If not, we'll look in any included files
-        $includedFiles = Scisr_FileIncludes::getIncludedFiles($phpcsFile->getFileName());
+        $includedFiles = Scisr_Db_FileIncludes::getIncludedFiles($phpcsFile->getFileName());
         //TODO we could do one query with filenames joined - we would need to 
         // ensure correct ordering, though
         foreach ($includedFiles as $file) {
-            $result = Scisr_VariableTypes::getVariableType($varName, $file, $scopeOpen);
+            $result = Scisr_Db_VariableTypes::getVariableType($varName, $file, $scopeOpen);
             if ($result !== null) {
                 return $result;
             }
@@ -104,7 +104,7 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
 
         // If a type has already been set for this variable that is more 
         // specific than this type, we don't overwrite it
-        $existing = Scisr_VariableTypes::checkVariableDefinition($phpcsFile->getFileName(), $varPtr);
+        $existing = Scisr_Db_VariableTypes::checkVariableDefinition($phpcsFile->getFileName(), $varPtr);
         if ($existing !== null && $existing != $type) {
             $existingArray = explode('->', $existing);
             $existingSpecificity = count($existingArray) + preg_match('/^\$|^\*/', $existingArray[0]);
@@ -115,7 +115,7 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
             }
         }
 
-        Scisr_VariableTypes::registerVariableType($varName, $type, $phpcsFile->getFileName(), $scopeOpen, $varPtr);
+        Scisr_Db_VariableTypes::registerVariableType($varName, $type, $phpcsFile->getFileName(), $scopeOpen, $varPtr);
     }
 
     /**
@@ -144,7 +144,7 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
         $tokens = $phpcsFile->getTokens();
         $varName = $tokens[$varPtr]['content'];
         $scopeOpen = $this->getScopeOwner($varPtr, $phpcsFile, $varName);
-        Scisr_VariableTypes::registerGlobalVariable($varName, $phpcsFile->getFileName(), $scopeOpen);
+        Scisr_Db_VariableTypes::registerGlobalVariable($varName, $phpcsFile->getFileName(), $scopeOpen);
     }
 
     /**
@@ -191,7 +191,7 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
         // Get the lowermost scope
         $scopeOpen = $scopes[count($scopes) - 1];
 
-        return Scisr_VariableTypes::isGlobalVariable($name, $filename, $scopeOpen);
+        return Scisr_Db_VariableTypes::isGlobalVariable($name, $filename, $scopeOpen);
     }
 
     /**

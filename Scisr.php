@@ -217,8 +217,8 @@ class Scisr
      */
     public function run()
     {
-        Scisr_VariableTypes::init();
-        Scisr_FileIncludes::init();
+        Scisr_Db_VariableTypes::init();
+        Scisr_Db_FileIncludes::init();
 
         $sniffer = $this->_sniffer;
 

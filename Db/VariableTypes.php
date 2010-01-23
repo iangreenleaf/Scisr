@@ -5,7 +5,7 @@
  *
  * Basically a very rudimentary static model
  */
-class Scisr_VariableTypes
+class Scisr_Db_VariableTypes
 {
     /**
      * Do any necessary setup

@@ -3,7 +3,7 @@
 /**
  * Stores information about file includes
  */
-class Scisr_FileIncludes
+class Scisr_Db_FileIncludes
 {
 
     /**

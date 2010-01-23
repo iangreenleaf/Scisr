@@ -829,7 +829,7 @@ class MockSniffer extends Scisr_CodeSniffer
 {
     public function process($files, $local=false)
     {
-        Scisr_VariableTypes::registerVariableType('$f', 'Foo', $this->incFile, 0, 4);
+        Scisr_Db_VariableTypes::registerVariableType('$f', 'Foo', $this->incFile, 0, 4);
         parent::process($files, $local);
     }
 }
