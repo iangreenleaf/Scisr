@@ -42,7 +42,6 @@ class Scisr_File
      * will be used as the base of a relative path. Defaults to the current 
      * working directory.
      * @return string the absolute path to the file
-     * @todo calculate something similar to realpath()
      */
     public static function getAbsolutePath($filename, $currDir=null)
     {
@@ -53,7 +52,26 @@ class Scisr_File
             }
             $filename = $currDir . '/' . $filename;
         }
-        return $filename;
+        return self::normalizePath($filename);
+    }
+
+    protected static function normalizePath($path)
+    {
+        $pieces = explode('/', $path);
+        // A for loop is ill-advised because we are changing the contents of the array
+        while (true) {
+            if ($i = array_search('.', $pieces)) {
+                array_splice($pieces, $i, 1);
+            } else if ($i = array_search('..', $pieces)) {
+                array_splice($pieces, $i - 1, 2);
+            } else {
+                break;
+            }
+        }
+        // Filter out empty items
+        $pieces = array_filter($pieces, create_function('$s', 'return ($s !== "");'));
+
+        return '/' . implode('/', $pieces);
     }
 
     /**

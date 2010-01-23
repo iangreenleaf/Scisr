@@ -196,4 +196,34 @@ EOL;
         $this->compareFile($expected);
     }
 
+    /**
+     * @dataProvider pathProvider
+     */
+    public function testGetAbsolutePath($path, $cwd, $expected) {
+        $newPath = Scisr_File::getAbsolutePath($path, $cwd);
+        $this->assertEquals($expected, $newPath);
+    }
+
+    public function pathProvider() {
+        return array(
+            array('/some/abs/path.ext', '/anywhere', '/some/abs/path.ext'),
+            array('a/path', '/root', '/root/a/path'),
+            array('a/path', '/root/', '/root/a/path'),
+            array('./a/path', '/root/', '/root/a/path'),
+            array('../a/path', '/root/dir/anotherdir', '/root/dir/a/path'),
+            array('../../a/path', '/root/dir/anotherdir', '/root/a/path'),
+            array('././a/path', '/root/', '/root/a/path'),
+            array('./a/../path', '/root/', '/root/path'),
+            array('a//path', '/root//', '/root/a/path'),
+            array('/some/./abs/path', '/anywhere', '/some/abs/path'),
+            array('/some//abs/path', '/anywhere', '/some/abs/path'),
+            array('/some/wrong/dirs/../../abs/path', '/anywhere', '/some/abs/path'),
+            array('/some/wrong/../anotherwrong/../abs/path', '/anywhere', '/some/abs/path'),
+            array('/some/./wrong/dirs/.././../abs/path', '/anywhere', '/some/abs/path'),
+            array('/some/abs//../path', '/anywhere', '/some/path'),
+            // Make sure we're not being type-lazy
+            array('0/path', '/root', '/root/0/path'),
+        );
+    }
+
 }
