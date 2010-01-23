@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ page.title }}</title>
+	<link rel="stylesheet" href="stylesheets/main.css" type="text/css" media="screen, projection" charset="utf-8" />
+	<!--[if lte IE 6]><link rel="stylesheet" href="http://universal-ie6-css.googlecode.com/files/ie6.0.3.css" media="screen, projection" /><![endif]-->
+  </head>
+
+  <body>
+	  <div id="page">
+
+		  <h1>{{ page.title }}</h1>
+
+		  {% if page.current_version %}
+		  <div id="latest_version">{{ page.current_version }}</div>
+		  {% endif %}
+
+		  <div id="nav"><ul>
+			  {% for nav in page.nav %}
+			  <li><a href="#{{ nav.link | downcase }}">{{ nav.name }}</a></li>
+			  {% endfor %}
+		  </ul></div>
+
+		  <div id="content">
+			  {{ content }}
+		  </div>
+
+	  </div>
+
+	<a href="http://github.com/youngian/{{ page.github_name }}"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub" /></a>
+  </body>
+</html>
+
