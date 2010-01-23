@@ -19,49 +19,9 @@
 // Turn on error reporting
 error_reporting(E_ALL | E_STRICT);
 // Register our autoloader
-spl_autoload_register('scisrAutoload');
+spl_autoload_register(array('Scisr', 'scisrAutoload'));
 // Include the main CodeSniffer file (this will register its own autoloader as well)
 require_once(dirname(__FILE__) . '/PHP/CodeSniffer.php');
-
-/**
- * An autoload function for Scisr
- * @param string
- */
-function scisrAutoload($className)
-{
-    if (strpos($className, 'Scisr_') === 0) {
-        $className = substr($className, 6);
-        $path = str_replace('_', '/', $className).'.php';
-        if (is_file(dirname(__FILE__).'/'.$path) === true) {
-            include dirname(__FILE__).'/'.$path;
-        }
-    }
-}
-
-/**
- * Handles the job of finding and parsing files.
- */
-class Scisr_CodeSniffer extends PHP_CodeSniffer
-{
-
-    public function __construct($verbosity=0, $tabWidth=0)
-    {
-        // PHP_CodeSniffer messes up the cwd, so restore it after we construct
-        $cwd = getcwd();
-        parent::__construct($verbosity, $tabWidth);
-        chdir($cwd);
-    }
-
-    /**
-     * Add a listener
-     * @param PHP_CodeSniffer_Sniff the listener to add. Unlike
-     * PHP_CodeSniffer's methods, this one takes an instantiated object.
-     */
-    public function addListener(PHP_CodeSniffer_Sniff $listener)
-    {
-        $this->listeners[] = $listener;
-    }
-}
 
 /**
  * The main Scisr controller
@@ -281,5 +241,21 @@ class Scisr
     {
         $this->_output->outputString($message);
     }
+
+    /**
+     * An autoload function for Scisr
+     * @param string
+     */
+    public static function scisrAutoload($className)
+    {
+        if (strpos($className, 'Scisr_') === 0) {
+            $className = substr($className, 6);
+            $path = str_replace('_', '/', $className).'.php';
+            if (is_file(dirname(__FILE__).'/'.$path) === true) {
+                include dirname(__FILE__).'/'.$path;
+            }
+        }
+    }
+
 }
 
