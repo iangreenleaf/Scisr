@@ -2,6 +2,14 @@
 
 /**
  * Handles command line interaction for Scisr
+ *
+ * @todo We could extend PHP_CodeSniffer_CLI and make use of some of the parsing 
+ * stuff instead of rolling our own. We would gain some flexibility in where 
+ * flags can be placed in the list, and it would fit reasonably well with the 
+ * need for "scisr command [variable arity args]".
+ *
+ * Downsides are that it won't quite work out of the box ($argv overrides our 
+ * testing stuff), and it's not flexible about --flag=val vs. --flag val.
  */
 class Scisr_CLI implements Scisr_Output
 {
