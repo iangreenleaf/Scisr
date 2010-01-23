@@ -94,7 +94,7 @@ class Scisr
      * Our codesniffer instance
      * @var Scisr_CodeSniffer
      */
-    private $sniffer;
+    private $_sniffer;
 
     public function __construct($output=null)
     {
@@ -103,7 +103,7 @@ class Scisr
             $output = new Scisr_NullOutput();
         }
         $this->_output = $output;
-        $this->sniffer = new Scisr_CodeSniffer();
+        $this->_sniffer = new Scisr_CodeSniffer();
     }
 
     /**
@@ -113,7 +113,7 @@ class Scisr
      */
     public function setSniffer($sniffer)
     {
-        $this->sniffer = $sniffer;
+        $this->_sniffer = $sniffer;
     }
 
     /**
@@ -220,7 +220,7 @@ class Scisr
         Scisr_VariableTypes::init();
         Scisr_FileIncludes::init();
 
-        $sniffer = $this->sniffer;
+        $sniffer = $this->_sniffer;
 
         // If we need to, make a read-only pass to populate our type information
         if (count($this->_firstPassListeners) > 0) {
