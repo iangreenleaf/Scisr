@@ -7,19 +7,11 @@ class Scisr_FileIncludes
 {
 
     /**
-     * Get the DB connection we're using
-     */
-    public static function getDB()
-    {
-        return new PDO('sqlite::memory:', null, null, array(PDO::ATTR_PERSISTENT => true));
-    }
-
-    /**
      * Set up the DB table we are going to use
      */
     public static function init()
     {
-        $db = self::getDB();
+        $db = Scisr_Db::getDB();
         // Yes, I know this is not the most efficient or normalized. But I'm lazy.
         $create = <<<EOS
 CREATE TABLE FileIncludes(file text, included_file text);
@@ -34,7 +26,7 @@ EOS;
      */
     public static function registerFileInclude($filename, $includedFilename)
     {
-        $db = self::getDB();
+        $db = Scisr_Db::getDB();
 
         $insert = <<<EOS
 INSERT INTO FileIncludes (file, included_file) VALUES (?, ?)
@@ -50,7 +42,7 @@ EOS;
      */
     public static function getIncludedFiles($filename)
     {
-        $db = self::getDB();
+        $db = Scisr_Db::getDB();
 
         $select = <<<EOS
 SELECT included_file FROM FileIncludes WHERE file = ?

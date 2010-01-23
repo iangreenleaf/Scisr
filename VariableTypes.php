@@ -4,19 +4,9 @@
  * Stores information about variable types
  *
  * Basically a very rudimentary static model
- * @todo share some functionality with Scisr_FileIncludes
  */
 class Scisr_VariableTypes
 {
-
-    /**
-     * Get the DB connection we're using
-     */
-    public static function getDB()
-    {
-        return new PDO('sqlite::memory:', null, null, array(PDO::ATTR_PERSISTENT => true));
-    }
-
     /**
      * Do any necessary setup
      *
@@ -24,7 +14,7 @@ class Scisr_VariableTypes
      */
     public static function init()
     {
-        $db = self::getDB();
+        $db = Scisr_Db::getDB();
         $create = <<<EOS
 CREATE TABLE VariableTypes(filename text, scopeopen integer, variable text, type text, variable_pointer integer);
 EOS;
@@ -45,7 +35,7 @@ EOS;
      */
     public static function registerVariableType($variable, $type, $filename, $scopeOpen, $varPtr)
     {
-        $db = self::getDB();
+        $db = Scisr_Db::getDB();
 
         // First delete any previous assignments in this scope
         $delete = <<<EOS
@@ -70,7 +60,7 @@ EOS;
      */
     public static function registerGlobalVariable($variable, $filename, $scopeOpen)
     {
-        $db = self::getDB();
+        $db = Scisr_Db::getDB();
 
         // Now insert this assignment
         $insert = <<<EOS
@@ -89,7 +79,7 @@ EOS;
      */
     public static function checkVariableDefinition($filename, $varPtr)
     {
-        $db = self::getDB();
+        $db = Scisr_Db::getDB();
 
         $sql = <<<EOS
 SELECT type FROM VariableTypes WHERE filename = ? AND variable_pointer = ?
@@ -113,7 +103,7 @@ EOS;
      */
     public static function getVariableType($variable, $filename, $scopeOpen)
     {
-        $db = self::getDB();
+        $db = Scisr_Db::getDB();
 
         $select = <<<EOS
 SELECT type FROM VariableTypes WHERE filename = ? AND variable = ? AND scopeopen = ? ORDER BY scopeopen DESC LIMIT 1
@@ -133,7 +123,7 @@ EOS;
      */
     public static function isGlobalVariable($variable, $filename, $scopeOpen)
     {
-        $db = self::getDB();
+        $db = Scisr_Db::getDB();
 
         $select = <<<EOS
 SELECT COUNT(*) FROM GlobalVariables WHERE filename = ? AND variable = ? AND scopeopen = ? LIMIT 1
