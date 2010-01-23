@@ -226,4 +226,13 @@ EOL;
         );
     }
 
+    public function testGetAbsolutePathFromCwd() {
+        $dir = dirname($this->test_file);
+        chdir($dir);
+        $newPath = Scisr_File::getAbsolutePath('some/path');
+        $this->assertEquals($dir . '/some/path', $newPath);
+        $newPath = Scisr_File::getAbsolutePath('/an/abs/path');
+        $this->assertEquals('/an/abs/path', $newPath);
+    }
+
 }
