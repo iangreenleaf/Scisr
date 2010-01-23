@@ -38,15 +38,20 @@ class Scisr_File
     /**
      * Calculate the absolute path for a file
      * @param string $filename a relative or absolute path to a file
+     * @param string $currDir an absolute path to the current directory, which 
+     * will be used as the base of a relative path. Defaults to the current 
+     * working directory.
      * @return string the absolute path to the file
      * @todo calculate something similar to realpath()
      */
-    public static function getAbsolutePath($filename)
+    public static function getAbsolutePath($filename, $currDir=null)
     {
         // If it's not an absolute path already, calculate it from our current dir
         if ($filename{0} != '/') {
-            $base = getcwd();
-            $filename = $base . '/' . $filename;
+            if ($currDir === null) {
+                $currDir = getcwd();
+            }
+            $filename = $currDir . '/' . $filename;
         }
         return $filename;
     }

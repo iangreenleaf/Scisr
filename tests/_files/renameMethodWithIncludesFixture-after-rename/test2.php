@@ -1,0 +1,3 @@
+<?php
+
+$includedF = new Foo();

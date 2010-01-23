@@ -742,26 +742,62 @@ EOL;
     }
 
     /**
-     * @todo messy, clean up
+     * @dataProvider includeTypeProvider
      */
-    public function testGetPropertyTypeFromIncludedFile() {
+    public function testGetPropertyTypeFromIncludedFile($includeCall) {
         $incFile = dirname($this->test_file) . '/my_included_file.php';
-        //Scisr_FileIncludes::registerFileInclude($this->test_file, $incFile);
         $orig = <<<EOL
 <?php
-include("$incFile");
+$includeCall("$incFile");
 \$f->bar();
 EOL;
         $expected = <<<EOL
 <?php
-include("$incFile");
+$includeCall("$incFile");
 \$f->baz();
 EOL;
+        $this->renameAndCompareWithIncludes($orig, $expected, $incFile);
+    }
+
+    public function includeTypeProvider() {
+        return array(
+            array('include'),
+            array('include_once'),
+            array('require'),
+            array('require_once'),
+        );
+    }
+
+    /**
+     * @dataProvider includeRelativePathProvider
+     */
+    public function testGetPropertyTypeFromIncludedFileWithRelativePath($incFile, $pathFromRoot) {
+        $orig = <<<EOL
+<?php
+require("$incFile");
+\$f->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+require("$incFile");
+\$f->baz();
+EOL;
+        $this->renameAndCompareWithIncludes($orig, $expected, dirname($this->test_file) . $pathFromRoot);
+    }
+
+    public function includeRelativePathProvider() {
+        return array(
+            array('otherfolder/my_included_file.php', '/otherfolder/my_included_file.php'),
+            array('./otherfolder/my_included_file.php', '/otherfolder/my_included_file.php'),
+        );
+    }
+
+    private function renameAndCompareWithIncludes($orig, $expected, $includedFile) {
         $this->populateFile($orig);
 
         $s = new Scisr();
         $sniffer = new MockSniffer();
-        $sniffer->incFile = $incFile;
+        $sniffer->incFile = $includedFile;
         $sniffer->test_file = $this->test_file;
         $s->setSniffer($sniffer);
         $s->setRenameMethod('Foo', 'bar', 'baz');
@@ -771,8 +807,17 @@ EOL;
         $this->compareFile($expected);
     }
 
-    public function testGetPropertyTypeFromRequiredFile() {
-        $this->markTestIncomplete();
+    public function testDontGetPropertyTypeFromFileNotIncluded() {
+        $incFile = dirname($this->test_file) . '/my_included_file.php';
+        $orig = <<<EOL
+<?php
+\$f->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+\$f->bar();
+EOL;
+        $this->renameAndCompareWithIncludes($orig, $expected, $incFile);
     }
 
 }
@@ -784,7 +829,6 @@ class MockSniffer extends Scisr_CodeSniffer
 {
     public function process($files, $local=false)
     {
-        Scisr_FileIncludes::registerFileInclude($this->test_file, $this->incFile);
         Scisr_VariableTypes::registerVariableType('$f', 'Foo', $this->incFile, 0, 4);
         parent::process($files, $local);
     }
