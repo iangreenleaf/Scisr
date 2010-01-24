@@ -4,6 +4,7 @@ class Scisr_CommentParser_ChangeTagValues extends PHP_CodeSniffer_CommentParser_
 {
 
     protected $_tagElements = array();
+    protected $_tagColumns = array();
 
     protected function getAllowedTags()
     {

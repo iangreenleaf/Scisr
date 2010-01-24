@@ -25,6 +25,7 @@ class Scisr_Operations_TrackCommentVariableTypes
 
         // Loop through the function arguments, looking for the given variable
         $varPtr = $funcOpenParen + 1;
+        $varFound = false;
         while ($varPtr > $funcOpenParen && $varPtr < $funcCloseParen) {
             if ($tokens[$varPtr]['content'] == $param->getVarName()) {
                 $varFound = true;

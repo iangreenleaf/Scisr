@@ -15,6 +15,11 @@ class ScisrTest extends Scisr_SingleFileTest
         $s->addFile($this->test_file);
         $s->run();
 
+        $s = new Scisr();
+        $s->setRenameMethod('DummyClass', 'dummy', 'dummy2');
+        $s->addFile($this->test_file);
+        $s->run();
+
         $this->compareFile($code);
 
     }
@@ -24,7 +29,7 @@ class ScisrTest extends Scisr_SingleFileTest
     }
 
     /**
-     * @group bug1
+     * @ticket 1
      */
     public function testNoPHPCode() {
         $code = <<<EOF
@@ -34,4 +39,64 @@ class ScisrTest extends Scisr_SingleFileTest
 EOF;
         $this->parseCode($code);
     }
+
+    /**
+     * @ticket 5
+     */
+    public function testEmptyComment() {
+        $code = <<<EOL
+<?php
+/**
+ */
+function someFunction() { }
+EOL;
+        $this->parseCode($code);
+
+        $code = <<<EOL
+<?php
+/***/
+function someFunction() { }
+EOL;
+        $this->parseCode($code);
+    }
+
+    /**
+     * @ticket 5
+     */
+    public function testEmptyVarTag() {
+        $code = <<<EOL
+<?php
+/**
+ * @var
+ */
+\$foo;
+EOL;
+        $this->parseCode($code);
+    }
+
+    /**
+     * @ticket 8
+     */
+    public function testEmptyParamTag() {
+        $code = <<<EOL
+<?php
+/**
+ * @param
+ */
+function someFunction() { }
+EOL;
+        $this->parseCode($code);
+    }
+
+    public function testEmptyReturnTag() {
+        $code = <<<EOL
+<?php
+/**
+ * @return
+ */
+function someFunction() { }
+EOL;
+        $this->parseCode($code);
+    }
+
 }

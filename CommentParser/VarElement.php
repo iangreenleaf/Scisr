@@ -26,6 +26,7 @@ class Scisr_CommentParser_VarElement extends Scisr_CommentParser_SingleElement
     {
         // Look for the special form
         if ($name == 'content'
+            && $content !== ''
             && $content{0} === '$'
             && preg_match('/(\$\w+)(\s+)(\w+)/', $content, $matches) !== false
         ) {
