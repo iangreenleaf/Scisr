@@ -71,6 +71,8 @@ If you find a bug or would like to request a feature, please "open an issue thro
 
 h2(#license). License
 
+h3(gpl). GPL Version 3
+
 Scisr is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
 Scisr is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
