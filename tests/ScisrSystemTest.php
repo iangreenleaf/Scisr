@@ -20,4 +20,8 @@ class ScisrSystemTest extends Scisr_Tests_MultipleFileTestCase
         $this->markTestIncomplete();
     }
 
+    public function testPrintUsageOnBadParams() {
+        $this->markTestIncomplete();
+    }
+
 }

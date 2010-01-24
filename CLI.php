@@ -29,7 +29,7 @@ class Scisr_CLI implements Scisr_Output
     {
         // Get the action name
         // TODO validate it
-        $action = array_shift($args);
+        $action = $this->getArg($args);
         // Parse all other options
         $shortOptions = 'at';
         $longOptions = array('aggressive', 'timid');
@@ -45,22 +45,34 @@ class Scisr_CLI implements Scisr_Output
         $actionOpts = array();
         switch ($action) {
         case 'rename-class':
-            $oldName = array_shift($params);
-            $newName = array_shift($params);
+            $oldName = $this->getArg($params);
+            $newName = $this->getArg($params);
             $this->scisr->setRenameClass($oldName, $newName);
             break;
         case 'rename-method':
-            $class = array_shift($params);
-            $oldName = array_shift($params);
-            $newName = array_shift($params);
+            $class = $this->getArg($params);
+            $oldName = $this->getArg($params);
+            $newName = $this->getArg($params);
             $this->scisr->setRenameMethod($class, $oldName, $newName);
             break;
         case 'rename-file':
-            $oldName = array_shift($params);
-            $newName = array_shift($params);
+            $oldName = $this->getArg($params);
+            $newName = $this->getArg($params);
             $this->scisr->setRenameFile($oldName, $newName);
             break;
+        default:
+            throw new Exception("Command \"$action\" not recognized");
+            return;
         }
+    }
+
+    private function getArg(&$params)
+    {
+        $arg = array_shift($params);
+        if ($arg === null) {
+            throw new Exception("Not enough arguments");
+        }
+        return $arg;
     }
 
     private function parseOtherOpts($params)
@@ -103,7 +115,14 @@ class Scisr_CLI implements Scisr_Output
         // Remove our own filename
         array_shift($args);
         // Send to the options handler
-        $this->parseOpts($args);
+        try {
+            $this->parseOpts($args);
+        } catch (Exception $e) {
+            $this->outputString('Error: ' . $e->getMessage());
+            $this->outputString("\n");
+            $this->printUsage();
+            exit(2);
+        }
         // Run Scisr
         $this->scisr->run();
     }
@@ -203,6 +222,27 @@ class Scisr_CLI implements Scisr_Output
             $result[$name] = $req;
         }
         return $result;
+    }
+
+    /**
+     * Print usage information to our output handler
+     */
+    public function printUsage()
+    {
+        $usage = <<<EOL
+Usage:
+  scisr.php rename-class OldName NewName [options] [files]
+  scisr.php rename-method OwningClassName oldMethodName newMethodName [options] [files]
+  scisr.php rename-file old/file_name new/dir/new_file_name [options] [files]
+
+[files] is any number of files and/or directories to be searched and modified.
+
+Options:
+    -t, --timid                 Do not make changes to the files, just list filenames with line numbers.
+    -a, --aggressive            Make changes even when we're not sure they're correct.
+EOL;
+        $this->outputString($usage);
+
     }
 
 }
