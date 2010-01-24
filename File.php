@@ -4,6 +4,11 @@
  * A single file, as Scisr sees it.
  *
  * Used to track edits and then make the actual changes.
+ *
+ * @todo Perhaps this could extend PHP_CodeSniffer_File. This would enable us to 
+ * move a lot of the responsibilities of Scisr_ChangeRegistry into this class, 
+ * which probably makes more sense in the end. And it ought to let us nicely 
+ * encapsulate the business of caching parsed info (ticket #4).
  */
 class Scisr_File
 {
