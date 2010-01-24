@@ -62,6 +62,8 @@ Additional options:
 
 h2(#installation). Installation
 
+You will need PHP 5. Currently Scisr probably only works on Unix-like systems.
+
 # "Download Scisr":http://github.com/youngian/{{ page.github_name }}/archives/master.
 # You can run Scisr right from the folder where you unpacked it. Or, if you'd prefer, you can move @scisr.php@ to somewhere in your executable path, and move everything else to a PHP include directory.
 
