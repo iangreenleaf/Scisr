@@ -124,6 +124,11 @@ class Scisr_ChangeRegistry
      */
     public static function addRename($oldName, $newName)
     {
+        // Don't rename the file if we're in timid mode
+        if (self::get('timid') === true) {
+            return;
+        }
+
         $file = self::getFile($oldName);
         $file->rename($newName);
         self::setFile($file);

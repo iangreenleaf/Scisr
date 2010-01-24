@@ -33,6 +33,18 @@ class RenameFileSystemTest extends Scisr_Tests_MultipleFileTestCase
         $this->compareDir(dirname(__FILE__) . '/_files/renameFileFixture-after-rename-file', $this->test_dir);
     }
 
+    public function testDontMoveFileInTimidMode() {
+        $this->populateDir(dirname(__FILE__) . '/_files/renameFileFixture', $this->test_dir);
+
+        $s = new Scisr();
+        $s->setEditMode(Scisr::MODE_TIMID);
+        $s->setRenameFile($this->test_dir . '/test2.php', $this->test_dir . '/otherfolder/things.php');
+        $s->addFile($this->test_dir);
+        $s->run();
+
+        $this->compareDir(dirname(__FILE__) . '/_files/renameFileFixture', $this->test_dir);
+    }
+
 	/**
 	 * @dataProvider includesRenameProvider
 	 */
