@@ -643,6 +643,52 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    public function testRenameFunctionParameterWithPHPDocTypeWithoutVarName() {
+        $this->markTestIncomplete();
+        $orig = <<<EOL
+<?php
+/**
+ * @param Foo a parameter
+ */
+function quark(\$f) {
+    \$f->bar();
+}
+EOL;
+        $expected = <<<EOL
+<?php
+/**
+ * @param Foo a parameter
+ */
+function quark(\$f) {
+    \$f->baz();
+}
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
+    public function testRenameFunctionParameterWithPHPDocTypeWithoutVarNameOrDescription() {
+        $this->markTestIncomplete();
+        $orig = <<<EOL
+<?php
+/**
+ * @param Foo
+ */
+function quark(\$f) {
+    \$f->bar();
+}
+EOL;
+        $expected = <<<EOL
+<?php
+/**
+ * @param Foo
+ */
+function quark(\$f) {
+    \$f->baz();
+}
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
     public function testRenameMethodParameterWithPHPDocType() {
         $orig = <<<EOL
 <?php
