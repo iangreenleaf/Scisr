@@ -1,6 +1,6 @@
 body {
-    padding-left: 10em;
-    padding-right: 10em;
+	padding-left: 10em;
+	padding-right: 10em;
 }
 
 #page {
@@ -19,4 +19,35 @@ div#nav>ul {
 	position: fixed;
 	width: 7em;
 	text-align: right;
+}
+
+h1 .connect {
+	display: none;
+}
+
+h1 .name {
+	display: block;
+}
+
+h1 .description {
+	display: block;
+	float: left;
+}
+
+#version {
+	margin-left: 2em;
+	float: left;
+}
+
+#version .connect {
+	display: none;
+}
+
+#version .number:before {
+	content: "v";
+}
+
+/* Clear to avoid floated version number */
+h2 {
+	clear: both;
 }
