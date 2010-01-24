@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Scisr, a refactoring tool for PHP
+title: <span class="name">Scisr</span>, <span class="description">a refactoring tool for PHP</span>
 github_name: Scisr
 current_version: 0.1.0
 nav:
