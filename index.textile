@@ -24,6 +24,8 @@ h2(#about). About
 
 <span class="title-acronym">Sc</span>isr is an <span class="title-acronym">i</span>mperfect but <span class="title-acronym">s</span>imple <span class="title-acronym">r</span>efactorer. It is written in and for PHP.
 
+I like to pronounce "Scisr" with a hard 'c' sound.
+
 _Scisr is imperfect._ Because PHP is weakly and dynamically typed, a refactorer will never make the right decision in every imaginable case. Scisr accepts this limitation and settles for trying to do the thing that is most likely to be right. When in doubt, Scisr errs on the side of caution.
 
 _Scisr is simple._ Scisr doesn't tell you how to structure your work. Scisr assumes you are doing smart things like using a version control system and testing the changes Scisr makes, but it doesn't try to dictate those parts of the process. Scisr sticks to doing what Scisr does best.
