@@ -28,7 +28,7 @@ class Scisr_CommentParser_VarElement extends Scisr_CommentParser_SingleElement
         if ($name == 'content'
             && $content !== ''
             && $content{0} === '$'
-            && preg_match('/(\$\w+)(\s+)(\w+)/', $content, $matches) !== false
+            && preg_match('/(\$\w+)(\s+)(\w+)/', $content, $matches) !== 0
         ) {
             $this->_specialForm = true;
             $this->_varName = $matches[1];

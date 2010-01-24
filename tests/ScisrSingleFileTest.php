@@ -122,4 +122,18 @@ EOL;
         $this->parseCode($code);
     }
 
+    /**
+     * @ticket 11
+     */
+    public function testIncompleteVar() {
+        $code = <<<EOL
+<?php
+/**
+ * @var \$foo
+ */
+\$foo = 1;
+EOL;
+        $this->parseCode($code);
+    }
+
 }
