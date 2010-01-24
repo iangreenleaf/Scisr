@@ -99,4 +99,27 @@ EOL;
         $this->parseCode($code);
     }
 
+    public function testTagWithoutFunction() {
+        $code = <<<EOL
+<?php
+/**
+ * @param string \$myVar a param
+ * @return int something
+ */
+\$foo = 1;
+EOL;
+        $this->parseCode($code);
+    }
+
+    public function testTagWithoutVar() {
+        $code = <<<EOL
+<?php
+/**
+ * @var int
+ */
+echo "blah";
+EOL;
+        $this->parseCode($code);
+    }
+
 }

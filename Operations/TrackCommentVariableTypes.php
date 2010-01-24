@@ -11,6 +11,11 @@ class Scisr_Operations_TrackCommentVariableTypes
     protected function processVar($var, $commentPtr, $phpcsFile)
     {
         $varPtr = $phpcsFile->findNext(T_VARIABLE, $commentPtr);
+
+        if ($varPtr === false) {
+            return false;
+        }
+
         $this->setVariableType($varPtr, $var->getContent(), $phpcsFile, $var->getVarName());
     }
 
@@ -18,6 +23,10 @@ class Scisr_Operations_TrackCommentVariableTypes
     {
         $tokens = $phpcsFile->getTokens();
         $funcPtr = $phpcsFile->findNext(T_FUNCTION, $commentPtr);
+
+        if ($funcPtr === false) {
+            return false;
+        }
 
         // Find the bounds of the function argument list
         $funcOpenParen = $tokens[$funcPtr]['parenthesis_opener'];
@@ -46,7 +55,15 @@ class Scisr_Operations_TrackCommentVariableTypes
     {
         $tokens = $phpcsFile->getTokens();
         $funcPtr = $phpcsFile->findNext(T_FUNCTION, $commentPtr);
+        if ($funcPtr === false) {
+            return;
+        }
+
         $funcNamePtr = $phpcsFile->findNext(T_STRING, $funcPtr);
+        if ($funcNamePtr === false) {
+            return;
+        }
+
         // We identify this as a function type by prepending a '*' to the name
         $funcName = '*' . $tokens[$funcNamePtr]['content'];
         $this->setVariableType($funcNamePtr, $return->getValue(), $phpcsFile, $funcName);
