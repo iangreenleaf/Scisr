@@ -1,3 +1,13 @@
+h1,h2,h3,h4,h5,h6 {
+	font-family: Palatino, "Palatino Linotype", "Hoefler Text", Times, "Times New Roman", serif;
+}
+
+body {
+	font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, sans-serif;
+}
+
+/* Left margin to make sure we always show the nav.
+   Right margin to keep things balanced. */
 body {
 	padding-left: 10em;
 	padding-right: 10em;
@@ -11,6 +21,7 @@ body {
 div#nav {
 	width: 7em;
 	margin-left: -10em;
+	clear: both;
 }
 div#nav>ul {
 	margin: 0;
@@ -27,16 +38,25 @@ h1 .connect {
 
 h1 .name {
 	display: block;
+	float: left;
+	font-size: 1.6em;
 }
 
 h1 .description {
 	display: block;
 	float: left;
+	clear: left;
+	font-size: 0.9em;
+	font-weight: normal;
+	font-style: italic;
+	margin-top: -0.3em;
 }
 
 #version {
-	margin-left: 2em;
+	margin-left: 3em;
 	float: left;
+	font-style: italic;
+	padding-top: 0.2em;
 }
 
 #version .connect {
@@ -51,3 +71,8 @@ h1 .description {
 h2 {
 	clear: both;
 }
+
+.title-acronym {
+    text-decoration: underline;
+}
+
