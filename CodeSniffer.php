@@ -11,6 +11,7 @@ class Scisr_CodeSniffer extends PHP_CodeSniffer
         $cwd = getcwd();
         parent::__construct($verbosity, $tabWidth);
         chdir($cwd);
+        $this->setAllowedFileExtensions(array('php', 'inc', 'html'));
     }
 
     /**
