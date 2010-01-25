@@ -2,7 +2,7 @@
 layout: default
 title: <strong class="name">Scisr</strong><span class="connect">, </span><span class="description">a refactoring tool for PHP</span>
 github_name: Scisr
-current_version: 0.1.0
+current_version: 0.1.1
 nav:
   - name: About
     link: "about"
