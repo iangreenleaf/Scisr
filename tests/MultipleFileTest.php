@@ -9,9 +9,24 @@ require_once '../Scisr.php';
 class Scisr_Tests_MultipleFileTestCase extends PHPUnit_Framework_TestCase
 {
     public function setUp() {
-        $this->rel_test_dir = 'myTestDir';
-        $this->test_dir = dirname(__FILE__) . '/' . $this->rel_test_dir;
+        $this->rel_test_dir = $this->getTestDir(true);
+        $this->test_dir = $this->getTestDir();
         mkdir($this->test_dir);
+    }
+
+    /**
+     * We need this so that we can have the test dir available to provider functions
+     * @param boolean $relative if true, return the directory relative to the base
+     * tests folder, otherwise return an absolute path
+     * @return string path to the test directory
+     */
+    protected function getTestDir($relative=false) {
+        $rel_test_dir = 'myTestDir';
+        if ($relative) {
+            return $rel_test_dir;
+        } else {
+            return dirname(__FILE__) . '/' . $rel_test_dir;
+        }
     }
 
     public function tearDown() {
