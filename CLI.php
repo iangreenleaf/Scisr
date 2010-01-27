@@ -16,9 +16,13 @@ class Scisr_CLI implements Scisr_Output
     const OPT_NONE = 0;
     const OPT_REQUIRED = 1;
 
-    public function __construct()
+    public function __construct($output=null)
     {
-        $this->scisr = new Scisr($this);
+        if ($output === null) {
+            $output = new Scisr_CLI_Output();
+        }
+        $this->output = $output;
+        $this->scisr = new Scisr($this->output);
     }
 
     /**
@@ -127,9 +131,10 @@ class Scisr_CLI implements Scisr_Output
         return 0;
     }
 
+    // We proxy output through here for simplicity
     public function outputString($message)
     {
-        echo trim($message) . "\n";
+        $this->output->outputString($message);
     }
 
     /**

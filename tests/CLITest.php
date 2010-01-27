@@ -151,12 +151,9 @@ class CLITest extends PHPUnit_Framework_TestCase
         $mock->expects($this->never())
             ->method('run')
             ->will($this->returnValue(true));
-        $c = new Scisr_CLI();
+        $c = new Scisr_CLI(new Scisr_NullOutput());
         $c->setScisr($mock);
-        //TODO fix our broken output mechanism
-        ob_start();
         $c->process($args);
-        ob_end_clean();
     }
 
     public function badArgsProvider() {
