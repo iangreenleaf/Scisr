@@ -40,20 +40,10 @@ class ScisrSystemTest extends Scisr_Tests_MultipleFileTestCase
         $this->markTestIncomplete();
     }
 
-    /**
-     * @dataProvider badArgsProvider
-     */
-    public function testPrintUsageOnBadArgs($args) {
+    public function testPrintUsageOnBadArgs() {
+        $args = array('foo', 'bar', 'baz', $this->getTestDir());
         $output = $this->runShellScisr($args, false);
         $this->assertRegExp('/usage/i', $output);
-    }
-
-    public function badArgsProvider() {
-        return array(
-            array(array('foo')),
-            array(array('foo', 'bar', 'baz', $this->getTestDir())),
-            array(array('rename-class', 'bar')),
-        );
     }
 
 }
