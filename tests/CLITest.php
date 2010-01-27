@@ -151,9 +151,12 @@ class CLITest extends PHPUnit_Framework_TestCase
         $mock->expects($this->never())
             ->method('run')
             ->will($this->returnValue(true));
-        $c = new Scisr_CLI(new Scisr_NullOutput());
+        $output = new Scisr_CaptureOutput();
+        $c = new Scisr_CLI($output);
         $c->setScisr($mock);
         $c->process($args);
+        // Let's make sure it printed a usage message too
+        $this->assertRegExp('/usage/i', $output->getOutput());
     }
 
     public function badArgsProvider() {
