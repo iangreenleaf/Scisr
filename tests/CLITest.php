@@ -168,6 +168,8 @@ class CLITest extends PHPUnit_Framework_TestCase
             array(array('rename-file', 'file.php')),
             array(array('rename-file')),
             array(array('rename-method', 'bar', 'baz', 'file.php')),
+            array(array('rename-class', '--unrecognized', 'baz', 'file.php')),
+            array(array('rename-class', 'bar', '-z', 'file.php')),
         );
     }
 
