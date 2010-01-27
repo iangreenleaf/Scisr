@@ -40,6 +40,10 @@ class Scisr_CLI implements Scisr_Output
         $unparsedOptions = $options[1];
         $this->parseActionOpts($action, $unparsedOptions);
         $this->parseOtherOpts($options[0]);
+
+        if (count($unparsedOptions) == 0) {
+            throw new Exception('No paths provided to examine');
+        }
         $this->scisr->addFiles($unparsedOptions);
     }
 
