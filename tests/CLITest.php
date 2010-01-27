@@ -142,4 +142,33 @@ class CLITest extends PHPUnit_Framework_TestCase
         $c->process($args);
     }
 
+    /**
+     * @dataProvider badArgsProvider
+     */
+    public function testDontRunOnBadArgs($args) {
+        array_unshift($args, 'scisr_executable');
+        $mock = $this->getMock('Scisr');
+        $mock->expects($this->never())
+            ->method('run')
+            ->will($this->returnValue(true));
+        $c = new Scisr_CLI();
+        $c->setScisr($mock);
+        //TODO fix our broken output mechanism
+        ob_start();
+        $c->process($args);
+        ob_end_clean();
+    }
+
+    public function badArgsProvider() {
+        return array(
+            array(array('foo')),
+            array(array('foo', 'bar', 'baz', 'file.php')),
+            array(array('rename-class', 'bar')),
+            array(array('rename-class', 'bar', 'baz')),
+            array(array('rename-file', 'file.php')),
+            array(array('rename-file')),
+            array(array('rename-method', 'bar', 'baz', 'file.php')),
+        );
+    }
+
 }

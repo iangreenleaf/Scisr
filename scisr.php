@@ -4,4 +4,5 @@
 require_once('Scisr.php');
 
 $cli = new Scisr_CLI();
-$cli->process();
+$status = $cli->process();
+exit($status);

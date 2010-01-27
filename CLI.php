@@ -28,7 +28,6 @@ class Scisr_CLI implements Scisr_Output
     protected function parseOpts($args)
     {
         // Get the action name
-        // TODO validate it
         $action = $this->getArg($args);
         // Parse all other options
         $shortOptions = 'at';
@@ -121,10 +120,11 @@ class Scisr_CLI implements Scisr_Output
             $this->outputString('Error: ' . $e->getMessage());
             $this->outputString("\n");
             $this->printUsage();
-            exit(2);
+            return 2;
         }
         // Run Scisr
         $this->scisr->run();
+        return 0;
     }
 
     public function outputString($message)
