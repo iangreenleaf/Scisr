@@ -69,7 +69,6 @@ class Scisr_CLI implements Scisr_Output
             break;
         default:
             throw new Exception("Command \"$action\" not recognized");
-            return;
         }
     }
 
@@ -163,18 +162,22 @@ class Scisr_CLI implements Scisr_Output
         $nonOptions = array();
         while ($i < $len) {
             $curr = $args[$i];
-            if (substr($curr, 0, 2) == '--'
-                && array_key_exists($opt = substr($curr, 2), $longOpts)
-            ) {
+            if (substr($curr, 0, 2) == '--') {
+                if (!array_key_exists($opt = substr($curr, 2), $longOpts)) {
+                    throw new Exception("Option \"$curr\" not recognized");
+                }
+
                 if ($longOpts[$opt] == self::OPT_REQUIRED) {
                     $value = $args[++$i];
                 } else {
                     $value = null;
                 }
                 $parsedOptions[$opt] = $value;
-            } else if (substr($curr, 0, 1) == '-'
-                && array_key_exists($opt = substr($curr, 1), $shortOpts)
-            ) {
+            } else if (substr($curr, 0, 1) == '-') {
+                if (!array_key_exists($opt = substr($curr, 1), $shortOpts)) {
+                    throw new Exception("Option \"$curr\" not recognized");
+                }
+
                 if ($shortOpts[$opt] == self::OPT_REQUIRED) {
                     $value = $args[++$i];
                 } else {
