@@ -41,7 +41,7 @@ class ScisrSystemTest extends Scisr_Tests_MultipleFileTestCase
     }
 
     public function testPrintUsageOnBadArgs() {
-        $args = array('foo', 'bar', 'baz', $this->getTestDir());
+        $args = array('foo', 'bar', 'baz', $this->test_dir);
         $output = $this->runShellScisr($args, false);
         $this->assertRegExp('/usage/i', $output);
     }
@@ -50,6 +50,13 @@ class ScisrSystemTest extends Scisr_Tests_MultipleFileTestCase
         $args = array('--help');
         $output = $this->runShellScisr($args, true);
         $this->assertRegExp('/usage/i', $output);
+    }
+
+    public function testIgnoreFiles() {
+        $this->populateDir(dirname(__FILE__) . '/_files/ignoreFilesFixture', $this->test_dir);
+        $args = array('rename-class', 'Foo', 'Bar', '--ignore', 'test2.php,dir1/nested,dir2', $this->test_dir);
+        $output = $this->runShellScisr($args, true);
+        $this->compareDir(dirname(__FILE__) . '/_files/ignoreFilesFixture-after-rename', $this->test_dir);
     }
 
 }

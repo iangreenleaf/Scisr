@@ -38,8 +38,8 @@ class Scisr_CLI implements Scisr_Output
     protected function parseOpts($args)
     {
         // Parse all other options
-        $shortOptions = 'ath';
-        $longOptions = array('aggressive', 'timid', 'help');
+        $shortOptions = 'athi:';
+        $longOptions = array('aggressive', 'timid', 'help', 'ignore=');
         $options = $this->getopt($args, $shortOptions, $longOptions);
         $unparsedOptions = $options[1];
 
@@ -104,6 +104,14 @@ class Scisr_CLI implements Scisr_Output
             case "t":
             case "timid":
                 $this->scisr->setEditMode(Scisr::MODE_TIMID);
+                break;
+            case "i":
+            case "ignore":
+                // We doctor and pass this value in to let phpcs run a pattern on it
+                $fakekey = 'ignore=' . $value;
+                $cli = new PHP_CodeSniffer_CLI();
+                $result = $cli->processLongArgument($fakekey, null, array());
+                $this->scisr->setIgnorePatterns($result['ignored']);
                 break;
             case "help":
                 $this->showHelp = true;

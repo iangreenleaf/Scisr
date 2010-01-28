@@ -9,6 +9,35 @@ class CLITest extends PHPUnit_Framework_TestCase
 {
 
     /**
+     * @dataProvider ignoreOptProvider
+     */
+    public function testSetIgnore($args, $patterns) {
+        $mock = $this->getMock('Scisr');
+        $mock->expects($this->once())
+            ->method('setRenameClass')
+            ->with($this->equalTo('Foo'), $this->equalTo('Baz'));
+        $mock->expects($this->once())
+            ->method('setIgnorePatterns')
+            ->with($patterns);
+        $mock->expects($this->once())
+            ->method('run')
+            ->will($this->returnValue(true));
+        $c = new Scisr_CLI();
+        $c->setScisr($mock);
+        $c->process($args);
+    }
+
+    public function ignoreOptProvider() {
+        return array(
+            array(array('scisr_executable', 'rename-class', 'Foo', 'Baz', '--ignore', 'foo', 'file1.php'), array('foo')),
+            array(array('scisr_executable', 'rename-class', 'Foo', 'Baz', '--ignore', 'dir/foo,another/dir/,baz', 'file1.php'), array('dir/foo', 'another/dir/', 'baz')),
+            array(array('scisr_executable', 'rename-class', 'Foo', 'Baz', '--ignore=foo,bar,baz', 'file1.php'), array('foo', 'bar', 'baz')),
+            array(array('scisr_executable', 'rename-class', 'Foo', 'Baz', '-i', 'foo,bar,baz', 'file1.php'), array('foo', 'bar', 'baz')),
+            array(array('scisr_executable', 'rename-class', 'Foo', 'Baz', '-ifoo,bar,baz', 'file1.php'), array('foo', 'bar', 'baz')),
+        );
+    }
+
+    /**
      * @dataProvider aggressiveOptProvider
      */
     public function testSetAggressive($args) {

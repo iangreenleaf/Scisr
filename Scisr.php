@@ -77,6 +77,16 @@ class Scisr
     }
 
     /**
+     * Set filename patterns to ignore when parsing
+     * @see PHP_CodeSniffer::setIgnorePatterns
+     */
+    public function setIgnorePatterns($patterns)
+    {
+        // Just pass it right through to phpcs
+        $this->_sniffer->setIgnorePatterns($patterns);
+    }
+
+    /**
      * Rename a class
      * @param string $oldClass the class to be renamed
      * @param string $newClass the new class name to be given
