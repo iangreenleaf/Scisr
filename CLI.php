@@ -16,6 +16,12 @@ class Scisr_CLI implements Scisr_Output
     const OPT_NONE = 0;
     const OPT_REQUIRED = 1;
 
+    /**
+     * If true, quit without running and show usage instead
+     * @var boolean
+     */
+    private $showHelp = false;
+
     public function __construct($output=null)
     {
         if ($output === null) {
@@ -31,15 +37,18 @@ class Scisr_CLI implements Scisr_Output
      */
     protected function parseOpts($args)
     {
-        // Get the action name
-        $action = $this->getArg($args);
         // Parse all other options
-        $shortOptions = 'at';
-        $longOptions = array('aggressive', 'timid');
+        $shortOptions = 'ath';
+        $longOptions = array('aggressive', 'timid', 'help');
         $options = $this->getopt($args, $shortOptions, $longOptions);
         $unparsedOptions = $options[1];
-        $this->parseActionOpts($action, $unparsedOptions);
+
         $this->parseOtherOpts($options[0]);
+        if ($this->showHelp) {
+            return;
+        }
+
+        $this->parseActionOpts($unparsedOptions);
 
         if (count($unparsedOptions) == 0) {
             throw new Exception('No paths provided to examine');
@@ -47,8 +56,11 @@ class Scisr_CLI implements Scisr_Output
         $this->scisr->addFiles($unparsedOptions);
     }
 
-    private function parseActionOpts($action, &$params)
+    private function parseActionOpts(&$params)
     {
+        // Get the action name
+        $action = $this->getArg($params);
+
         $actionOpts = array();
         switch ($action) {
         case 'rename-class':
@@ -93,6 +105,9 @@ class Scisr_CLI implements Scisr_Output
             case "timid":
                 $this->scisr->setEditMode(Scisr::MODE_TIMID);
                 break;
+            case "help":
+                $this->showHelp = true;
+                break;
             }
         }
     }
@@ -123,6 +138,10 @@ class Scisr_CLI implements Scisr_Output
         // Send to the options handler
         try {
             $this->parseOpts($args);
+            if ($this->showHelp) {
+                $this->printUsage();
+                return 0;
+            }
         } catch (Exception $e) {
             $this->outputString('Error: ' . $e->getMessage());
             $this->outputString("\n");

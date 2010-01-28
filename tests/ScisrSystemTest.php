@@ -46,4 +46,10 @@ class ScisrSystemTest extends Scisr_Tests_MultipleFileTestCase
         $this->assertRegExp('/usage/i', $output);
     }
 
+    public function testPrintUsageOnHelp() {
+        $args = array('--help');
+        $output = $this->runShellScisr($args, true);
+        $this->assertRegExp('/usage/i', $output);
+    }
+
 }
