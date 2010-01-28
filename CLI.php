@@ -306,8 +306,19 @@ Usage:
 [files] is any number of files and/or directories to be searched and modified.
 
 Options:
-    -t, --timid                 Do not make changes to the files, just list filenames with line numbers.
-    -a, --aggressive            Make changes even when we're not sure they're correct.
+  -t, --timid           Do not make changes to the files, just list filenames
+                        with line numbers.
+
+  -a, --aggressive      Make changes even when we're not sure they're correct.
+
+  -e<extensions>, --extensions=<extensions>
+                        Specify a comma-separated list of allowed file extensions.
+
+  -i<patterns>, --ignore=<patterns>
+                        Specify a comma-separated list of patterns used to
+                        ignore directories and files.
+
+  -h, --help            Print usage instructions.
 EOL;
         $this->outputString($usage);
 
