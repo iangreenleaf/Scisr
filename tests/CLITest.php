@@ -38,6 +38,35 @@ class CLITest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider extensionsOptProvider
+     */
+    public function testSetExtensions($args, $patterns) {
+        $mock = $this->getMock('Scisr');
+        $mock->expects($this->once())
+            ->method('setRenameClass')
+            ->with($this->equalTo('Foo'), $this->equalTo('Baz'));
+        $mock->expects($this->once())
+            ->method('setAllowedFileExtensions')
+            ->with($patterns);
+        $mock->expects($this->once())
+            ->method('run')
+            ->will($this->returnValue(true));
+        $c = new Scisr_CLI();
+        $c->setScisr($mock);
+        $c->process($args);
+    }
+
+    public function extensionsOptProvider() {
+        return array(
+            array(array('scisr_executable', 'rename-class', 'Foo', 'Baz', '--extensions', 'foo', 'file1.php'), array('foo')),
+            array(array('scisr_executable', 'rename-class', 'Foo', 'Baz', '--extensions', 'html,php,inc,phtml', 'file1.php'), array('html', 'php', 'inc', 'phtml')),
+            array(array('scisr_executable', 'rename-class', 'Foo', 'Baz', '--extensions=html,php,inc,phtml', 'file1.php'), array('html', 'php', 'inc', 'phtml')),
+            array(array('scisr_executable', 'rename-class', 'Foo', 'Baz', '-e', 'foo,bar,baz', 'file1.php'), array('foo', 'bar', 'baz')),
+            array(array('scisr_executable', 'rename-class', 'Foo', 'Baz', '-efoo,bar,baz', 'file1.php'), array('foo', 'bar', 'baz')),
+        );
+    }
+
+    /**
      * @dataProvider aggressiveOptProvider
      */
     public function testSetAggressive($args) {

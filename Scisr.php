@@ -87,6 +87,16 @@ class Scisr
     }
 
     /**
+     * Set allowed file extensions
+     * @see PHP_CodeSniffer::setAllowedFileExtensions
+     */
+    public function setAllowedFileExtensions($extensions)
+    {
+        // Just pass it right through to phpcs
+        $this->_sniffer->setAllowedFileExtensions($extensions);
+    }
+
+    /**
      * Rename a class
      * @param string $oldClass the class to be renamed
      * @param string $newClass the new class name to be given

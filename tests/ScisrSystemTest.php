@@ -59,4 +59,11 @@ class ScisrSystemTest extends Scisr_Tests_MultipleFileTestCase
         $this->compareDir(dirname(__FILE__) . '/_files/ignoreFilesFixture-after-rename', $this->test_dir);
     }
 
+    public function testExtensions() {
+        $this->populateDir(dirname(__FILE__) . '/_files/fileExtensionsFixture', $this->test_dir);
+        $args = array('rename-class', 'Foo', 'Bar', '--extensions', 'inc,foo', $this->test_dir);
+        $output = $this->runShellScisr($args, true);
+        $this->compareDir(dirname(__FILE__) . '/_files/fileExtensionsFixture-after-rename', $this->test_dir);
+    }
+
 }

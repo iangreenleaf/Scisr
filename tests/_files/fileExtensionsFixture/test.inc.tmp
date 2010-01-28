@@ -1,0 +1,3 @@
+<?php
+
+$f = new Foo();

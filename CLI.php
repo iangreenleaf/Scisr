@@ -38,8 +38,8 @@ class Scisr_CLI implements Scisr_Output
     protected function parseOpts($args)
     {
         // Parse all other options
-        $shortOptions = 'athi:';
-        $longOptions = array('aggressive', 'timid', 'help', 'ignore=');
+        $shortOptions = 'athi:e:';
+        $longOptions = array('aggressive', 'timid', 'help', 'ignore=', 'extensions=');
         $options = $this->getopt($args, $shortOptions, $longOptions);
         $unparsedOptions = $options[1];
 
@@ -112,6 +112,14 @@ class Scisr_CLI implements Scisr_Output
                 $cli = new PHP_CodeSniffer_CLI();
                 $result = $cli->processLongArgument($fakekey, null, array());
                 $this->scisr->setIgnorePatterns($result['ignored']);
+                break;
+            case "e":
+            case "extensions":
+                // We doctor and pass this value in to let phpcs run a pattern on it
+                $fakekey = 'extensions=' . $value;
+                $cli = new PHP_CodeSniffer_CLI();
+                $result = $cli->processLongArgument($fakekey, null, array());
+                $this->scisr->setAllowedFileExtensions($result['extensions']);
                 break;
             case "help":
                 $this->showHelp = true;
