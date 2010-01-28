@@ -190,26 +190,47 @@ class Scisr_CLI implements Scisr_Output
         while ($i < $len) {
             $curr = $args[$i];
             if (substr($curr, 0, 2) == '--') {
-                if (!array_key_exists($opt = substr($curr, 2), $longOpts)) {
-                    throw new Exception("Option \"$curr\" not recognized");
-                }
 
-                if ($longOpts[$opt] == self::OPT_REQUIRED) {
+                $opt = substr($curr, 2);
+
+                // If there is a "=", split this argument into opt and value
+                if (($pos = strpos($opt, '=')) !== false) {
+                    $value = substr($opt, $pos + 1);
+                    $opt = substr($opt, 0, $pos);
+                    if ($longOpts[$opt] != self::OPT_REQUIRED) {
+                        throw new Exception("Value given for option \"$opt\", which does not accept a value");
+                    }
+                } else if ($longOpts[$opt] == self::OPT_REQUIRED) {
                     $value = $args[++$i];
                 } else {
                     $value = null;
                 }
+
+                if (!array_key_exists($opt, $longOpts)) {
+                    throw new Exception("Option \"$opt\" not recognized");
+                }
+
                 $parsedOptions[$opt] = $value;
-            } else if (substr($curr, 0, 1) == '-') {
-                if (!array_key_exists($opt = substr($curr, 1), $shortOpts)) {
-                    throw new Exception("Option \"$curr\" not recognized");
-                }
 
-                if ($shortOpts[$opt] == self::OPT_REQUIRED) {
+            } else if (substr($curr, 0, 1) == '-') {
+
+                $opt = substr($curr, 1, 1);
+
+                if (strlen($curr) > 2) {
+                    $value = substr($curr, 2);
+                    if ($shortOpts[$opt] != self::OPT_REQUIRED) {
+                        throw new Exception("Value given for option \"$opt\", which does not accept a value");
+                    }
+                } else if ($shortOpts[$opt] == self::OPT_REQUIRED) {
                     $value = $args[++$i];
                 } else {
                     $value = null;
                 }
+
+                if (!array_key_exists($opt, $shortOpts)) {
+                    throw new Exception("Option \"$opt\" not recognized");
+                }
+
                 $parsedOptions[$opt] = $value;
             } else {
                 $nonOptions[] = $curr;

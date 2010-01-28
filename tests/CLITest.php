@@ -93,6 +93,27 @@ class CLITest extends PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @dataProvider nonValueArgsProvider
+     */
+    public function testDontAllowValuesToNonValueArg($args) {
+        $stub = $this->getMock('Scisr');
+        $output = new Scisr_CaptureOutput();
+        $c = new Scisr_CLI($output);
+        $c->setScisr($stub);
+        $this->assertNotEquals(0, $c->process($args));
+        // Let's make sure it printed a usage message too
+        $this->assertRegExp('/error.*does not accept a value/i', $output->getOutput());
+    }
+
+    public function nonValueArgsProvider() {
+        return array(
+            array(array('scisr_executable', 'rename-class', 'Foo', 'Baz', '--timid=foo', 'file1.php')),
+            array(array('scisr_executable', 'rename-class', 'Foo', 'Baz', '--aggressive=foo,bar/stuff', 'file1.php')),
+            array(array('scisr_executable', 'rename-class', 'Foo', 'Baz', '-tfoo', 'foo', 'file1.php')),
+        );
+    }
+
     public function testDontAllowTimidAndAggressiveAtSameTime() {
         $this->markTestSkipped("Maybe it's okay if both are passed, and we just accept the last one?");
         $stub = $this->getMock('Scisr');
