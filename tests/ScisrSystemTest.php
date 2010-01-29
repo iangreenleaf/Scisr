@@ -29,15 +29,36 @@ class ScisrSystemTest extends Scisr_Tests_MultipleFileTestCase
     }
 
     public function testChangedFileNotification() {
-        $this->markTestIncomplete();
+        $this->populateDir(dirname(__FILE__) . '/_files/cliFixture', $this->test_dir);
+        $args = array('rename-class', 'Foo', 'Bar', $this->test_dir);
+        $output = $this->runShellScisr($args, true);
+        $this->assertRegexp('/changed 2 files/i', $output);
+    }
+
+    public function testTimidNotification() {
+        $this->populateDir(dirname(__FILE__) . '/_files/cliFixture', $this->test_dir);
+        $args = array('rename-class', 'Foo', 'Bar', '--timid', $this->test_dir);
+        $output = $this->runShellScisr($args, true);
+        $this->assertRegexp('/test\.php/', $output);
+        $this->assertRegexp('/test2\.php/', $output);
+        $this->assertRegexp('/not applied/i', $output);
     }
 
     public function testNotChangedNotification() {
-        $this->markTestIncomplete();
+        $this->populateDir(dirname(__FILE__) . '/_files/cliFixture', $this->test_dir);
+        $args = array('rename-class', 'NotFoo', 'NotBar', $this->test_dir);
+        $output = $this->runShellScisr($args, true);
+        $this->assertRegexp('/changed 0 files/i', $output);
     }
 
-    public function testAllNotifications() {
-        $this->markTestIncomplete();
+    public function testTentativeChangeNotification() {
+        $this->populateDir(dirname(__FILE__) . '/_files/cliFixture', $this->test_dir);
+        $args = array('rename-class', 'Foo', 'Bar', $this->test_dir);
+        $output = $this->runShellScisr($args, true);
+        $this->assertRegexp('/1 file/i', $output);
+        $this->assertNotRegexp('/test\.php/', $output);
+        $this->assertRegexp('/test2\.php/', $output);
+        $this->assertRegexp('/not applied/i', $output);
     }
 
     public function testPrintUsageOnBadArgs() {

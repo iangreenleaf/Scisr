@@ -10,4 +10,4 @@ class Baz {
 
 $f = new Baz();
 
-$b = Baz::bar();
+$b = $f->bar();

@@ -4,10 +4,10 @@
  * A simple test class
  */
 class Foo {
-    function bar() {
+    function quark() {
     }
 }
 
 $f = new Foo();
 
-$b = $f->bar();
+$b = $f->quark();

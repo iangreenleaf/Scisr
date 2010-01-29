@@ -9,15 +9,25 @@ class RenameMethodSystemTest extends Scisr_Tests_MultipleFileTestCase
 {
 
     public function testRenameMethodAndCompareFile() {
-        $this->markTestIncomplete();
-    }
+        $this->populateDir(dirname(__FILE__) . '/_files/cliFixture', $this->test_dir);
 
-    public function testRenameMethodAndCompareFileWithRelativeDir() {
-        $this->markTestIncomplete();
+        $s = new Scisr();
+        $s->setRenameMethod('Foo', 'bar', 'quark');
+        $s->addFile($this->test_dir . '/test.php');
+        $s->run();
+
+        $this->compareFile(dirname(__FILE__) . '/_files/cliFixture-after-rename-method/test.php', $this->test_dir . '/test.php');
     }
 
     public function testRenameMethodAndCompareDir() {
-        $this->markTestIncomplete();
+        $this->populateDir(dirname(__FILE__) . '/_files/cliFixture', $this->test_dir);
+
+        $s = new Scisr();
+        $s->setRenameMethod('Foo', 'bar', 'quark');
+        $s->addFile($this->test_dir);
+        $s->run();
+
+        $this->compareFile(dirname(__FILE__) . '/_files/cliFixture-after-rename-method', $this->test_dir);
     }
 
     public function testRenameMethodWithIncludedFile() {
