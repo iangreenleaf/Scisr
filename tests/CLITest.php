@@ -143,16 +143,6 @@ class CLITest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testDontAllowTimidAndAggressiveAtSameTime() {
-        $this->markTestSkipped("Maybe it's okay if both are passed, and we just accept the last one?");
-        $stub = $this->getMock('Scisr');
-        $args = array('scisr_executable', 'rename-class', 'Foo', 'Baz', '--timid', '--aggressive', 'file1.php');
-        $c = new Scisr_CLI();
-        $c->setScisr($stub);
-        $this->setExpectedException('Exception');
-        $c->process($args);
-    }
-
     public function testGiveMultipleFiles() {
         $mock = $this->getMock('Scisr');
         $mock->expects($this->once())
