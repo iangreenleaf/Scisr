@@ -50,6 +50,12 @@ h3. Rename a file
 $ scisr.php rename-file old/file_name new/dir/new_file_name [files]
 {% endhighlight %}
 
+h3. Rename a class, and rename the class' file if the name matches
+
+{% highlight bash %}
+$ scisr.php rename-class-file OldClassName NewClassName [files]
+{% endhighlight %}
+
 h3. General
 
 The last arguments to @scisr.php@ are any number of directory or file names. These designate the code to be refactored.
