@@ -55,6 +55,28 @@ class RenameClassFileSystemTest extends Scisr_Tests_MultipleFileTestCase
         $this->compareFile(dirname(__FILE__) . '/_files/classFileFixture-after-rename/StrangeQuark.foo', $this->test_dir . '/StrangeQuark.foo');
     }
 
+    public function testRenameDirWithNamespacing() {
+        $this->populateDir(dirname(__FILE__) . '/_files/classFileNamespacedFixture', $this->test_dir);
+
+        $s = new Scisr();
+        $s->setRenameClassFile('Foo_Bar_Quark', 'Foo_Baz_Quack');
+        $s->addFile($this->test_dir);
+        $s->run();
+
+        $this->compareDir(dirname(__FILE__) . '/_files/classFileNamespacedFixture-after-rename', $this->test_dir);
+    }
+
+    public function testDontCreateDirNamespacingIfOriginalIsnt() {
+        $this->populateDir(dirname(__FILE__) . '/_files/classFileNamespacedFixture2', $this->test_dir);
+
+        $s = new Scisr();
+        $s->setRenameClassFile('Foo_Bar_Quark', 'Foo_Baz_Quack');
+        $s->addFile($this->test_dir);
+        $s->run();
+
+        $this->compareDir(dirname(__FILE__) . '/_files/classFileNamespacedFixture2-after-rename', $this->test_dir);
+    }
+
     public function testRenameClassFileAndCompareDir() {
         $this->populateDir(dirname(__FILE__) . '/_files/classFileFixture-dir', $this->test_dir);
 
