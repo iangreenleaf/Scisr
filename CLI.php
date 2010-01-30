@@ -79,6 +79,11 @@ class Scisr_CLI implements Scisr_Output
             $newName = $this->getArg($params);
             $this->scisr->setRenameFile($oldName, $newName);
             break;
+        case 'rename-class-file':
+            $oldName = $this->getArg($params);
+            $newName = $this->getArg($params);
+            $this->scisr->setRenameClassFile($oldName, $newName);
+            break;
         default:
             throw new Exception("Command \"$action\" not recognized");
         }
@@ -302,6 +307,7 @@ Usage:
   scisr.php rename-class OldName NewName [options] [files]
   scisr.php rename-method OwningClassName oldMethodName newMethodName [options] [files]
   scisr.php rename-file old/file_name new/dir/new_file_name [options] [files]
+  scisr.php rename-class-file OldName NewName [options] [files]
 
 [files] is any number of files and/or directories to be searched and modified.
 

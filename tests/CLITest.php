@@ -211,6 +211,23 @@ class CLITest extends PHPUnit_Framework_TestCase
         $c->process($args);
     }
 
+    public function testRenameClassFile() {
+        $mock = $this->getMock('Scisr');
+        $mock->expects($this->once())
+            ->method('setRenameClassFile')
+            ->with($this->equalTo('Foo'), $this->equalTo('Baz'));
+        $mock->expects($this->once())
+            ->method('addFiles')
+            ->with($this->equalTo(array('mydir')));
+        $mock->expects($this->once())
+            ->method('run')
+            ->will($this->returnValue(true));
+        $args = array('scisr_executable', 'rename-class-file', 'Foo', 'Baz', 'mydir');
+        $c = new Scisr_CLI();
+        $c->setScisr($mock);
+        $c->process($args);
+    }
+
     /**
      * @dataProvider badArgsProvider
      */

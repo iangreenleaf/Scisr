@@ -97,6 +97,15 @@ class Scisr
     }
 
     /**
+     * Get the list of allowed file extensions
+     * @return array(string) a list of file extensions
+     */
+    public function getAllowedFileExtensions()
+    {
+        return $this->_sniffer->allowedFileExtensions;
+    }
+
+    /**
      * Rename a class
      * @param string $oldClass the class to be renamed
      * @param string $newClass the new class name to be given
@@ -145,6 +154,17 @@ class Scisr
             $msg = "File \"$oldFilePath\" " . $msg;
             $this->sendOutput($msg);
         }
+    }
+
+    /**
+     * Rename a class, renaming the file as well if possible
+     * @param string $oldClass the class to be renamed
+     * @param string $newClass the new class name to be given
+     */
+    public function setRenameClassFile($oldClass, $newClass)
+    {
+        $this->setRenameClass($oldClass, $newClass);
+        $this->_firstPassListeners[] = new Scisr_Operations_RenameClassFile($oldClass, $newClass, $this);
     }
 
     /**

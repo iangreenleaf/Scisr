@@ -1,0 +1,8 @@
+<?php
+/* Why is this class so strange? It's hard to say... */
+class StrangeClass extends Foo {
+	private theOnlyFunc() {
+		$x = array(1, 1, 2, 3, 5, 8, 13, 21);
+		$y = array_pop($x);
+	}
+}
