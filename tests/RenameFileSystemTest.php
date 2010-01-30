@@ -27,7 +27,7 @@ class RenameFileSystemTest extends Scisr_Tests_MultipleFileTestCase
     public function testRenameFileToNewDirAndCompare() {
         $this->populateDir(dirname(__FILE__) . '/_files/renameFileFixture', $this->test_dir);
 
-        $this->doRenameFile($this->test_dir . '/stuff.php', $this->test_dir . '/newfolder/things.php');
+        $this->doRenameFile($this->test_dir . '/stuff.php', $this->test_dir . '/newfolder/subdir/things.php');
 
         $this->compareDir(dirname(__FILE__) . '/_files/renameFileFixture-after-rename-file-new-dir', $this->test_dir);
     }
