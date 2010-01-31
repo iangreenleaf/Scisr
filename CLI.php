@@ -25,7 +25,7 @@ class Scisr_CLI implements Scisr_Output
     public function __construct($output=null)
     {
         if ($output === null) {
-            $output = new Scisr_CLI_Output();
+            $output = new Scisr_Output_CLI();
         }
         $this->output = $output;
         $this->scisr = new Scisr($this->output);

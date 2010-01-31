@@ -127,7 +127,7 @@ class CLITest extends PHPUnit_Framework_TestCase
      */
     public function testDontAllowValuesToNonValueArg($args) {
         $stub = $this->getMock('Scisr');
-        $output = new Scisr_CaptureOutput();
+        $output = new Scisr_Output_String();
         $c = new Scisr_CLI($output);
         $c->setScisr($stub);
         $this->assertNotEquals(0, $c->process($args));
@@ -237,7 +237,7 @@ class CLITest extends PHPUnit_Framework_TestCase
         $mock->expects($this->never())
             ->method('run')
             ->will($this->returnValue(true));
-        $output = new Scisr_CaptureOutput();
+        $output = new Scisr_Output_String();
         $c = new Scisr_CLI($output);
         $c->setScisr($mock);
         $c->process($args);

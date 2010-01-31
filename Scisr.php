@@ -60,7 +60,7 @@ class Scisr
     {
         $this->setEditMode(self::MODE_CONSERVATIVE);
         if ($output === null) {
-            $output = new Scisr_NullOutput();
+            $output = new Scisr_Output_Null();
         }
         $this->_output = $output;
         $this->_sniffer = new Scisr_CodeSniffer();

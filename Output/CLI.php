@@ -2,7 +2,7 @@
 /**
  * An output handler for the command line
  */
-class Scisr_CLI_Output implements Scisr_Output
+class Scisr_Output_CLI implements Scisr_Output
 {
     public function outputString($message)
     {
