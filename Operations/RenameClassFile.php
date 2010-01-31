@@ -44,10 +44,20 @@ class Scisr_Operations_RenameClassFile implements PHP_CodeSniffer_Sniff
         // If it's the name we're looking for, see if the filename is a match
         if ($className == $this->oldName) {
             $filename = basename($phpcsFile->getFilename());
+            $pieces = explode('_', $this->oldName);
             foreach (array_keys($this->_scisr->getAllowedFileExtensions()) as $ext) {
                 if ($filename == "$this->oldName.$ext") {
                     $dir = dirname($phpcsFile->getFilename());
                     $this->_scisr->setRenameFile($phpcsFile->getFilename(), "$dir/$this->newName.$ext");
+                    break;
+                } else if (count($pieces) > 0) {
+                    $namespacedFile = implode('/', $pieces) . ".$ext";
+                    $baseDir = Scisr_Operations_ChangeFile::matchPaths($phpcsFile->getFilename(), $namespacedFile);
+                    if ($baseDir !== false) {
+                        $newNamespacedFile = implode('/', explode('_', $this->newName)) . ".$ext";
+                        $this->_scisr->setRenameFile($phpcsFile->getFilename(), "$baseDir$newNamespacedFile");
+                        break;
+                    }
                 }
             }
         }

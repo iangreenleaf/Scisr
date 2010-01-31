@@ -21,7 +21,7 @@ class Scisr_Operations_ChangeFile extends Scisr_Operations_AbstractFileOperation
     public function processInclude($phpcsFile, $includedFile, $line, $column, $length, $quote, $tentative)
     {
         // If the filename matches, register it
-        $base = $this->matchPaths($this->oldName, $includedFile, $phpcsFile);
+        $base = self::matchPaths($this->oldName, $includedFile);
         if ($base !== false) {
             $newName = $this->pathRelativeTo($this->newName, $base);
             Scisr_ChangeRegistry::addChange(
@@ -39,14 +39,12 @@ class Scisr_Operations_ChangeFile extends Scisr_Operations_AbstractFileOperation
      * See if paths match satisfactorily
      * @param string $expectedPath an absolute path to target file
      * @param string $actualPath the absolute or relative path that was found
-     * @param PHP_CodeSniffer_File $phpcsFile the file where $actualpath was 
-     * found
      * @return string|bool false if the paths do not match. If they do match,
      * returns the base, if any, that is not explicitly defined by $actualPath.
      * Since this method may return the empty string on success, strict type
      * comparison must be used.
      */
-    public function matchPaths($expectedPath, $actualPath, $phpcsFile)
+    public static function matchPaths($expectedPath, $actualPath)
     {
         // If it's an absolute path, it must match exactly
         if ($actualPath{0} == '/') {

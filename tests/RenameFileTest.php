@@ -138,7 +138,7 @@ class RenameFileTest extends Scisr_SingleFileTest
     public function testMatchPaths($path, $newPath, $expected) {
         $phpcsfile = $this->getMock('PHP_CodeSniffer_File', null, array(), '', false);
         $o = new Scisr_Operations_ChangeFile('dummy', 'dummy');
-        $this->assertSame($expected, $o->matchPaths($path, $newPath, $phpcsfile));
+        $this->assertSame($expected, Scisr_Operations_ChangeFile::matchPaths($path, $newPath));
     }
 
     public function matchPathsProvider() {
