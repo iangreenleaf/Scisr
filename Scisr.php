@@ -17,7 +17,7 @@
  */
 
 // Turn on error reporting
-error_reporting(E_ALL | E_STRICT);
+error_reporting(E_ALL);
 // Register our autoloader
 spl_autoload_register(array('Scisr', 'scisrAutoload'));
 // Include the main CodeSniffer file (this will register its own autoloader as well)
@@ -55,6 +55,11 @@ class Scisr
      * @var Scisr_CodeSniffer
      */
     private $_sniffer;
+    /**
+     * If the current operation parses cacheable information
+     * @var boolean
+     */
+    protected $_cacheResults = false;
 
     public function __construct($output=null)
     {
@@ -132,6 +137,7 @@ class Scisr
         $this->_firstPassListeners[] = new Scisr_Operations_TrackCommentVariableTypes();
         $this->_firstPassListeners[] = new Scisr_Operations_TrackIncludedFiles();
         $this->_listeners[] = new Scisr_Operations_RenameMethod($class, $oldMethod, $newMethod);
+        $this->_cacheResults = true;
     }
 
     /**
@@ -219,6 +225,7 @@ class Scisr
     {
         Scisr_Db_VariableTypes::init();
         Scisr_Db_FileIncludes::init();
+        Scisr_Db_Files::init();
 
         $sniffer = $this->_sniffer;
 
@@ -227,7 +234,7 @@ class Scisr
             foreach ($this->_firstPassListeners as $listener) {
                 $sniffer->addListener($listener);
             }
-            $sniffer->process($this->files);
+            $sniffer->process($this->files, false, $this->_cacheResults);
         }
 
         // NOTE: We do want to keep all the first-pass listeners for this pass.

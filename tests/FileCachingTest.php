@@ -26,6 +26,9 @@ EOL;
         // Sniff should be activated three times: twice the first run (once on 
         // each pass), and only once the second (second pass only)
         $mock->expects($this->exactly(3))->method('process');
+        // Make sure we don't get confused by an mtime exactly equal to the cache time
+        touch($this->test_file, time() - 1);
+
         $this->runWithMock($mock);
         $this->runWithMock($mock);
     }
@@ -76,5 +79,6 @@ class Scisr_FileTest extends Scisr
 {
     public function setFirstPassListener($listener) {
         $this->_firstPassListeners[] = $listener;
+        $this->_cacheResults = true;
     }
 }
