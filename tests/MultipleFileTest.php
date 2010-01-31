@@ -1,14 +1,14 @@
 <?php
-require_once 'PHPUnit/Framework.php';
-require_once '../Scisr.php';
+require_once 'Scisr_TestCase.php';
 
 /**
  * @runTestsInSeparateProcesses
  * @todo This test case uses shell commands. Rework with some recursive PHP funcs.
  */
-class Scisr_Tests_MultipleFileTestCase extends PHPUnit_Framework_TestCase
+class Scisr_Tests_MultipleFileTestCase extends Scisr_TestCase
 {
     public function setUp() {
+        parent::setUp();
         $this->rel_test_dir = $this->getTestDir(true);
         $this->test_dir = $this->getTestDir();
         mkdir($this->test_dir);
@@ -32,6 +32,7 @@ class Scisr_Tests_MultipleFileTestCase extends PHPUnit_Framework_TestCase
     public function tearDown() {
         // Cheat and just use a shell command
         shell_exec("rm -r $this->test_dir");
+        parent::tearDown();
     }
 
     public function populateDir($fixture, $dir) {

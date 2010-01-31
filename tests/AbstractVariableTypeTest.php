@@ -1,6 +1,5 @@
 <?php
-require_once 'PHPUnit/Framework.php';
-require_once '../Scisr.php';
+require_once 'Scisr_TestCase.php';
 
 /**
  * This test case is in a somewhat awkward place. Right now we are only unit 
@@ -9,7 +8,7 @@ require_once '../Scisr.php';
  * the other, not in-between like this.
  * @runTestsInSeparateProcesses
  */
-class AbstractVariableTypeTest extends PHPUnit_Framework_TestCase
+class AbstractVariableTypeTest extends Scisr_TestCase
 {
 
     /**

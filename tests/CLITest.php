@@ -1,11 +1,10 @@
 <?php
-require_once 'PHPUnit/Framework.php';
-require_once '../Scisr.php';
+require_once 'Scisr_TestCase.php';
 
 /**
  * @runTestsInSeparateProcesses
  */
-class CLITest extends PHPUnit_Framework_TestCase
+class CLITest extends Scisr_TestCase
 {
 
     /**

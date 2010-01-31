@@ -16,7 +16,7 @@ class Scisr_Db_VariableTypes
     {
         $db = Scisr_Db::getDB();
         $create = <<<EOS
-CREATE TABLE VariableTypes(filename text, scopeopen integer, variable text, type text, variable_pointer integer);
+CREATE TABLE IF NOT EXISTS VariableTypes(filename text, scopeopen integer, variable text, type text, variable_pointer integer);
 EOS;
         $db->exec($create);
         $create = <<<EOS

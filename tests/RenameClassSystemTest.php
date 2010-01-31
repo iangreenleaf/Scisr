@@ -1,6 +1,5 @@
 <?php
-require_once '../Scisr.php';
-require_once './MultipleFileTest.php';
+require_once 'MultipleFileTest.php';
 
 /**
  * @runTestsInSeparateProcesses

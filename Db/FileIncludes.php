@@ -14,7 +14,7 @@ class Scisr_Db_FileIncludes
         $db = Scisr_Db::getDB();
         // Yes, I know this is not the most efficient or normalized. But I'm lazy.
         $create = <<<EOS
-CREATE TABLE FileIncludes(file text, included_file text);
+CREATE TABLE IF NOT EXISTS FileIncludes(file text, included_file text);
 EOS;
         $db->exec($create);
     }

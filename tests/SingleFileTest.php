@@ -1,11 +1,11 @@
 <?php
-require_once 'PHPUnit/Framework.php';
-require_once '../Scisr.php';
+require_once 'Scisr_TestCase.php';
 
-class Scisr_SingleFileTest extends PHPUnit_Framework_TestCase
+class Scisr_SingleFileTest extends Scisr_TestCase
 {
 
     public function setUp() {
+        parent::setUp();
         mkdir(dirname(__FILE__) . '/d1');
         mkdir(dirname(__FILE__) . '/d1/d2');
         $this->test_file = dirname(__FILE__) . '/d1/d2/myTestFile.php';
@@ -16,6 +16,7 @@ class Scisr_SingleFileTest extends PHPUnit_Framework_TestCase
         unlink($this->test_file);
         rmdir(dirname(__FILE__) . '/d1/d2');
         rmdir(dirname(__FILE__) . '/d1');
+        parent::tearDown();
     }
 
     public function populateFile($contents) {
