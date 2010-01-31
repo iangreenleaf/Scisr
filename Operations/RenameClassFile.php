@@ -52,7 +52,7 @@ class Scisr_Operations_RenameClassFile implements PHP_CodeSniffer_Sniff
                     break;
                 } else if (count($pieces) > 0) {
                     $namespacedFile = implode('/', $pieces) . ".$ext";
-                    $baseDir = Scisr_Operations_ChangeFile::matchPaths($phpcsFile->getFilename(), $namespacedFile);
+                    $baseDir = Scisr_Operations_RenameFile::matchPaths($phpcsFile->getFilename(), $namespacedFile);
                     if ($baseDir !== false) {
                         $newNamespacedFile = implode('/', explode('_', $this->newName)) . ".$ext";
                         $this->_scisr->setRenameFile($phpcsFile->getFilename(), "$baseDir$newNamespacedFile");

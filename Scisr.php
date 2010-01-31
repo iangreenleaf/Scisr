@@ -141,7 +141,7 @@ class Scisr
      */
     public function setRenameFile($oldFilePath, $newFilePath)
     {
-        $this->_listeners[] = new Scisr_Operations_ChangeFile($oldFilePath, $newFilePath);
+        $this->_listeners[] = new Scisr_Operations_RenameFile($oldFilePath, $newFilePath);
         if (!file_exists($oldFilePath)) {
             $msg = 'does not exist, so will not be moved.';
         } else if (!is_writeable($oldFilePath)) {

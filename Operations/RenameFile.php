@@ -3,7 +3,7 @@
 /**
  * An operation to change the name of a class
  */
-class Scisr_Operations_ChangeFile extends Scisr_Operations_AbstractFileOperation
+class Scisr_Operations_RenameFile extends Scisr_Operations_AbstractFileOperation
 {
 
     public $oldName;
