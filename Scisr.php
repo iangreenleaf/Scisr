@@ -144,7 +144,7 @@ class Scisr
         $this->_listeners[] = new Scisr_Operations_ChangeFile($oldFilePath, $newFilePath);
         if (!file_exists($oldFilePath)) {
             $msg = 'does not exist, so will not be moved.';
-        } else if (!is_writeable($oldFilePath) || !is_writeable(dirname($newFilePath))) {
+        } else if (!is_writeable($oldFilePath)) {
             $msg = 'could not be moved.';
         } else {
             Scisr_ChangeRegistry::addRename($oldFilePath, $newFilePath);

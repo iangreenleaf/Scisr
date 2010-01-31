@@ -154,7 +154,19 @@ class Scisr_File
 
         // If there's a rename pending, do it
         if ($this->_newName !== null) {
-            rename($this->filename, $this->_newName);
+            $dir = dirname($this->_newName);
+            if (!is_dir($dir)) {
+                $success = mkdir($dir, 0775, true);
+                if (!$success) {
+                    $err = "Could not create new directory ($dir)";
+                    throw new Exception($err);
+                }
+            }
+            $success = rename($this->filename, $this->_newName);
+            if (!$success) {
+                $err = "Could not rename file ($this->filename => $this->_newName)";
+                throw new Exception($err);
+            }
         }
     }
 }
