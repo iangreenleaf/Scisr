@@ -38,11 +38,15 @@ h3. Rename a class
 $ scisr.php rename-class OldName NewName [files]
 {% endhighlight %}
 
+Rename a class, changing all references to that class in your code and PHPDoc.
+
 h3. Rename a class method
 
 {% highlight bash %}
 $ scisr.php rename-method OwningClassName oldMethodName newMethodName [files]
 {% endhighlight %}
+
+Rename a class method. Tries to guess variable types so as to only rename methods called on objects of the correct class.
 
 h3. Rename a file
 
@@ -50,11 +54,17 @@ h3. Rename a file
 $ scisr.php rename-file old/file_name new/dir/new_file_name [files]
 {% endhighlight %}
 
-h3. Rename a class, and rename the class' file if the name matches
+Rename a file, and try to modify require and include statements appropriately.
+
+At the current time, this command is a bit simplistic in which filenames it will detect.
+
+h3. Rename a class and containing file
 
 {% highlight bash %}
 $ scisr.php rename-class-file OldClassName NewClassName [files]
 {% endhighlight %}
+
+Rename a class, and rename the class' file if the name matches (for example, a class named Foo in Foo.php, or a class named Foo_Bar_Baz in Foo/Bar/Baz.inc).
 
 h3. General
 
