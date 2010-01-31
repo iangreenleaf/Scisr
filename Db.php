@@ -8,7 +8,7 @@ class Scisr_Db
     /**
      * Get the DB connection we're using
      */
-    public static function getDB()
+    public static function getDb()
     {
         static $db = null;
         if ($db === null) {
@@ -18,7 +18,7 @@ class Scisr_Db
         return $db;
     }
 
-    public static function clearDB()
+    public static function clearDb()
     {
         $db = self::getDB();
 

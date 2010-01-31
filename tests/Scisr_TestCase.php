@@ -6,11 +6,11 @@ class Scisr_TestCase extends PHPUnit_Framework_TestCase
 {
 
     public function setUp() {
-        Scisr_Db::clearDB();
+        Scisr_Db::clearDb();
     }
 
     public function tearDown() {
-        Scisr_Db::clearDB();
+        Scisr_Db::clearDb();
     }
 
 }

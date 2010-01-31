@@ -14,7 +14,7 @@ class Scisr_Db_VariableTypes
      */
     public static function init()
     {
-        $db = Scisr_Db::getDB();
+        $db = Scisr_Db::getDb();
         $create = <<<EOS
 CREATE TABLE IF NOT EXISTS VariableTypes(filename text, scopeopen integer, variable text, type text, variable_pointer integer);
 EOS;
@@ -35,7 +35,7 @@ EOS;
      */
     public static function registerVariableType($variable, $type, $filename, $scopeOpen, $varPtr)
     {
-        $db = Scisr_Db::getDB();
+        $db = Scisr_Db::getDb();
 
         // First delete any previous assignments in this scope
         $delete = <<<EOS
@@ -60,7 +60,7 @@ EOS;
      */
     public static function registerGlobalVariable($variable, $filename, $scopeOpen)
     {
-        $db = Scisr_Db::getDB();
+        $db = Scisr_Db::getDb();
 
         // Now insert this assignment
         $insert = <<<EOS
@@ -79,7 +79,7 @@ EOS;
      */
     public static function checkVariableDefinition($filename, $varPtr)
     {
-        $db = Scisr_Db::getDB();
+        $db = Scisr_Db::getDb();
 
         $sql = <<<EOS
 SELECT type FROM VariableTypes WHERE filename = ? AND variable_pointer = ?
@@ -103,7 +103,7 @@ EOS;
      */
     public static function getVariableType($variable, $filename, $scopeOpen)
     {
-        $db = Scisr_Db::getDB();
+        $db = Scisr_Db::getDb();
 
         $select = <<<EOS
 SELECT type FROM VariableTypes WHERE filename = ? AND variable = ? AND scopeopen = ? ORDER BY scopeopen DESC LIMIT 1
@@ -123,7 +123,7 @@ EOS;
      */
     public static function isGlobalVariable($variable, $filename, $scopeOpen)
     {
-        $db = Scisr_Db::getDB();
+        $db = Scisr_Db::getDb();
 
         $select = <<<EOS
 SELECT COUNT(*) FROM GlobalVariables WHERE filename = ? AND variable = ? AND scopeopen = ? LIMIT 1

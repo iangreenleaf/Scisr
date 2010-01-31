@@ -11,7 +11,7 @@ class Scisr_Db_FileIncludes
      */
     public static function init()
     {
-        $db = Scisr_Db::getDB();
+        $db = Scisr_Db::getDb();
         // Yes, I know this is not the most efficient or normalized. But I'm lazy.
         $create = <<<EOS
 CREATE TABLE IF NOT EXISTS FileIncludes(file text, included_file text);
@@ -26,7 +26,7 @@ EOS;
      */
     public static function registerFileInclude($filename, $includedFilename)
     {
-        $db = Scisr_Db::getDB();
+        $db = Scisr_Db::getDb();
 
         $insert = <<<EOS
 INSERT INTO FileIncludes (file, included_file) VALUES (?, ?)
@@ -42,7 +42,7 @@ EOS;
      */
     public static function getIncludedFiles($filename)
     {
-        $db = Scisr_Db::getDB();
+        $db = Scisr_Db::getDb();
 
         $select = <<<EOS
 SELECT included_file FROM FileIncludes WHERE file = ?
