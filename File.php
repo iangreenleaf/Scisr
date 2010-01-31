@@ -87,7 +87,6 @@ class Scisr_File
      * @param int $column the column number where the edit begins
      * @param int $length length of the text to remove
      * @param string $replacement the text to replace the removed text with
-     * @todo detect conflicting edits
      */
     public function addEdit($line, $column, $length, $replacement)
     {
