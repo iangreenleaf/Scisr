@@ -7,10 +7,13 @@ require_once 'SingleFileTest.php';
 class RenameMethodTest extends Scisr_SingleFileTest
 {
 
-    public function renameAndCompare($original, $expected, $class='Foo', $oldmethod='bar', $newmethod='baz') {
+    public function renameAndCompare($original, $expected, $class='Foo', $oldmethod='bar', $newmethod='baz', $aggressive=false) {
         $this->populateFile($original);
 
         $s = new Scisr();
+        if ($aggressive) {
+            $s->setEditMode(Scisr::MODE_AGGRESSIVE);
+        }
         $s->setRenameMethod($class, $oldmethod, $newmethod);
         $s->addFile($this->test_file);
         $s->run();
@@ -785,6 +788,70 @@ EOL;
 \$result = Foo::baz();
 EOL;
         $this->renameAndCompare($orig, $expected);
+    }
+
+    public function testRenameMethodNameInCommentsWhenAggressive() {
+        $orig = <<<EOL
+<?php
+/**
+ * We are talking about Foo::bar() here, also known as Foo->bar but not Foo::barnacle().
+ * Also when we just talk about bar or bar() not barnacle, that should only be
+ * renamed when aggressive.
+ */
+EOL;
+        $expected = <<<EOL
+<?php
+/**
+ * We are talking about Foo::baz() here, also known as Foo->baz but not Foo::barnacle().
+ * Also when we just talk about baz or baz() not barnacle, that should only be
+ * renamed when aggressive.
+ */
+EOL;
+        $this->renameAndCompare($orig, $expected, 'Foo', 'bar', 'baz', true);
+    }
+
+    public function testOnlyRenameSomeMethodNamesInCommentsWhenNotAggressive() {
+        $orig = <<<EOL
+<?php
+/**
+ * We are talking about Foo::bar() here, also known as Foo->bar but not Foo::barnacle().
+ * Also when we just talk about bar or bar() not barnacle, that should only be
+ * renamed when aggressive.
+ */
+EOL;
+        $expected = <<<EOL
+<?php
+/**
+ * We are talking about Foo::baz() here, also known as Foo->baz but not Foo::barnacle().
+ * Also when we just talk about bar or bar() not barnacle, that should only be
+ * renamed when aggressive.
+ */
+EOL;
+        $this->renameAndCompare($orig, $expected, 'Foo', 'bar', 'baz', false);
+    }
+
+    public function testRenameMethodNameInStringWhenAggressive() {
+        $orig = <<<EOL
+<?php
+\$x = "string with Foo::bar or Foo->bar() and bar and bar()";
+EOL;
+        $expected = <<<EOL
+<?php
+\$x = "string with Foo::baz or Foo->baz() and baz and baz()";
+EOL;
+        $this->renameAndCompare($orig, $expected, 'Foo', 'bar', 'baz', true);
+    }
+
+    public function testOnlyRenameSomeMethodNamesInStringWhenNotAggressive() {
+        $orig = <<<EOL
+<?php
+\$x = "string with Foo::bar or Foo->bar() and bar and bar()";
+EOL;
+        $expected = <<<EOL
+<?php
+\$x = "string with Foo::baz or Foo->baz() and bar and bar()";
+EOL;
+        $this->renameAndCompare($orig, $expected, 'Foo', 'bar', 'baz', false);
     }
 
     /**
