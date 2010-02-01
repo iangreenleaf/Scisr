@@ -41,8 +41,7 @@ class Scisr_CodeSniffer extends PHP_CodeSniffer
         if ($this->_cacheable) {
             // If we have cached results and they're not stale, don't bother processing
             $cacheTime = Scisr_Db_Files::getTimeParsed($file);
-            $stat = stat($file);
-            $mtime = $stat['mtime'];
+            $mtime = filemtime($file);
             if ($cacheTime !== null && $cacheTime > $mtime) {
                 return;
             }
