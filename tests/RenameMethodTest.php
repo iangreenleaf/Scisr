@@ -795,7 +795,7 @@ EOL;
 <?php
 /**
  * We are talking about Foo::bar() here, also known as Foo->bar but not Foo::barnacle().
- * Also when we just talk about bar or bar() not barnacle, that should only be
+ * Also when we just talk about bar or bar() not barnacle or Ebar(), that should only be
  * renamed when aggressive.
  */
 EOL;
@@ -803,7 +803,7 @@ EOL;
 <?php
 /**
  * We are talking about Foo::baz() here, also known as Foo->baz but not Foo::barnacle().
- * Also when we just talk about baz or baz() not barnacle, that should only be
+ * Also when we just talk about baz or baz() not barnacle or Ebar(), that should only be
  * renamed when aggressive.
  */
 EOL;

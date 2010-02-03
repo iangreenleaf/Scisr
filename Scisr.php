@@ -137,6 +137,18 @@ class Scisr
         $this->_firstPassListeners[] = new Scisr_Operations_TrackCommentVariableTypes();
         $this->_firstPassListeners[] = new Scisr_Operations_TrackIncludedFiles();
         $this->_listeners[] = new Scisr_Operations_RenameMethod($class, $oldMethod, $newMethod);
+
+        // Look for matches in comments and strings
+        $fullOldString = "$class(->|::)$oldMethod";
+        $fullNewString = "$class\\1$newMethod";
+        $this->_listeners[] = new Scisr_Operations_ChangeCommentWords($fullOldString, $fullNewString, false);
+        $this->_listeners[] = new Scisr_Operations_ChangeStringWords($fullOldString, $fullNewString, false);
+        // We have to make sure to avoid double-matching
+        $oldString = "([^>:\w])$oldMethod";
+        $newString = "\\1$newMethod";
+        $this->_listeners[] = new Scisr_Operations_ChangeCommentWords($oldString, $newString);
+        $this->_listeners[] = new Scisr_Operations_ChangeStringWords($oldString, $newString);
+
         $this->_cacheResults = true;
     }
 
