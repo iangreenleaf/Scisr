@@ -128,8 +128,9 @@ class Scisr
      * @param string $class the class that contains the method to be renamed
      * @param string $oldMethod the method to be renamed
      * @param string $newMethod the new method name
+     * @param boolean $withInheritance if true, also rename method on child classes
      */
-    public function setRenameMethod($class, $oldMethod, $newMethod)
+    public function setRenameMethod($class, $oldMethod, $newMethod, $withInheritance)
     {
         $this->_firstPassListeners[] = new Scisr_Operations_TrackGlobalVariables();
         $this->_firstPassListeners[] = new Scisr_Operations_TrackVariableTypes();

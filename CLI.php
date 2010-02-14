@@ -21,6 +21,11 @@ class Scisr_CLI implements Scisr_Output
      * @var boolean
      */
     private $showHelp = false;
+    /**
+     * When renaming a method, true if we should also rename children methods
+     * @var boolean
+     */
+    private $withInheritance = false;
 
     public function __construct($output=null)
     {
@@ -38,8 +43,8 @@ class Scisr_CLI implements Scisr_Output
     protected function parseOpts($args)
     {
         // Parse all other options
-        $shortOptions = 'athi:e:';
-        $longOptions = array('aggressive', 'timid', 'help', 'ignore=', 'extensions=');
+        $shortOptions = 'athni:e:';
+        $longOptions = array('aggressive', 'timid', 'with-inheritance', 'help', 'ignore=', 'extensions=');
         $options = $this->getopt($args, $shortOptions, $longOptions);
         $unparsedOptions = $options[1];
 
@@ -72,7 +77,7 @@ class Scisr_CLI implements Scisr_Output
             $class = $this->getArg($params);
             $oldName = $this->getArg($params);
             $newName = $this->getArg($params);
-            $this->scisr->setRenameMethod($class, $oldName, $newName);
+            $this->scisr->setRenameMethod($class, $oldName, $newName, $this->withInheritance);
             break;
         case 'rename-file':
             $oldName = $this->getArg($params);
@@ -105,6 +110,10 @@ class Scisr_CLI implements Scisr_Output
             case "a":
             case "aggressive":
                 $this->scisr->setEditMode(Scisr::MODE_AGGRESSIVE);
+                break;
+            case "n":
+            case "with-inheritance":
+                $this->withInheritance = true;
                 break;
             case "t":
             case "timid":
