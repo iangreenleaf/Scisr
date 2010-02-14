@@ -2367,6 +2367,44 @@ class PHP_CodeSniffer_File
 
     }//end findExtendedClassName()
 
+    /**
+     * Returns the names of classes that the specified class implements.
+     *
+     * @param int $stackPtr The stack position of the class.
+     *
+     * @return array
+     */
+    public function findImplementsClassName($stackPtr)
+    {
+        // Check for the existence of the token.
+        if (isset($this->_tokens[$stackPtr]) === false) {
+            return false;
+        }
+
+        if ($this->_tokens[$stackPtr]['code'] !== T_CLASS) {
+            return false;
+        }
+
+        if (isset($this->_tokens[$stackPtr]['scope_closer']) === false) {
+            return false;
+        }
+
+        $classCloserIndex = $this->_tokens[$stackPtr]['scope_closer'];
+        $implements = array();
+        $currPtr = $stackPtr;
+        while (($extendsIndex = $this->findNext(T_IMPLEMENTS, $currPtr, $classCloserIndex)) !== false) {
+            $stringIndex = $this->findNext(T_STRING, $extendsIndex, $classCloserIndex);
+            if (false === $stringIndex) {
+                return false;
+            }
+            $implements[] = $this->_tokens[$stringIndex]['content'];
+            $currPtr = $stringIndex;
+        }
+
+        return $implements;
+
+    }//end findExtendedClassName()
+
 
 }//end class
 

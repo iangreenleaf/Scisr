@@ -7,14 +7,14 @@ require_once 'SingleFileTest.php';
 class RenameMethodTest extends Scisr_SingleFileTest
 {
 
-    public function renameAndCompare($original, $expected, $class='Foo', $oldmethod='bar', $newmethod='baz', $aggressive=false) {
+    public function renameAndCompare($original, $expected, $class='Foo', $oldmethod='bar', $newmethod='baz', $aggressive=false, $inheritance=false) {
         $this->populateFile($original);
 
         $s = new Scisr();
         if ($aggressive) {
             $s->setEditMode(Scisr::MODE_AGGRESSIVE);
         }
-        $s->setRenameMethod($class, $oldmethod, $newmethod);
+        $s->setRenameMethod($class, $oldmethod, $newmethod, $inheritance);
         $s->addFile($this->test_file);
         $s->run();
 
@@ -854,6 +854,120 @@ EOL;
         $this->renameAndCompare($orig, $expected, 'Foo', 'bar', 'baz', false);
     }
 
+    public function testRenameInChildClass() {
+        $orig = <<<EOL
+<?php
+class FooFoo extends Foo {
+    public function bar() { }
+}
+\$x = new FooFoo();
+\$x->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+class FooFoo extends Foo {
+    public function baz() { }
+}
+\$x = new FooFoo();
+\$x->baz();
+EOL;
+        $this->renameAndCompare($orig, $expected, 'Foo', 'bar', 'baz', false, true);
+    }
+
+    public function testDontRenameInChildClassWhenNoInheritance() {
+        $orig = <<<EOL
+<?php
+class FooFoo extends Foo {
+    public function bar() { }
+}
+\$x = new Foo();
+\$x->bar();
+\$x = new FooFoo();
+\$x->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+class FooFoo extends Foo {
+    public function bar() { }
+}
+\$x = new Foo();
+\$x->baz();
+\$x = new FooFoo();
+\$x->bar();
+EOL;
+        $this->renameAndCompare($orig, $expected, 'Foo', 'bar', 'baz', false, false);
+    }
+
+    public function testRenameInSecondChildClass() {
+        $this->markTestIncomplete();
+        $orig = <<<EOL
+<?php
+class FooFoo extends Foo {
+}
+class FooFooFoo extends FooFoo {
+    public function bar() { }
+}
+\$x = new FooFooFoo();
+\$x->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+class FooFoo extends Foo {
+}
+class FooFooFoo extends FooFoo {
+    public function baz() { }
+}
+\$x = new FooFooFoo();
+\$x->baz();
+EOL;
+        $this->renameAndCompare($orig, $expected, 'Foo', 'bar', 'baz', false, true);
+    }
+
+    public function testRenameInImplementsClass() {
+        $orig = <<<EOL
+<?php
+class MyFoo implements Foo {
+    public function bar() { }
+}
+\$x = new MyFoo();
+\$x->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+class MyFoo implements Foo {
+    public function baz() { }
+}
+\$x = new MyFoo();
+\$x->baz();
+EOL;
+        $this->renameAndCompare($orig, $expected, 'Foo', 'bar', 'baz', false, true);
+    }
+
+    public function testRenameInExtendsImplementsClass() {
+        $this->markTestIncomplete();
+        $orig = <<<EOL
+<?php
+class MyFoo implements Foo {
+}
+class MySpecialFoo extends MyFoo {
+    public function bar() { }
+}
+\$x = new MySpecialFoo();
+\$x->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+class MyFoo implements Foo {
+}
+class MySpecialFoo extends MyFoo {
+    public function baz() { }
+}
+\$x = new MySpecialFoo();
+\$x->baz();
+EOL;
+        $this->renameAndCompare($orig, $expected, 'Foo', 'bar', 'baz', false, true);
+    }
+
     /**
      * @dataProvider includeTypeProvider
      */
@@ -913,7 +1027,7 @@ EOL;
         $sniffer->incFile = $includedFile;
         $sniffer->test_file = $this->test_file;
         $s->setSniffer($sniffer);
-        $s->setRenameMethod('Foo', 'bar', 'baz');
+        $s->setRenameMethod('Foo', 'bar', 'baz', false);
         $s->addFile($this->test_file);
         $s->run();
 

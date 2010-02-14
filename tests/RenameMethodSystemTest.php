@@ -11,7 +11,7 @@ class RenameMethodSystemTest extends Scisr_Tests_MultipleFileTestCase
         $this->populateDir(dirname(__FILE__) . '/_files/cliFixture', $this->test_dir);
 
         $s = new Scisr();
-        $s->setRenameMethod('Foo', 'bar', 'quark');
+        $s->setRenameMethod('Foo', 'bar', 'quark', false);
         $s->addFile($this->test_dir . '/test.php');
         $s->run();
 
@@ -22,7 +22,7 @@ class RenameMethodSystemTest extends Scisr_Tests_MultipleFileTestCase
         $this->populateDir(dirname(__FILE__) . '/_files/cliFixture', $this->test_dir);
 
         $s = new Scisr();
-        $s->setRenameMethod('Foo', 'bar', 'quark');
+        $s->setRenameMethod('Foo', 'bar', 'quark', false);
         $s->addFile($this->test_dir);
         $s->run();
 
@@ -33,7 +33,7 @@ class RenameMethodSystemTest extends Scisr_Tests_MultipleFileTestCase
         $this->populateDir(dirname(__FILE__) . '/_files/renameMethodWithIncludesFixture', $this->test_dir);
 
         $s = new Scisr();
-        $s->setRenameMethod('Foo', 'bar', 'baz');
+        $s->setRenameMethod('Foo', 'bar', 'baz', false);
         $s->addFile($this->test_dir);
         $s->run();
 

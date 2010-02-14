@@ -137,6 +137,9 @@ class Scisr
         $this->_firstPassListeners[] = new Scisr_Operations_TrackVariableTypeHints();
         $this->_firstPassListeners[] = new Scisr_Operations_TrackCommentVariableTypes();
         $this->_firstPassListeners[] = new Scisr_Operations_TrackIncludedFiles();
+        if ($withInheritance) {
+            $this->_firstPassListeners[] = new Scisr_Operations_RenameChildMethods($class, $oldMethod, $newMethod, $this);
+        }
         $this->_listeners[] = new Scisr_Operations_RenameMethod($class, $oldMethod, $newMethod);
 
         // Look for matches in comments and strings

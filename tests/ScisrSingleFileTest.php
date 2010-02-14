@@ -16,7 +16,7 @@ class ScisrTest extends Scisr_SingleFileTest
         $s->run();
 
         $s = new Scisr();
-        $s->setRenameMethod('DummyClass', 'dummy', 'dummy2');
+        $s->setRenameMethod('DummyClass', 'dummy', 'dummy2', false);
         $s->addFile($this->test_file);
         $s->run();
 
