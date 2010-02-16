@@ -30,11 +30,6 @@ class Scisr_Operations_RenameClassFile implements PHP_CodeSniffer_Sniff
         );
     }
 
-    /**
-     * @todo Right now, this runs on both passes, even though it should really 
-     * only be running on the first pass. It's not breaking anything, but I'm 
-     * not crazy about this.
-     */
     public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();

@@ -30,6 +30,14 @@ class Scisr_CodeSniffer extends PHP_CodeSniffer
         $this->listeners[] = $listener;
     }
 
+    /**
+     * Clear all registered listeners
+     */
+    public function clearListeners()
+    {
+        $this->listeners = array();
+    }
+
     public function process($files, $local=false, $cacheable=false)
     {
         $this->_cacheable = $cacheable;

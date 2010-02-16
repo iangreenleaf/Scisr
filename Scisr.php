@@ -253,9 +253,8 @@ class Scisr
             $sniffer->process($this->files, false, $this->_cacheResults);
         }
 
-        // NOTE: We do want to keep all the first-pass listeners for this pass.
-        // This will ensure that the types are fully populated, but are also
-        // populated with the most relevant type assignment when multiples exist.
+        // Clear out the first pass listeners before we run the second pass
+        $sniffer->clearListeners();
         foreach ($this->_listeners as $listener) {
             $sniffer->addListener($listener);
         }

@@ -22,9 +22,6 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
      * @param string $varName the name of the variable. If not provided, will
      * be determined from $varPtr.
      * @return string|null the class name, or null if we don't know
-     * @todo do we want to always return results from included files, or do we
-     * want to provide a toggle? I'm worried about resolveFullVariableType() 
-     * resolving some variable like $a early and missing the real type.
      */
     protected function getVariableType($varPtr, $phpcsFile, $varName=null)
     {
@@ -48,21 +45,28 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
 
         // If we find the type in this file, return it
         $result = Scisr_Db_VariableTypes::getVariableType($varName, $phpcsFile->getFileName(), $scopeOpen, $varPtr);
-        if ($result !== null) {
-            return $result;
-        }
-        // If not, we'll look in any included files
-        $includedFiles = Scisr_Db_FileIncludes::getIncludedFiles($phpcsFile->getFileName());
-        //TODO we could do one query with filenames joined - we would need to 
-        // ensure correct ordering, though
-        foreach ($includedFiles as $file) {
-            $result = Scisr_Db_VariableTypes::getVariableType($varName, $file, $scopeOpen, $varPtr);
-            if ($result !== null) {
-                return $result;
+        if ($result === null) {
+            // If not, we'll look in any included files
+            $includedFiles = Scisr_Db_FileIncludes::getIncludedFiles($phpcsFile->getFileName());
+            //TODO we could do one query with filenames joined - we would need to 
+            // ensure correct ordering, though
+            foreach ($includedFiles as $file) {
+                $result = Scisr_Db_VariableTypes::getVariableType($varName, $file, $scopeOpen, $varPtr);
+                if ($result !== null) {
+                    break;
+                }
             }
         }
-        // If still nothing, we failed
-        return null;
+
+        // If our result is not completely specific, try to resolve it further
+        //TODO this is ugly, replace
+        if ($result !== null && ($result{0} == '*' || $result{0} == '$' || strpos($result, '->') !== false)) {
+            $newResult = $this->getVariableType($varPtr, $phpcsFile, $result);
+            if ($newResult !== null) {
+                $result = $newResult;
+            }
+        }
+        return $result;
     }
 
     /**

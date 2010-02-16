@@ -25,7 +25,7 @@ EOL;
         $mock = $this->getMock('Scisr_Operations_TrackIncludedFiles', array('process'));
         // Sniff should be activated three times: twice the first run (once on 
         // each pass), and only once the second (second pass only)
-        $mock->expects($this->exactly(3))->method('process');
+        $mock->expects($this->exactly(1))->method('process');
         // Make sure we don't get confused by an mtime exactly equal to the cache time
         touch($this->test_file, time() - 1);
 
@@ -40,7 +40,7 @@ include "Foo.php"
 EOL;
         $this->populateFile($code);
         $mock = $this->getMock('Scisr_Operations_TrackIncludedFiles', array('process'));
-        $mock->expects($this->exactly(4))->method('process');
+        $mock->expects($this->exactly(2))->method('process');
         $this->runWithMock($mock);
         touch($this->test_file);
         $this->runWithMock($mock);
@@ -62,7 +62,7 @@ EOL;
         $s->addFile($this->test_file);
         $s->run();
         $mock = $this->getMock('Scisr_Operations_TrackIncludedFiles', array('process'));
-        $mock->expects($this->exactly(2))->method('process');
+        $mock->expects($this->exactly(1))->method('process');
         $this->runWithMock($mock);
     }
 

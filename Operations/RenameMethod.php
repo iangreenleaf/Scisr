@@ -72,6 +72,7 @@ class Scisr_Operations_RenameMethod
         } else if ($tokens[$stackPtr]['code'] == T_OBJECT_OPERATOR) {
             // If the object we're operating on is of the correct type, continue
 
+            //TODO remove this line?
             $varPtr = $phpcsFile->findPrevious(array(T_VARIABLE, T_STRING), $stackPtr);
             $varPtr = $this->getStartOfVar($varPtr, $tokens);
             $type = $this->resolveFullVariableType($varPtr, $stackPtr - 1, $phpcsFile);

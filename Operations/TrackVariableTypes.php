@@ -19,6 +19,7 @@ class Scisr_Operations_TrackVariableTypes
         );
     }
 
+    //TODO take out resolveFullVariableType from this class
     public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
     {
         $varName = null;
