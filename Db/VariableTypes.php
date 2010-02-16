@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS VariableTypes(filename text, scopeopen integer, varia
 EOS;
         $db->exec($create);
         $create = <<<EOS
-CREATE TABLE GlobalVariables(filename text, scopeopen integer, variable text);
+CREATE TABLE GlobalVariables(filename text, scopeopen integer, variable text, variable_pointer integer);
 EOS;
         $db->exec($create);
     }
@@ -39,10 +39,10 @@ EOS;
 
         // First delete any previous assignments in this scope
         $delete = <<<EOS
-DELETE FROM VariableTypes WHERE filename = ? AND scopeopen = ? AND variable = ?
+DELETE FROM VariableTypes WHERE filename = ? AND variable_pointer = ?
 EOS;
         $delSt = $db->prepare($delete);
-        $delSt->execute(array($filename, $scopeOpen, $variable));
+        $delSt->execute(array($filename, $varPtr));
 
         // Now insert this assignment
         $insert = <<<EOS
@@ -57,17 +57,18 @@ EOS;
      * @param string $variable the name of the variable (including the dollar sign)
      * @param string $filename the file we're in
      * @param array $scopeOpen the stack pointer to the beginning of the current scope
+     * @param int $varPtr a pointer to the beginning of the variable
      */
-    public static function registerGlobalVariable($variable, $filename, $scopeOpen)
+    public static function registerGlobalVariable($variable, $filename, $scopeOpen, $varPtr)
     {
         $db = Scisr_Db::getDb();
 
         // Now insert this assignment
         $insert = <<<EOS
-INSERT INTO GlobalVariables (filename, scopeopen, variable) VALUES (?, ?, ?)
+INSERT INTO GlobalVariables (filename, scopeopen, variable, variable_pointer) VALUES (?, ?, ?, ?)
 EOS;
         $insSt = $db->prepare($insert);
-        $insSt->execute(array($filename, $scopeOpen, $variable));
+        $insSt->execute(array($filename, $scopeOpen, $variable, $varPtr));
     }
 
     /**
@@ -99,18 +100,30 @@ EOS;
      * @param string $variable the name of the variable (including the dollar sign)
      * @param string $filename the file we're in
      * @param array $scopeOpen the stack pointer to the beginning of the current scope
+     * @param int $varPtr a pointer to the beginning of the variable
      * @return string|null the class name, or null if we don't know
      */
-    public static function getVariableType($variable, $filename, $scopeOpen)
+    public static function getVariableType($variable, $filename, $scopeOpen, $varPtr)
     {
         $db = Scisr_Db::getDb();
 
         $select = <<<EOS
-SELECT type FROM VariableTypes WHERE filename = ? AND variable = ? AND scopeopen = ? ORDER BY scopeopen DESC LIMIT 1
+SELECT type FROM VariableTypes WHERE filename = ? AND variable = ? AND scopeopen = ? AND variable_pointer <= ? ORDER BY variable_pointer DESC LIMIT 1
 EOS;
         $st = $db->prepare($select);
-        $st->execute(array($filename, $variable, $scopeOpen));
+        $st->execute(array($filename, $variable, $scopeOpen, $varPtr));
         $result = $st->fetch();
+
+        // If nothing was found, we'll settle for a type found after this point in the file
+        if ($result === false) {
+            $select = <<<EOS
+SELECT type FROM VariableTypes WHERE filename = ? AND variable = ? AND scopeopen = ? AND variable_pointer > ? ORDER BY variable_pointer DESC LIMIT 1
+EOS;
+            $st = $db->prepare($select);
+            $st->execute(array($filename, $variable, $scopeOpen, $varPtr));
+            $result = $st->fetch();
+        }
+
         return $result['type'];
     }
 
@@ -119,9 +132,10 @@ EOS;
      * @param string $variable the name of the variable (including the dollar sign)
      * @param string $filename the file we're in
      * @param array $scopeOpen the stack pointer to the beginning of the current scope
+     * @param int $varPtr a pointer to the beginning of the variable
      * @return boolean true if it is global
      */
-    public static function isGlobalVariable($variable, $filename, $scopeOpen)
+    public static function isGlobalVariable($variable, $filename, $scopeOpen, $varPtr)
     {
         $db = Scisr_Db::getDb();
 
