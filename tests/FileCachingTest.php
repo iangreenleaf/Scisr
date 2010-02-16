@@ -66,6 +66,10 @@ EOL;
         $this->runWithMock($mock);
     }
 
+    public function testDontKeepStaleResults() {
+        $this->markTestIncomplete();
+    }
+
     private function runWithMock($mock) {
         $s = new Scisr_FileTest();
         $s->setFirstPassListener($mock);

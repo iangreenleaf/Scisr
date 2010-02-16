@@ -62,6 +62,17 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    public function testDontRenameMethodDeclarationInOtherClass() {
+        $orig = <<<EOL
+<?php
+class Quark {
+    function bar() {
+    }
+}
+EOL;
+        $this->renameAndCompare($orig, $orig);
+    }
+
     public function testRenameMethodInstantiatedCall() {
         $orig = <<<EOL
 <?php
@@ -78,6 +89,16 @@ EOL;
 \$result = \$f2->baz();
 EOL;
         $this->renameAndCompare($orig, $expected);
+    }
+
+    public function testDontRenameMethodOnUntypedVar() {
+        $orig = <<<EOL
+<?php
+\$result = \$f->bar();
+\$f2 = somefunc();
+\$result = \$f2->bar();
+EOL;
+        $this->renameAndCompare($orig, $orig);
     }
 
     public function testRenameMethodInstantiatedInOtherClassProperty() {
