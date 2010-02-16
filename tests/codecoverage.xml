@@ -1,0 +1,11 @@
+<phpunit>
+	<filter>
+		<blacklist>
+			<directory suffix=".php">../PHP</directory>
+			<directory suffix=".php">.</directory>
+		</blacklist>
+	</filter>
+	<logging>
+		<log type="coverage-html" target="coverage" charset="UTF-8" yui="true" />
+	</logging>
+</phpunit>
