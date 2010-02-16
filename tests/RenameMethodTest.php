@@ -681,6 +681,42 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    public function testRenameWithEarlyAssignment() {
+        $orig = <<<EOL
+<?php
+\$x = new X();
+\$x->y->z = new Foo();
+
+class X {
+    function func() {
+        \$this->y = new Y();
+    }
+}
+class Y {
+    function func() {
+        \$this->z->bar();
+    }
+}
+EOL;
+        $expected = <<<EOL
+<?php
+\$x = new X();
+\$x->y->z = new Foo();
+
+class X {
+    function func() {
+        \$this->y = new Y();
+    }
+}
+class Y {
+    function func() {
+        \$this->z->baz();
+    }
+}
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
     public function testRenameFunctionParameterWithPHPDocType() {
         $orig = <<<EOL
 <?php
