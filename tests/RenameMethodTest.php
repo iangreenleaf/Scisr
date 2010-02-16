@@ -645,6 +645,42 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    public function testRenameWithStackedCallsBeforeDeclarations() {
+        $orig = <<<EOL
+<?php
+\$q = new Q();
+\$q->a->bar();
+
+class Q {
+    function func() {
+        \$this->a = \$this->func2();
+    }
+    /**
+     * @return Foo
+     */
+    function func2() {
+    }
+}
+EOL;
+        $expected = <<<EOL
+<?php
+\$q = new Q();
+\$q->a->baz();
+
+class Q {
+    function func() {
+        \$this->a = \$this->func2();
+    }
+    /**
+     * @return Foo
+     */
+    function func2() {
+    }
+}
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
     public function testRenameFunctionParameterWithPHPDocType() {
         $orig = <<<EOL
 <?php
