@@ -717,6 +717,24 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    public function testDontClobberSimilarNamedVar() {
+        $orig = <<<EOL
+<?php
+\$x->yz = new Foo();
+\$x->y = new NotFoo();
+\$x->yz->bar();
+\$x->y->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+\$x->yz = new Foo();
+\$x->y = new NotFoo();
+\$x->yz->baz();
+\$x->y->bar();
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
     public function testRenameFunctionParameterWithPHPDocType() {
         $orig = <<<EOL
 <?php

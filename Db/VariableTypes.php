@@ -44,12 +44,30 @@ EOS;
         $delSt = $db->prepare($delete);
         $delSt->execute(array($filename, $varPtr));
 
+        // Update any partially typed entries
+        $select = <<<EOS
+SELECT variable, variable_pointer FROM VariableTypes WHERE variable LIKE ? AND filename = ? AND scopeopen = ?
+EOS;
+        $querySt = $db->prepare($select);
+        $querySt->execute(array($variable . '->_%', $filename, $scopeOpen));
+        while (($result = $querySt->fetch()) !== false) {
+            $varPtr = $result['variable_pointer'];
+            $varName = $result['variable'];
+            $newVarName = substr_replace($varName, $type, 0, strlen($variable));
+            $update = <<<EOS
+UPDATE VariableTypes SET variable = ? WHERE filename = ? AND variable_pointer = ?
+EOS;
+            $upSt = $db->prepare($update);
+            $upSt->execute(array($newVarName, $filename, $varPtr));
+        }
+
         // Now insert this assignment
         $insert = <<<EOS
 INSERT INTO VariableTypes (filename, scopeopen, variable, type, variable_pointer) VALUES (?, ?, ?, ?, ?)
 EOS;
         $insSt = $db->prepare($insert);
         $insSt->execute(array($filename, $scopeOpen, $variable, $type, $varPtr));
+
     }
 
     /**
