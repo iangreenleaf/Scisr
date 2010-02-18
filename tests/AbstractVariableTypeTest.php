@@ -12,6 +12,29 @@ class AbstractVariableTypeTest extends Scisr_TestCase
 {
 
     /**
+     * @dataProvider specificityProvider
+     */
+    public function testGetVariableSpecificity($name, $specificity) {
+        $this->assertEquals($specificity, Scisr_Operations_AbstractVariableTypeOperation::getVariableSpecificity($name));
+    }
+
+    public function specificityProvider() {
+        return array(
+            array('Foo', 0),
+            array('$foo', 1),
+            array('*myFunc', 1),
+            array('Foo->a', 1),
+            array('Foo->*myMethod', 1),
+            array('$foo->a', 2),
+            array('$foo->*myMethod', 2),
+            array('*myFunc->a', 2),
+            array('*myFunc->*myMethod', 2),
+            array('Foo->a->b->c->d', 4),
+            array('$foo->*myMethod->a->*method2->b->*three', 6),
+        );
+    }
+
+    /**
      * @dataProvider variableProvider
      * @param string $code the code to tokenize
      * @param string $startContent the token content to start our var

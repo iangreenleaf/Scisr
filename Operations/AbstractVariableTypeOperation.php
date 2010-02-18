@@ -59,8 +59,7 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
         }
 
         // If our result is not completely specific, try to resolve it further
-        //TODO this is ugly, replace
-        if ($result !== null && ($result{0} == '*' || $result{0} == '$' || strpos($result, '->') !== false)) {
+        if ($result !== null && self::getVariableSpecificity($result) > 0) {
             $newResult = $this->getVariableType($varPtr, $phpcsFile, $result);
             if ($newResult !== null) {
                 $result = $newResult;
@@ -113,16 +112,34 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
             return null;
         }
         if ($existing !== null) {
-            $existingArray = explode('->', $existing);
-            $existingSpecificity = count($existingArray) + preg_match('/^\$|^\*/', $existingArray[0]);
-            $typeArray = explode('->', $type);
-            $typeSpecificity = count($typeArray) + preg_match('/^\$|^\*/', $typeArray[0]);
+            $existingSpecificity = self::getVariableSpecificity($existing);
+            $typeSpecificity = self::getVariableSpecificity($type);
             if ($typeSpecificity > $existingSpecificity) {
                 return;
             }
         }
 
         Scisr_Db_VariableTypes::registerVariableType($varName, $type, $phpcsFile->getFileName(), $scopeOpen, $varPtr);
+    }
+
+    /**
+     * Measure how specifically typed a variable name is.
+     *
+     * A single class name has a specificity of 0. Each variable and function
+     * adds 1 to the specificity.
+     *
+     * @param string the full variable name
+     * @return int the specificity of that variable name
+     */
+    public static function getVariableSpecificity($varName)
+    {
+        $pieces = explode('->', $varName);
+        $specificity = count($pieces) - 1;
+        $char = $pieces[0]{0};
+        if ($char == '$' || $char == '*') {
+            $specificity++;
+        }
+        return $specificity;
     }
 
     /**
