@@ -81,8 +81,12 @@ EOL;
 
 class Scisr_FileTest extends Scisr
 {
+    private $_extraListeners = array();
     public function setFirstPassListener($listener) {
-        $this->_firstPassListeners[] = $listener;
-        $this->_cacheResults = true;
+        $this->_extraListeners[] = $listener;
+        $this->_firstPassRequired = true;
+    }
+    public function getFirstPassListeners() {
+        return array_merge(parent::getFirstPassListeners(), $this->_extraListeners);
     }
 }

@@ -36,10 +36,10 @@ class Scisr
     const MODE_AGGRESSIVE = 2;
 
     /**
-     * CodeSniffer listener objects to be used during the first, read-only pass
+     * Callbacks to be invoked after the first, read-only pass
      * @var array
      */
-    protected $_firstPassListeners = array();
+    protected $_firstPassCallbacks = array();
     /**
      * CodeSniffer listener objects to be used during the main processing pass
      * @var array
@@ -56,10 +56,10 @@ class Scisr
      */
     private $_sniffer;
     /**
-     * If the current operation parses cacheable information
+     * If we must run a first pass
      * @var boolean
      */
-    protected $_cacheResults = false;
+    protected $_firstPassRequired = false;
 
     public function __construct($output=null)
     {
@@ -111,6 +111,21 @@ class Scisr
     }
 
     /**
+     * Get the listeners to be run on the first (read-only) pass
+     */
+    protected function getFirstPassListeners()
+    {
+        $listeners = array();
+        $listeners[] = new Scisr_Operations_TrackGlobalVariables();
+        $listeners[] = new Scisr_Operations_TrackVariableTypes();
+        $listeners[] = new Scisr_Operations_TrackVariableTypeHints();
+        $listeners[] = new Scisr_Operations_TrackCommentVariableTypes();
+        $listeners[] = new Scisr_Operations_TrackIncludedFiles();
+        $listeners[] = new Scisr_Operations_TrackClasses();
+        return $listeners;
+    }
+
+    /**
      * Rename a class
      * @param string $oldClass the class to be renamed
      * @param string $newClass the new class name to be given
@@ -132,11 +147,6 @@ class Scisr
      */
     public function setRenameMethod($class, $oldMethod, $newMethod, $withInheritance)
     {
-        $this->_firstPassListeners[] = new Scisr_Operations_TrackGlobalVariables();
-        $this->_firstPassListeners[] = new Scisr_Operations_TrackVariableTypes();
-        $this->_firstPassListeners[] = new Scisr_Operations_TrackVariableTypeHints();
-        $this->_firstPassListeners[] = new Scisr_Operations_TrackCommentVariableTypes();
-        $this->_firstPassListeners[] = new Scisr_Operations_TrackIncludedFiles();
         if ($withInheritance) {
             $this->_firstPassListeners[] = new Scisr_Operations_RenameChildMethods($class, $oldMethod, $newMethod, $this);
         }
@@ -153,7 +163,7 @@ class Scisr
         $this->_listeners[] = new Scisr_Operations_ChangeCommentWords($oldString, $newString);
         $this->_listeners[] = new Scisr_Operations_ChangeStringWords($oldString, $newString);
 
-        $this->_cacheResults = true;
+        $this->_firstPassRequired = true;
     }
 
     /**
@@ -185,8 +195,37 @@ class Scisr
      */
     public function setRenameClassFile($oldClass, $newClass)
     {
+        $this->_firstPassCallbacks[] = array(array($this, 'doRenameClassFile'), array($oldClass, $newClass));
         $this->setRenameClass($oldClass, $newClass);
-        $this->_firstPassListeners[] = new Scisr_Operations_RenameClassFile($oldClass, $newClass, $this);
+        $this->_firstPassRequired = true;
+    }
+
+    /**
+     * Callback that uses the class information from the first pass to figure 
+     * out how to rename class files.
+     */
+    protected function doRenameClassFile($oldClass, $newClass)
+    {
+        $oldFilePath = Scisr_Db_Classes::getClassFile($oldClass);
+        if ($oldFilePath !== null) {
+            $pieces = explode('_', $oldClass);
+            foreach (array_keys($this->getAllowedFileExtensions()) as $ext) {
+                if (basename($oldFilePath) == "$oldClass.$ext") {
+                    $dir = dirname($oldFilePath);
+                    $this->setRenameFile($oldFilePath, "$dir/$newClass.$ext");
+                    break;
+                } else if (count($pieces) > 0) {
+                    //TODO > 1?
+                    $namespacedFile = implode('/', $pieces) . ".$ext";
+                    $baseDir = Scisr_Operations_RenameFile::matchPaths($oldFilePath, $namespacedFile);
+                    if ($baseDir !== false) {
+                        $newNamespacedFile = implode('/', explode('_', $newClass)) . ".$ext";
+                        $this->setRenameFile($oldFilePath, "$baseDir$newNamespacedFile");
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -242,15 +281,23 @@ class Scisr
         Scisr_Db_VariableTypes::init();
         Scisr_Db_FileIncludes::init();
         Scisr_Db_Files::init();
+        Scisr_Db_Classes::init();
 
         $sniffer = $this->_sniffer;
 
         // If we need to, make a read-only pass to populate our type information
-        if (count($this->_firstPassListeners) > 0) {
-            foreach ($this->_firstPassListeners as $listener) {
+        if ($this->_firstPassRequired) {
+            foreach ($this->getFirstPassListeners() as $listener) {
                 $sniffer->addListener($listener);
             }
-            $sniffer->process($this->files, false, $this->_cacheResults);
+            $sniffer->process($this->files, false, true);
+        }
+
+        // Now call any callbacks registered to run after the first pass
+        foreach ($this->_firstPassCallbacks as $cbArray) {
+            $callback = $cbArray[0];
+            $args = $cbArray[1];
+            call_user_func_array($callback, $args);
         }
 
         // Clear out the first pass listeners before we run the second pass
