@@ -139,7 +139,6 @@ class CLITest extends Scisr_TestCase
 
     public function inheritanceOptProvider() {
         return array(
-            array(array('scisr_executable', 'rename-method', 'Foo', 'bar', 'baz', '-n', 'file1.php', 'file2.php')),
             array(array('scisr_executable', 'rename-method', 'Foo', 'bar', 'baz', '--with-inheritance', 'file1.php', 'file2.php')),
         );
     }

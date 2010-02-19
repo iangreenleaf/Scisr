@@ -43,7 +43,7 @@ class Scisr_CLI implements Scisr_Output
     protected function parseOpts($args)
     {
         // Parse all other options
-        $shortOptions = 'athni:e:';
+        $shortOptions = 'athi:e:';
         $longOptions = array('aggressive', 'timid', 'with-inheritance', 'help', 'ignore=', 'extensions=');
         $options = $this->getopt($args, $shortOptions, $longOptions);
         $unparsedOptions = $options[1];
@@ -111,7 +111,6 @@ class Scisr_CLI implements Scisr_Output
             case "aggressive":
                 $this->scisr->setEditMode(Scisr::MODE_AGGRESSIVE);
                 break;
-            case "n":
             case "with-inheritance":
                 $this->withInheritance = true;
                 break;
@@ -321,8 +320,7 @@ Usage:
 [files] is any number of files and/or directories to be searched and modified.
 
 Options:
-  -n, --with-inheritance
-                        Only with rename-method. Rename method in children of
+  --with-inheritance    Only with rename-method. Rename method in children of
                         the given class as well.
 
   -t, --timid           Do not make changes to the files, just list filenames
