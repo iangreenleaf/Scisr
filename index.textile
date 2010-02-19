@@ -48,6 +48,12 @@ $ scisr.php rename-method OwningClassName oldMethodName newMethodName [files]
 
 Rename a class method. Tries to guess variable types so as to only rename methods called on objects of the correct class.
 
+Additional options:
+
+{% highlight bash %}
+    --with-inheritance          Rename the method in children of the given class as well.
+{% endhighlight %}
+
 h3. Rename a file
 
 {% highlight bash %}
