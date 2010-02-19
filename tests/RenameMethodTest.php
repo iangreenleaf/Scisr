@@ -1010,7 +1010,6 @@ EOL;
     }
 
     public function testRenameInSecondChildClass() {
-        $this->markTestIncomplete();
         $orig = <<<EOL
 <?php
 class FooFoo extends Foo {
@@ -1055,7 +1054,6 @@ EOL;
     }
 
     public function testRenameInExtendsImplementsClass() {
-        $this->markTestIncomplete();
         $orig = <<<EOL
 <?php
 class MyFoo implements Foo {

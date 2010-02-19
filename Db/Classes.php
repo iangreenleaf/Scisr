@@ -17,6 +17,11 @@ class Scisr_Db_Classes
 CREATE TABLE IF NOT EXISTS Classes(filename text, class text);
 EOS;
         $db->exec($create);
+
+        $create = <<<EOS
+CREATE TABLE IF NOT EXISTS ClassRelationships(class text, is_a text);
+EOS;
+        $db->exec($create);
     }
 
     /**
@@ -37,6 +42,46 @@ EOS;
     }
 
     /**
+     * Register one class as extending another
+     * @param string $className the name of the class
+     * @param string $extendsClass the name of the class being extended
+     */
+    public static function registerClassExtends($className, $extendsClass)
+    {
+        self::registerClassRelationship($className, $extendsClass);
+    }
+
+    /**
+     * Register a class as implementing one or more interfaces
+     * @param string $className the name of the class
+     * @param array(string) $implements an array of names of
+     * interfaces being implemented
+     */
+    public static function registerClassImplements($className, $implements)
+    {
+        foreach ($implements as $interface) {
+            self::registerClassRelationship($className, $interface);
+        }
+    }
+
+    /**
+     * Register a class relationship
+     * @param string $className the name of the class
+     * @param string $isA the name of the class or interface it extends or implements
+     */
+    private static function registerClassRelationship($className, $isA)
+    {
+        $db = Scisr_Db::getDb();
+
+        // Now insert this assignment
+        $insert = <<<EOS
+INSERT INTO ClassRelationships (class, is_a) VALUES (?, ?)
+EOS;
+        $insSt = $db->prepare($insert);
+        $insSt->execute(array($className, $isA));
+    }
+
+    /**
      * Find the file that contains a given clas
      * @param string $className the name of the class
      * @return string|null the filename, or null if we can't find this class
@@ -54,6 +99,36 @@ EOS;
         $result = $st->fetch();
 
         return $result['filename'];
+    }
+
+    /**
+     * Get all classes that extend or implement this class or interface
+     * @param string the class or interface name
+     * @return array(string) the names of all child classes
+     */
+    public static function getChildClasses($className)
+    {
+        $db = Scisr_Db::getDb();
+        $select = <<<EOS
+SELECT class FROM ClassRelationships WHERE is_a = ?
+EOS;
+        $st = $db->prepare($select);
+        $st->execute(array($className));
+        $result = $st->fetchAll();
+
+        if ($result === false) {
+            return array();
+        }
+
+        $children = array();
+        foreach ($result as $row) {
+            $child = $row['class'];
+            if (!in_array($child, $children)) {
+                $children[] = $child;
+                $children = array_merge($children, self::getChildClasses($child));
+            }
+        }
+        return $children;
     }
 
 }

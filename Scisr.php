@@ -148,7 +148,7 @@ class Scisr
     public function setRenameMethod($class, $oldMethod, $newMethod, $withInheritance)
     {
         if ($withInheritance) {
-            $this->_firstPassListeners[] = new Scisr_Operations_RenameChildMethods($class, $oldMethod, $newMethod, $this);
+            $this->_firstPassCallbacks[] = array(array($this, 'doRenameChildMethods'), array($class, $oldMethod, $newMethod));
         }
         $this->_listeners[] = new Scisr_Operations_RenameMethod($class, $oldMethod, $newMethod);
 
@@ -164,6 +164,18 @@ class Scisr
         $this->_listeners[] = new Scisr_Operations_ChangeStringWords($oldString, $newString);
 
         $this->_firstPassRequired = true;
+    }
+
+    /**
+     * Callback that uses the class information from the first pass to rename 
+     * methods on child classes.
+     */
+    protected function doRenameChildMethods($class, $oldMethod, $newMethod)
+    {
+        $classes = Scisr_Db_Classes::getChildClasses($class);
+        foreach ($classes as $child) {
+            $this->setRenameMethod($child, $oldMethod, $newMethod, false);
+        }
     }
 
     /**
