@@ -321,6 +321,10 @@ Usage:
 [files] is any number of files and/or directories to be searched and modified.
 
 Options:
+  -n, --with-inheritance
+                        Only with rename-method. Rename method in children of
+                        the given class as well.
+
   -t, --timid           Do not make changes to the files, just list filenames
                         with line numbers.
 
