@@ -1156,6 +1156,28 @@ EOL;
         $this->renameAndCompareWithIncludes($orig, $expected, $incFile);
     }
 
+    public function testCircularTypes() {
+        $orig = <<<EOL
+<?php
+\$f = new Quark();
+\$f2 = new Quark();
+\$a = \$f->a;
+\$f2->a = \$a;
+\$f->a = new Foo();
+\$f2->a->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+\$f = new Quark();
+\$f2 = new Quark();
+\$a = \$f->a;
+\$f2->a = \$a;
+\$f->a = new Foo();
+\$f2->a->baz();
+EOL;
+        $this->renameAndCompare($orig, $expected, 'Foo', 'bar', 'baz', false, true);
+    }
+
 }
 
 /**

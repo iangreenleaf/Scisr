@@ -98,7 +98,7 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
             $className = $tokens[$classNamePtr]['content'];
             // If it's a property, strip off the $ symbol
             if (substr($varName, 0, 1) == '$') {
-               $varName = substr($varName, 1);
+                $varName = substr($varName, 1);
             }
             $varName = $className . '->' . $varName;
             // Recalculate the owning scope in case it has changed
@@ -108,15 +108,16 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
         // If a type has already been set for this variable that is more 
         // specific than this type, we don't overwrite it
         $existing = Scisr_Db_VariableTypes::checkVariableDefinition($phpcsFile->getFileName(), $varPtr);
-        if ($existing == $type) {
-            return null;
-        }
         if ($existing !== null) {
             $existingSpecificity = self::getVariableSpecificity($existing);
             $typeSpecificity = self::getVariableSpecificity($type);
-            if ($typeSpecificity > $existingSpecificity) {
+            if ($typeSpecificity >= $existingSpecificity) {
                 return;
             }
+        }
+
+        if ($varName == $type) {
+            return;
         }
 
         Scisr_Db_VariableTypes::registerVariableType($varName, $type, $phpcsFile->getFileName(), $scopeOpen, $varPtr);
