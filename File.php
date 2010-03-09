@@ -106,6 +106,61 @@ class Scisr_File
     }
 
     /**
+     * Process all pending edits to the file
+     */
+    public function process()
+    {
+        // Sort by columns and then by lines
+        foreach ($this->changes as $key => &$array) {
+            ksort($array);
+        }
+        ksort($this->changes);
+
+        // Get the file contents and open it for writing
+        $contents = file($this->filename);
+        $output = array();
+        // Loop through the file contents, making changes
+        foreach ($contents as $i => $line) {
+            $lineNo = $i + 1;
+            if (isset($this->changes[$lineNo])) {
+                $lineEdits = $this->reconcileEdits($this->changes[$lineNo]);
+                // Track the net column change caused by edits to this line so far
+                $lineOffsetDelta = 0;
+                foreach ($lineEdits as $col => $edit) {
+                    $col += $lineOffsetDelta;
+                    $length = $edit[0];
+                    $replacement = $edit[1];
+                    // Update the net offset with the change caused by this edit
+                    $lineOffsetDelta += strlen($replacement) - $length;
+                    // Make the change
+                    $line = substr_replace($line, $replacement, $col - 1, $length);
+                }
+            }
+            // Save the resulting line to be written to the file
+            $output[] = $line;
+        }
+        // Write all output to the file
+        file_put_contents($this->filename, $output);
+
+        // If there's a rename pending, do it
+        if ($this->_newName !== null) {
+            $dir = dirname($this->_newName);
+            if (!is_dir($dir)) {
+                $success = mkdir($dir, 0775, true);
+                if (!$success) {
+                    $err = "Could not create new directory ($dir)";
+                    throw new Exception($err);
+                }
+            }
+            $success = rename($this->filename, $this->_newName);
+            if (!$success) {
+                $err = "Could not rename file ($this->filename => $this->_newName)";
+                throw new Exception($err);
+            }
+        }
+    }
+
+    /**
      * Reconcile edit requests for a line.
      * Handles benign conflicts automatically.
      * @param array an array of edit requests for a line, as stored in $this->changes
@@ -160,58 +215,4 @@ class Scisr_File
         return $previousEdits;
     }
 
-    /**
-     * Process all pending edits to the file
-     */
-    public function process()
-    {
-        // Sort by columns and then by lines
-        foreach ($this->changes as $key => &$array) {
-            ksort($array);
-        }
-        ksort($this->changes);
-
-        // Get the file contents and open it for writing
-        $contents = file($this->filename);
-        $output = array();
-        // Loop through the file contents, making changes
-        foreach ($contents as $i => $line) {
-            $lineNo = $i + 1;
-            if (isset($this->changes[$lineNo])) {
-                $lineEdits = $this->reconcileEdits($this->changes[$lineNo]);
-                // Track the net column change caused by edits to this line so far
-                $lineOffsetDelta = 0;
-                foreach ($lineEdits as $col => $edit) {
-                    $col += $lineOffsetDelta;
-                    $length = $edit[0];
-                    $replacement = $edit[1];
-                    // Update the net offset with the change caused by this edit
-                    $lineOffsetDelta += strlen($replacement) - $length;
-                    // Make the change
-                    $line = substr_replace($line, $replacement, $col - 1, $length);
-                }
-            }
-            // Save the resulting line to be written to the file
-            $output[] = $line;
-        }
-        // Write all output to the file
-        file_put_contents($this->filename, $output);
-
-        // If there's a rename pending, do it
-        if ($this->_newName !== null) {
-            $dir = dirname($this->_newName);
-            if (!is_dir($dir)) {
-                $success = mkdir($dir, 0775, true);
-                if (!$success) {
-                    $err = "Could not create new directory ($dir)";
-                    throw new Exception($err);
-                }
-            }
-            $success = rename($this->filename, $this->_newName);
-            if (!$success) {
-                $err = "Could not rename file ($this->filename => $this->_newName)";
-                throw new Exception($err);
-            }
-        }
-    }
 }
