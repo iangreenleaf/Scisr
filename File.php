@@ -106,6 +106,51 @@ class Scisr_File
     }
 
     /**
+     * Reconcile edit requests for a line.
+     * Handles benign conflicts automatically.
+     * @param array an array of edit requests for a line, as stored in $this->changes
+     * @return array the array of all edit requests to act on
+     */
+    private function reconcileEdits($lineChanges)
+    {
+        $lineEdits = array();
+        foreach ($lineChanges as $startCol => $edit) {
+            $length = $edit[0];
+            $endCol = $startCol + $length - 1;
+            $keepThisEdit = true;
+            foreach ($lineEdits as $oldStartCol => $oldEdit) {
+
+                $oldEndCol = $oldStartCol + $oldEdit[0] - 1;
+                // Ignore unless this edit request conflicts
+                if ($oldEndCol < $startCol || $oldStartCol > $endCol) {
+                    continue;
+                }
+
+                if ($startCol >= $oldStartCol && $endCol <= $oldEndCol) {
+                    // Previous edit encompasses all of this edit, ignore this edit
+                    $keepThisEdit = false;
+                    break;
+                } else if ($startCol <= $oldStartCol && $endCol >= $oldEndCol) {
+                    // This edit encompasses all of previous edit, override previous edit
+                    //TODO potentially unsafe, we're editing the array while inside of the foreach
+                    unset($lineEdits[$oldStartCol]);
+                } else {
+                    // Edit requests are staggered, no correct resolution is possible.
+                    // I don't expect this to ever happen unless a developer makes a mistake,
+                    // so we'll just abort messily
+                    $err = "We've encountered conflicting edit requests. Cannot continue.";
+                    throw new Exception($err);
+                }
+
+            }
+            if ($keepThisEdit) {
+                $lineEdits[$startCol] = $edit;
+            }
+        }
+        return $lineEdits;
+    }
+
+    /**
      * Process all pending edits to the file
      */
     public function process()
@@ -123,17 +168,10 @@ class Scisr_File
         foreach ($contents as $i => $line) {
             $lineNo = $i + 1;
             if (isset($this->changes[$lineNo])) {
+                $lineEdits = $this->reconcileEdits($this->changes[$lineNo]);
                 // Track the net column change caused by edits to this line so far
                 $lineOffsetDelta = 0;
-                // Track the (offset-adjusted) last column modified to prevent edit conflicts
-                $lastChanged = 0;
-                foreach ($this->changes[$lineNo] as $col => $edit) {
-                    if ($col <= $lastChanged) {
-                        // I don't expect this to ever happen unless a developer makes a mistake,
-                        // so we'll just abort messily
-                        $err = "We've encountered conflicting edit requests. Cannot continue.";
-                        throw new Exception($err);
-                    }
+                foreach ($lineEdits as $col => $edit) {
                     $col += $lineOffsetDelta;
                     $length = $edit[0];
                     $replacement = $edit[1];
@@ -141,8 +179,6 @@ class Scisr_File
                     $lineOffsetDelta += strlen($replacement) - $length;
                     // Make the change
                     $line = substr_replace($line, $replacement, $col - 1, $length);
-                    // Update to the last column this edit affected
-                    $lastChanged = $col + $length - 1;
                 }
             }
             // Save the resulting line to be written to the file
