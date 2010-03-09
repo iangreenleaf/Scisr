@@ -115,39 +115,49 @@ class Scisr_File
     {
         $lineEdits = array();
         foreach ($lineChanges as $startCol => $edit) {
-            $length = $edit[0];
-            $endCol = $startCol + $length - 1;
-            $keepThisEdit = true;
-            foreach ($lineEdits as $oldStartCol => $oldEdit) {
-
-                $oldEndCol = $oldStartCol + $oldEdit[0] - 1;
-                // Ignore unless this edit request conflicts
-                if ($oldEndCol < $startCol || $oldStartCol > $endCol) {
-                    continue;
-                }
-
-                if ($startCol >= $oldStartCol && $endCol <= $oldEndCol) {
-                    // Previous edit encompasses all of this edit, ignore this edit
-                    $keepThisEdit = false;
-                    break;
-                } else if ($startCol <= $oldStartCol && $endCol >= $oldEndCol) {
-                    // This edit encompasses all of previous edit, override previous edit
-                    //TODO potentially unsafe, we're editing the array while inside of the foreach
-                    unset($lineEdits[$oldStartCol]);
-                } else {
-                    // Edit requests are staggered, no correct resolution is possible.
-                    // I don't expect this to ever happen unless a developer makes a mistake,
-                    // so we'll just abort messily
-                    $err = "We've encountered conflicting edit requests. Cannot continue.";
-                    throw new Exception($err);
-                }
-
-            }
-            if ($keepThisEdit) {
-                $lineEdits[$startCol] = $edit;
-            }
+            $lineEdits = $this->checkNewEditForConflicts($edit, $startCol, $lineEdits);
         }
         return $lineEdits;
+    }
+
+    /**
+     * Try to insert a new edit request into an existing list of edit requests.
+     * May remove an existing edit or not insert the new edit if a resolvable conflict exists.
+     * @param array $newEdit an edit request, as stored in $this->changes[][]
+     * @param int $startCol the start column of $newEdit
+     * @param array $previousEdits the list of existing edit requests
+     * @return array a new list of edit requests with the new edit incorporated
+     */
+    private function checkNewEditForConflicts($newEdit, $startCol, $previousEdits)
+    {
+        $length = $newEdit[0];
+        $endCol = $startCol + $length - 1;
+        foreach ($previousEdits as $oldStartCol => $oldEdit) {
+
+            $oldEndCol = $oldStartCol + $oldEdit[0] - 1;
+            // Ignore unless this edit request conflicts
+            if ($oldEndCol < $startCol || $oldStartCol > $endCol) {
+                continue;
+            }
+
+            if ($startCol >= $oldStartCol && $endCol <= $oldEndCol) {
+                // Previous edit encompasses all of this edit, ignore this edit
+                return $previousEdits;
+            } else if ($startCol <= $oldStartCol && $endCol >= $oldEndCol) {
+                // This edit encompasses all of previous edit, remove previous edit
+                $newEditsList = array_splice($previousEdits, $oldStartCol, 1);
+                return $this->checkNewEditForConflicts($newEdit, $startCol, $newEditsList);
+            } else {
+                // Edit requests are staggered, no correct resolution is possible.
+                // I don't expect this to ever happen unless a developer makes a mistake,
+                // so we'll just abort messily
+                $err = "We've encountered conflicting edit requests. Cannot continue.";
+                throw new Exception($err);
+            }
+
+        }
+        $previousEdits[$startCol] = $newEdit;
+        return $previousEdits;
     }
 
     /**
