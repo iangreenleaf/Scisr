@@ -18,8 +18,7 @@ class Scisr_Db_Files
     {
         $db = Scisr_Db::getDb();
         $create = <<<EOS
-CREATE TABLE IF NOT EXISTS FileInfo (file text, parsed text);
-CREATE INDEX IF NOT EXISTS Files_index_file ON FileInfo (file);
+CREATE TABLE IF NOT EXISTS FileInfo (file text PRIMARY KEY, parsed text);
 EOS;
         $db->exec($create);
     }
