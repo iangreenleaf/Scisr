@@ -15,11 +15,13 @@ class Scisr_Db_Classes
         $db = Scisr_Db::getDb();
         $create = <<<EOS
 CREATE TABLE IF NOT EXISTS Classes(filename text, class text);
+CREATE INDEX IF NOT EXISTS Classes_index_filename ON Classes (class);
 EOS;
         $db->exec($create);
 
         $create = <<<EOS
 CREATE TABLE IF NOT EXISTS ClassRelationships(class text, is_a text);
+CREATE INDEX IF NOT EXISTS ClassRelationships_index_is_a ON ClassRelationships (is_a);
 EOS;
         $db->exec($create);
     }

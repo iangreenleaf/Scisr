@@ -17,10 +17,16 @@ class Scisr_Db_VariableTypes
         $db = Scisr_Db::getDb();
         $create = <<<EOS
 CREATE TABLE IF NOT EXISTS VariableTypes(filename text, scopeopen integer, variable text, type text, variable_pointer integer);
+CREATE INDEX IF NOT EXISTS VariableTypes_index_filename ON VariableTypes (filename);
+CREATE UNIQUE INDEX IF NOT EXISTS VariableTypes_index_filename_var_ptr ON VariableTypes (filename, variable_pointer);
+CREATE INDEX IF NOT EXISTS VariableTypes_index_filename_var_scope ON VariableTypes (filename, scopeopen, variable);
 EOS;
         $db->exec($create);
         $create = <<<EOS
 CREATE TABLE GlobalVariables(filename text, scopeopen integer, variable text, variable_pointer integer);
+CREATE INDEX IF NOT EXISTS GlobalVariables_index_filename ON GlobalVariables (filename);
+CREATE UNIQUE INDEX IF NOT EXISTS GlobalVariables_index_filename_var_ptr ON GlobalVariables (filename, variable_pointer);
+CREATE INDEX IF NOT EXISTS GlobalVariables_index_filename_var_scope ON GlobalVariables (filename, scopeopen, variable);
 EOS;
         $db->exec($create);
     }
