@@ -69,6 +69,9 @@ class RenameFileSystemTest extends Scisr_Tests_MultipleFileTestCase
 		return array(
 			array('test.php', 'otherfolder/test.php', 'renameFileIncludesFixture-after-rename-1'),
 			array('otherfolder/stuff.php', 'stuff.php', 'renameFileIncludesFixture-after-rename-2'),
+			array('test2.php', 'test3.php', 'renameFileIncludesFixture-after-rename-4'),
+			array('test2.php', 'otherfolder/test2.php', 'renameFileIncludesFixture-after-rename-5'),
+			array('test2.php', '../test2.php', 'renameFileIncludesFixture-after-rename-6'),
 		);
 	}
 
