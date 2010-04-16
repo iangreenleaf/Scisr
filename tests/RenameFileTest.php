@@ -138,8 +138,6 @@ class RenameFileTest extends Scisr_SingleFileTest
      * @dataProvider matchPathsProvider
      */
     public function testMatchPaths($path, $newPath, $expected, $currDir='/dummy') {
-        $phpcsfile = $this->getMock('PHP_CodeSniffer_File', null, array(), '', false);
-        $o = new Scisr_Operations_RenameFile('dummy', 'dummy');
         $this->assertSame($expected, Scisr_Operations_RenameFile::matchPaths($path, $newPath, $currDir));
     }
 
@@ -164,8 +162,6 @@ class RenameFileTest extends Scisr_SingleFileTest
     }
 
     public function testMatchPathsNoCurrDirError() {
-        $phpcsfile = $this->getMock('PHP_CodeSniffer_File', null, array(), '', false);
-        $o = new Scisr_Operations_RenameFile('dummy', 'dummy');
         $this->setExpectedException('Exception');
         $this->assertSame('DUMMY', Scisr_Operations_RenameFile::matchPaths('/foo/bar', './relative/path'));
     }

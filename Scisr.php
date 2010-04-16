@@ -226,8 +226,7 @@ class Scisr
                     $dir = dirname($oldFilePath);
                     $this->setRenameFile($oldFilePath, "$dir/$newClass.$ext");
                     break;
-                } else if (count($pieces) > 0) {
-                    //TODO > 1?
+                } else if (count($pieces) > 1) {
                     $namespacedFile = implode('/', $pieces) . ".$ext";
                     $baseDir = Scisr_Operations_RenameFile::matchPaths($oldFilePath, $namespacedFile);
                     if ($baseDir !== false) {
