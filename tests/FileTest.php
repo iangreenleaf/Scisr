@@ -210,6 +210,7 @@ EOL;
             array('a/path', '/root', '/root/a/path'),
             array('a/path', '/root/', '/root/a/path'),
             array('./a/path', '/root/', '/root/a/path'),
+            array('./a/path', '/', '/a/path'),
             array('../a/path', '/root/dir/anotherdir', '/root/dir/a/path'),
             array('../../a/path', '/root/dir/anotherdir', '/root/a/path'),
             array('././a/path', '/root/', '/root/a/path'),

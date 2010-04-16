@@ -68,10 +68,10 @@ class Scisr_File
         // array_filter left us with wonky keys, which will confuse array_splice, so rekey
         $pieces = array_values($pieces);
         // Now look for . and ..
-        while ($i = array_search('.', $pieces)) {
+        while (($i = array_search('.', $pieces)) !== false) {
             array_splice($pieces, $i, 1);
         }
-        while ($i = array_search('..', $pieces)) {
+        while (($i = array_search('..', $pieces)) !== false) {
             array_splice($pieces, $i - 1, 2);
         }
 
