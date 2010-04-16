@@ -91,5 +91,15 @@ abstract class Scisr_Operations_AbstractFileOperation implements PHP_CodeSniffer
         return $result;
     }
 
+    /**
+     * Process an include or require statement
+     * @param PHP_CodeSniffer_File $phpcsFile the file it was found in
+     * @param string $includedFile the filename that is being included
+     * @param int $line the line number on which it was found
+     * @param int $column the column in which it starts
+     * @param int $length the length of the filename (not necessarily equal to strlen($includedFile))
+     * @param string $quote the type of quote character that surrounds the filename
+     * @param boolean $tentative if this include filename is tentative or not
+     */
     abstract public function processInclude($phpcsFile, $includedFile, $line, $column, $length, $quote, $tentative);
 }

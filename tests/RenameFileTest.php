@@ -118,27 +118,29 @@ class RenameFileTest extends Scisr_SingleFileTest
     /**
      * @dataProvider relativePathProvider
      */
-    public function testPathRelativeTo($path, $base, $expected) {
+    public function testPathRelativeTo($path, $base, $expected, $relativeExpected) {
         $o = new Scisr_Operations_RenameFile('dummy', 'dummy');
-        $this->assertSame($expected, $o->pathRelativeTo($path, $base));
+        $this->assertSame($expected, $o->pathRelativeTo($path, $base, false));
+        $this->assertSame($relativeExpected, $o->pathRelativeTo($path, $base, true));
     }
 
     public function relativePathProvider() {
         return array(
-            array('/home/user/foo.php', '/home/user/', 'foo.php'),
-            array('/home/user/foo.php', '/home/user', 'foo.php'),
-            array('/home/user/foo.php', '', '/home/user/foo.php'),
-            array('/home/user/foo.php', '/', 'home/user/foo.php'),
+            array('/home/user/foo.php', '/home/user/', 'foo.php', './foo.php'),
+            array('/home/user/foo.php', '/home/user', 'foo.php', './foo.php'),
+            array('/home/user/foo.php', '', '/home/user/foo.php', '/home/user/foo.php'),
+            array('/home/user/foo.php', '/', 'home/user/foo.php', './home/user/foo.php'),
+            array('/home/user/foo.php', '/home/bar/baz', 'user/foo.php', '../../user/foo.php'),
         );
     }
 
     /**
      * @dataProvider matchPathsProvider
      */
-    public function testMatchPaths($path, $newPath, $expected) {
+    public function testMatchPaths($path, $newPath, $expected, $currDir='/dummy') {
         $phpcsfile = $this->getMock('PHP_CodeSniffer_File', null, array(), '', false);
         $o = new Scisr_Operations_RenameFile('dummy', 'dummy');
-        $this->assertSame($expected, Scisr_Operations_RenameFile::matchPaths($path, $newPath));
+        $this->assertSame($expected, Scisr_Operations_RenameFile::matchPaths($path, $newPath, $currDir));
     }
 
     public function matchPathsProvider() {
@@ -149,7 +151,23 @@ class RenameFileTest extends Scisr_SingleFileTest
             array('/home/user/foo.php', 'home/user/foo.php', '/'),
             array('/home/user/foo.php', '/home/admin/foo.php', false),
             array('/home/user/foo.php', '/user/foo.php', false),
+            array('/home/user/foo.php', './foo.php', '/home/user/', '/home/user/'),
+            array('/home/user/foo.php', './foo.php', '/home/user/', '/home/user'),
+            array('/home/user/foo.php', './foo.php', false, '/home/user/bar'),
+            array('/home/user/foo.php', './home/user/foo.php', '/', '/'),
+            array('/home/user/foo.php', '../foo.php', '/home/user/bar/', '/home/user/bar'),
+            array('/home/user/foo.php', '../foo.php', false, '/home/user/'),
+            array('/home/user/foo.php', '../user/foo.php', '/home/user/', '/home/user/'),
+            array('/home/user/foo.php', '.././../user/./foo.php', '/home/user/bar/', '/home/user/bar'),
+            array('/home/user/foo.php', '../../user/../user/foo.php', '/home/user/bar/', '/home/user/bar'),
         );
+    }
+
+    public function testMatchPathsNoCurrDirError() {
+        $phpcsfile = $this->getMock('PHP_CodeSniffer_File', null, array(), '', false);
+        $o = new Scisr_Operations_RenameFile('dummy', 'dummy');
+        $this->setExpectedException('Exception');
+        $this->assertSame('DUMMY', Scisr_Operations_RenameFile::matchPaths('/foo/bar', './relative/path'));
     }
 
 }
