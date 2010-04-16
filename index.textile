@@ -51,7 +51,7 @@ Rename a class method. Tries to guess variable types so as to only rename method
 Additional options:
 
 {% highlight bash %}
-    --with-inheritance          Rename the method in children of the given class as well.
+    --no-inheritance            Do not rename method in descendants of the given class.
 {% endhighlight %}
 
 h3. Rename a file
