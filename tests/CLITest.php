@@ -124,11 +124,11 @@ class CLITest extends Scisr_TestCase
     /**
      * @dataProvider inheritanceOptProvider
      */
-    public function testSetInheritance($args) {
+    public function testSetNoInheritance($args) {
         $mock = $this->getMock('Scisr');
         $mock->expects($this->once())
             ->method('setRenameMethod')
-            ->with($this->equalTo('Foo'), $this->equalTo('bar'), $this->equalTo('baz'), $this->equalTo(true));
+            ->with($this->equalTo('Foo'), $this->equalTo('bar'), $this->equalTo('baz'), $this->equalTo(false));
         $mock->expects($this->once())
             ->method('run')
             ->will($this->returnValue(true));
@@ -139,7 +139,7 @@ class CLITest extends Scisr_TestCase
 
     public function inheritanceOptProvider() {
         return array(
-            array(array('scisr_executable', 'rename-method', 'Foo', 'bar', 'baz', '--with-inheritance', 'file1.php', 'file2.php')),
+            array(array('scisr_executable', 'rename-method', 'Foo', 'bar', 'baz', '--no-inheritance', 'file1.php', 'file2.php')),
         );
     }
 
@@ -202,7 +202,7 @@ class CLITest extends Scisr_TestCase
         $mock = $this->getMock('Scisr');
         $mock->expects($this->once())
             ->method('setRenameMethod')
-            ->with($this->equalTo('Foo'), $this->equalTo('bar'), $this->equalTo('baz'), $this->equalTo(false));
+            ->with($this->equalTo('Foo'), $this->equalTo('bar'), $this->equalTo('baz'), $this->equalTo(true));
         $mock->expects($this->once())
             ->method('addFiles')
             ->with($this->equalTo(array('somefile.php')));

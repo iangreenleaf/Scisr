@@ -25,7 +25,7 @@ class Scisr_CLI implements Scisr_Output
      * When renaming a method, true if we should also rename children methods
      * @var boolean
      */
-    private $withInheritance = false;
+    private $withInheritance = true;
 
     public function __construct($output=null)
     {
@@ -44,7 +44,7 @@ class Scisr_CLI implements Scisr_Output
     {
         // Parse all other options
         $shortOptions = 'athi:e:';
-        $longOptions = array('aggressive', 'timid', 'with-inheritance', 'help', 'ignore=', 'extensions=');
+        $longOptions = array('aggressive', 'timid', 'no-inheritance', 'help', 'ignore=', 'extensions=');
         $options = $this->getopt($args, $shortOptions, $longOptions);
         $unparsedOptions = $options[1];
 
@@ -111,8 +111,8 @@ class Scisr_CLI implements Scisr_Output
             case "aggressive":
                 $this->scisr->setEditMode(Scisr::MODE_AGGRESSIVE);
                 break;
-            case "with-inheritance":
-                $this->withInheritance = true;
+            case "no-inheritance":
+                $this->withInheritance = false;
                 break;
             case "t":
             case "timid":
@@ -320,8 +320,8 @@ Usage:
 [files] is any number of files and/or directories to be searched and modified.
 
 Options:
-  --with-inheritance    Only with rename-method. Rename method in children of
-                        the given class as well.
+  --no-inheritance    Only with rename-method. Do not rename method in descendants of
+                        the given class.
 
   -t, --timid           Do not make changes to the files, just list filenames
                         with line numbers.
