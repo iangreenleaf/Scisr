@@ -166,4 +166,24 @@ class RenameFileTest extends Scisr_SingleFileTest
         $this->assertSame('DUMMY', Scisr_Operations_RenameFile::matchPaths('/foo/bar', './relative/path'));
     }
 
+    /**
+     * @dataProvider isRelativeProvider
+     */
+    public function testIsRelative($path, $isRelative) {
+        $this->assertSame($isRelative, Scisr_File::isExplicitlyRelative($path));
+    }
+
+    public function isRelativeProvider() {
+        return array(
+            array('/home/user/foo.php', false),
+            array('/home/user/../foo.php', false),
+            array('.foo.php', false),
+            array('.user/foo.php', false),
+            array('./home/user/foo.php', true),
+            array('./home/user/../foo.php', true),
+            array('../user/foo.php', true),
+            array('../.././user/foo.php', true),
+        );
+    }
+
 }

@@ -41,6 +41,17 @@ class Scisr_File
     }
 
     /**
+     * Is a path explicitly relative?
+     * Paths like "./foo" are explicitly relative. Paths like "/x/foo" clearly
+     * are not, and paths like "x/foo" are considered implicitly relative but
+     * not explicitly so.
+     * @return boolean true if the path is explicitly relative
+     */
+    public static function isExplicitlyRelative($path) {
+        return (preg_match('_^[.]+/_', $path) === 1);
+    }
+
+    /**
      * Calculate the absolute path for a file
      * @param string $filename a relative or absolute path to a file
      * @param string $currDir an absolute path to the current directory, which 

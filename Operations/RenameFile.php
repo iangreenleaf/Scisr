@@ -17,7 +17,7 @@ class Scisr_Operations_RenameFile extends Scisr_Operations_AbstractFileOperation
 
     public function processInclude($phpcsFile, $includedFile, $line, $column, $length, $quote, $tentative)
     {
-        $isRelative = (preg_match('_^[.]+/_', $includedFile) === 1);
+        $isRelative = Scisr_File::isExplicitlyRelative($includedFile);
         $addChange = false;
         if ($isRelative && $this->oldName == $phpcsFile->getFileName()) {
             // This include is relative and inside the file that is being
@@ -60,7 +60,7 @@ class Scisr_Operations_RenameFile extends Scisr_Operations_AbstractFileOperation
      */
     public static function matchPaths($expectedPath, $actualPath, $currDir=false)
     {
-        if (preg_match('_^[.]+/_', $actualPath) === 1) {
+        if (Scisr_File::isExplicitlyRelative($actualPath)) {
             if ($currDir === false) {
                 throw new Exception('You provided a relative path without a current dir!');
             }
