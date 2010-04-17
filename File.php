@@ -134,6 +134,8 @@ class Scisr_File
 
     /**
      * Process all pending edits to the file
+     * @param int $mode a constant from {@link Scisr} indicating what mode we are running in
+     * @return boolean true if this file was actually changed
      */
     public function process($mode)
     {
@@ -203,6 +205,7 @@ class Scisr_File
                 throw new Exception($err);
             }
         }
+        return (count($this->changes) > 0);
     }
 
     /**

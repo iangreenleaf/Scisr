@@ -317,22 +317,23 @@ class Scisr
             $changes = array();
         }
 
-        // Display a summary line
-        $numFiles = count($changes);
-        $msg = "Changed $numFiles files";
-        $this->sendOutput($msg);
-
         // Now make the actual changes
+        $filesChanged = 0;
         $totalWarnings = 0;
         $warnings = array();
         foreach ($changes as $file) {
-            $file->process($this->_mode);
+            $changed = $file->process($this->_mode);
+            $filesChanged += ($changed ? 1 : 0);
             $numWarnings = $file->getNumChangesNotProcessed();
             if ($numWarnings > 0) {
                 $totalWarnings += $numWarnings;
                 $warnings[$file->filename] = $file->getLinesNotProcessed();
             }
         }
+
+        // Display a summary line
+        $msg = "Changed $filesChanged files";
+        $this->sendOutput($msg);
 
         // If we have any notifications, display them
         if ($totalWarnings > 0) {

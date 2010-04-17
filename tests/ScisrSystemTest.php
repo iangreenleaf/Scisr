@@ -38,6 +38,7 @@ class ScisrSystemTest extends Scisr_Tests_MultipleFileTestCase
         $this->populateDir(dirname(__FILE__) . '/_files/cliFixture', $this->test_dir);
         $args = array('rename-class', 'Foo', 'Bar', '--timid', $this->test_dir);
         $output = $this->runShellScisr($args, true);
+        $this->assertRegexp('/changed 0 files/i', $output);
         $this->assertRegexp('/test\.php/', $output);
         $this->assertRegexp('/test2\.php/', $output);
         $this->assertRegexp('/not applied/i', $output);
@@ -57,6 +58,16 @@ class ScisrSystemTest extends Scisr_Tests_MultipleFileTestCase
         $this->assertRegexp('/1 file.*not applied/i', $output);
         $this->assertNotRegexp('/test\.php/', $output);
         $this->assertRegexp('/test2\.php/', $output);
+    }
+
+    public function testMixedChangeNotification() {
+        $this->populateDir(dirname(__FILE__) . '/_files/mixedChangesFixture', $this->test_dir);
+        $args = array('rename-class', 'Foo', 'Bar', $this->test_dir);
+        $output = $this->runShellScisr($args, true);
+        $this->assertRegexp('/changed 1 file/i', $output);
+        $this->assertRegexp('/1 file.*not applied/i', $output);
+        $this->assertRegexp('/notchanged\.php/', $output);
+        $this->assertNotRegexp('/\<changed\.php/', $output);
     }
 
     /**
