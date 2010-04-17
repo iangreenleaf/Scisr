@@ -71,7 +71,12 @@ class ScisrSystemTest extends Scisr_Tests_MultipleFileTestCase
     }
 
     public function testTwoTentativeChangesOnOneLine() {
-        $this->markTestIncomplete();
+        $this->populateDir(dirname(__FILE__) . '/_files/doubleChangeFixture', $this->test_dir);
+        $args = array('rename-class', 'Foo', 'Bar', $this->test_dir);
+        $output = $this->runShellScisr($args, true);
+        $this->assertRegexp('/2 possible changes in 1 file/i', $output);
+        $this->assertRegexp('/foo\.php/i', $output);
+        $this->assertNotRegexp('/foo\.php.*\n.*foo\.php/i', $output);
     }
 
     public function testPrintUsageOnBadArgs() {
