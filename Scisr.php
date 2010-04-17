@@ -60,6 +60,11 @@ class Scisr
      * @var boolean
      */
     protected $_firstPassRequired = false;
+    /**
+     * The edit mode
+     * @var int one of MODE_TIMID, MODE_CONSERVATIVE, or MODE_AGGRESSIVE
+     */
+    private $_mode;
 
     public function __construct($output=null)
     {
@@ -268,20 +273,7 @@ class Scisr
      */
     public function setEditMode($mode)
     {
-        switch ($mode) {
-        case self::MODE_TIMID:
-            Scisr_ChangeRegistry::set('aggressive', false);
-            Scisr_ChangeRegistry::set('timid', true);
-            break;
-        case self::MODE_CONSERVATIVE:
-            Scisr_ChangeRegistry::set('aggressive', false);
-            Scisr_ChangeRegistry::set('timid', false);
-            break;
-        case self::MODE_AGGRESSIVE:
-            Scisr_ChangeRegistry::set('aggressive', true);
-            Scisr_ChangeRegistry::set('timid', false);
-            break;
-        }
+        $this->_mode = $mode;
     }
 
     /**
@@ -331,21 +323,25 @@ class Scisr
         $this->sendOutput($msg);
 
         // Now make the actual changes
+        $totalWarnings = 0;
+        $warnings = array();
         foreach ($changes as $file) {
-            $file->process();
+            $file->process($this->_mode);
+            $numWarnings = $file->getNumChangesNotProcessed();
+            if ($numWarnings > 0) {
+                $totalWarnings += $numWarnings;
+                $warnings[$file->filename] = $file->getLinesNotProcessed();
+            }
         }
 
         // If we have any notifications, display them
-        $warnings = Scisr_ChangeRegistry::get('storedNotifications');
-        if (is_array($warnings) && count($warnings) > 0) {
+        if ($totalWarnings > 0) {
             // Display a summary
             $numFiles = count($warnings);
-            $numWarnings = array_sum(array_map('count', $warnings));
-            $msg = "Found $numWarnings possible changes in $numFiles files that were not applied:";
+            $msg = "Found $totalWarnings possible changes in $numFiles files that were not applied:";
             $this->sendOutput($msg);
             // Now display each line where we found changes
             foreach ($warnings as $filename => $lines) {
-                $lines = array_unique($lines);
                 foreach ($lines as $lineNo) {
                     $this->sendOutput("$filename:$lineNo");
                 }

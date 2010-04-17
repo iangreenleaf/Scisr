@@ -70,6 +70,10 @@ class ScisrSystemTest extends Scisr_Tests_MultipleFileTestCase
         $this->assertNotRegexp('/not applied/i', $output);
     }
 
+    public function testTwoTentativeChangesOnOneLine() {
+        $this->markTestIncomplete();
+    }
+
     public function testPrintUsageOnBadArgs() {
         $args = array('foo', 'bar', 'baz', $this->test_dir);
         $output = $this->runShellScisr($args, false);

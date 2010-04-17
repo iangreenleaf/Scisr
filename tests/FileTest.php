@@ -15,8 +15,8 @@ EOL;
 
         $this->populateFile($original);
         $f = new Scisr_File($this->test_file);
-        $f->addEdit(2, 9, 2, 'may be');
-        $f->process();
+        $f->addEdit(2, 9, 2, 'may be', false);
+        $f->process(Scisr::MODE_CONSERVATIVE);
 
         $expected = <<<EOL
 <?php
@@ -33,7 +33,7 @@ EOL;
 
         $this->populateFile($original);
         $f = new Scisr_File($this->test_file);
-        $f->process();
+        $f->process(Scisr::MODE_CONSERVATIVE);
 
         $this->compareFile($original);
     }
@@ -47,9 +47,9 @@ EOL;
 
         $this->populateFile($original);
         $f = new Scisr_File($this->test_file);
-        $f->addEdit(2, 9, 2, 'may be');
-        $f->addEdit(3, 4, 6, 'Another');
-        $f->process();
+        $f->addEdit(2, 9, 2, 'may be', false);
+        $f->addEdit(3, 4, 6, 'Another', false);
+        $f->process(Scisr::MODE_CONSERVATIVE);
 
         $expected = <<<EOL
 <?php
@@ -72,9 +72,9 @@ EOL;
 
         $this->populateFile($original);
         $f = new Scisr_File($this->test_file);
-        $f->addEdit(2, 12, 5, 'Bazzle');
-        $f->addEdit(2, 35, 5, 'Bazzle');
-        $f->process();
+        $f->addEdit(2, 12, 5, 'Bazzle', false);
+        $f->addEdit(2, 35, 5, 'Bazzle', false);
+        $f->process(Scisr::MODE_CONSERVATIVE);
 
         $expected = <<<EOL
 <?php
@@ -91,9 +91,9 @@ EOL;
 
         $this->populateFile($original);
         $f = new Scisr_File($this->test_file);
-        $f->addEdit(2, 12, 5, 'Foo');
-        $f->addEdit(2, 35, 5, 'Foo');
-        $f->process();
+        $f->addEdit(2, 12, 5, 'Foo', false);
+        $f->addEdit(2, 35, 5, 'Foo', false);
+        $f->process(Scisr::MODE_CONSERVATIVE);
 
         $expected = <<<EOL
 <?php
@@ -115,10 +115,10 @@ EOL;
 
         $this->populateFile($original);
         $f = new Scisr_File($this->test_file);
-        $f->addEdit(2, 35, 5, 'Bazzle');
-        $f->addEdit(3, 4, 6, 'Another');
-        $f->addEdit(2, 12, 5, 'Bazzle');
-        $f->process();
+        $f->addEdit(2, 35, 5, 'Bazzle', false);
+        $f->addEdit(3, 4, 6, 'Another', false);
+        $f->addEdit(2, 12, 5, 'Bazzle', false);
+        $f->process(Scisr::MODE_CONSERVATIVE);
 
         $expected = <<<EOL
 <?php
@@ -136,10 +136,10 @@ EOL;
 
         $this->populateFile($original);
         $f = new Scisr_File($this->test_file);
-        $f->addEdit(2, 4, 3, 'Replacement');
-        $f->addEdit(2, 6, 2, 'Foo');
+        $f->addEdit(2, 4, 3, 'Replacement', false);
+        $f->addEdit(2, 6, 2, 'Foo', false);
         $this->setExpectedException('Exception');
-        $f->process();
+        $f->process(Scisr::MODE_CONSERVATIVE);
     }
 
     public function testConflictingOffsetsWithOffsetAdjustment() {
@@ -150,11 +150,11 @@ EOL;
 
         $this->populateFile($original);
         $f = new Scisr_File($this->test_file);
-        $f->addEdit(2, 1, 2, '/**/');
-        $f->addEdit(2, 4, 3, 'Replacement');
-        $f->addEdit(2, 6, 2, 'Foo');
+        $f->addEdit(2, 1, 2, '/**/', false);
+        $f->addEdit(2, 4, 3, 'Replacement', false);
+        $f->addEdit(2, 6, 2, 'Foo', false);
         $this->setExpectedException('Exception');
-        $f->process();
+        $f->process(Scisr::MODE_CONSERVATIVE);
     }
 
     public function testNoChangesToFileWhenConflictFound() {
@@ -165,10 +165,10 @@ EOL;
 
         $this->populateFile($original);
         $f = new Scisr_File($this->test_file);
-        $f->addEdit(2, 4, 3, 'Replacement');
-        $f->addEdit(2, 6, 2, 'Foo');
+        $f->addEdit(2, 4, 3, 'Replacement', false);
+        $f->addEdit(2, 6, 2, 'Foo', false);
         try {
-            $f->process();
+            $f->process(Scisr::MODE_CONSERVATIVE);
         } catch (Exception $e) {
             // Do nothing
         }
@@ -184,9 +184,9 @@ EOL;
 
         $this->populateFile($original);
         $f = new Scisr_File($this->test_file);
-        $f->addEdit(2, 12, 6, 'something else');
-        $f->addEdit(2, 18, 1, '!');
-        $f->process();
+        $f->addEdit(2, 12, 6, 'something else', false);
+        $f->addEdit(2, 18, 1, '!', false);
+        $f->process(Scisr::MODE_CONSERVATIVE);
 
         $expected = <<<EOL
 <?php
@@ -236,4 +236,71 @@ EOL;
         $this->assertEquals('/an/abs/path', $newPath);
     }
 
+    /**
+     * @dataProvider changesProvider
+     */
+    public function testMergeChanges($c1, $c2, $expected) {
+        $this->assertEquals($expected, MockFile::exposeMergeChanges($c1, $c2));
+    }
+    public function changesProvider() {
+        $result = array();
+        $result[] = array(
+            array(1 => array(1 => array(3, 'Baz'))),
+            array(1 => array(1 => array(3, 'Baz'))),
+            array(1 => array(1 => array(3, 'Baz'))),
+        );
+        $result[] = array(
+            array(1 => array(1 => array(3, 'Baz'))),
+            array(2 => array(1 => array(3, 'Baz'))),
+            array(1 => array(1 => array(3, 'Baz')), 2 => array(1 => array(3, 'Baz'))),
+        );
+        $result[] = array(
+            array(1 => array(1 => array(3, 'Baz'))),
+            array(1 => array(2 => array(3, 'Baz'))),
+            array(1 => array(1 => array(3, 'Baz'), 2 => array(3, 'Baz'))),
+        );
+        $result[] = array(
+            array(1 => array(1 => array(3, 'Baz'))),
+            array(1 => array(1 => array(6, 'Baz'))),
+            array(1 => array(1 => array(6, 'Baz'))),
+        );
+        $result[] = array(
+            array(1 => array(1 => array(3, 'Baz'), 12 => array(2, 'Foo'))),
+            array(1 => array(1 => array(6, 'Baz'), 32 => array(2, 'Bar'))),
+            array(1 => array(1 => array(6, 'Baz'), 12 => array(2, 'Foo'), 32 => array(2, 'Bar'))),
+        );
+        $result[] = array(
+            array(
+                1 => array(
+                    1 => array(3, 'Baz'),
+                    12 => array(2, 'Foo')
+                )
+            ),
+            array(
+                1 => array(
+                    1 => array(6, 'Baz')
+                ),
+                2 => array(
+                    5 => array(7, 'Bar')
+                )
+            ),
+            array(
+                1 => array(
+                    1 => array(6, 'Baz'),
+                    12 => array(2, 'Foo'),
+                ),
+                2 => array(
+                    5 => array(7, 'Bar')
+                )
+            )
+        );
+        return $result;
+    }
+
+}
+
+class MockFile extends Scisr_File {
+    public static function exposeMergeChanges($c1, $c2) {
+        return parent::mergeChanges($c1, $c2);
+    }
 }

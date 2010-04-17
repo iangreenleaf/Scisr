@@ -20,16 +20,28 @@ class Scisr_File
     public $filename;
     /**
      * Stores the pending changes to this file.
-     * A 2D array by line number, then column number
+     * A 2D array by line number, then column number.
      * @var array
      */
     public $changes = array();
+    /**
+     * Stores the pending tentative changes to this file.
+     * These changes will only be made if we are in aggressive mode.
+     * A 2D array by line number, then column number.
+     * @var array
+     */
+    public $tentativeChanges = array();
     /**
      * A new filename.
      * If not null, indicates this file is to be renamed.
      * @var string|null
      */
     private $_newName = null;
+    /**
+     * Changes that were suggested but are not actually being made to this file.
+     * @var array
+     */
+    private $_changesNotProcessed = array();
 
     /**
      * Create a new Scisr_File
@@ -99,9 +111,13 @@ class Scisr_File
      * @param int $length length of the text to remove
      * @param string $replacement the text to replace the removed text with
      */
-    public function addEdit($line, $column, $length, $replacement)
+    public function addEdit($line, $column, $length, $replacement, $tentative)
     {
-        $this->changes[$line][$column] = array($length, $replacement);
+        if ($tentative) {
+            $this->tentativeChanges[$line][$column] = array($length, $replacement);
+        } else {
+            $this->changes[$line][$column] = array($length, $replacement);
+        }
     }
 
     /**
@@ -119,8 +135,26 @@ class Scisr_File
     /**
      * Process all pending edits to the file
      */
-    public function process()
+    public function process($mode)
     {
+        if ($mode === Scisr::MODE_AGGRESSIVE) {
+            // In aggressive mode, all tentative changes get slated for application
+            $this->changes = self::mergeChanges($this->tentativeChanges, $this->changes);
+            $this->tentativeChanges = array();
+        } else {
+            if ($mode == Scisr::MODE_TIMID) {
+                // In timid mode, all changes become tentative
+                $this->tentativeChanges = self::mergeChanges($this->tentativeChanges, $this->changes);
+                $this->changes = array();
+            }
+            ksort($this->tentativeChanges);
+            // We need to get rid of multiple tentative changes and any that are covered by actual changes
+            foreach ($this->tentativeChanges as $lineNo => $changes) {
+                $realChanges = (isset($this->changes[$lineNo]) ? $this->changes[$lineNo] : array());
+                $this->_changesNotProcessed[$lineNo] = $this->reconcileNonEdits($changes, $realChanges);
+            }
+        }
+
         // Sort by columns and then by lines
         foreach ($this->changes as $key => &$array) {
             ksort($array);
@@ -154,7 +188,7 @@ class Scisr_File
         file_put_contents($this->filename, $output);
 
         // If there's a rename pending, do it
-        if ($this->_newName !== null) {
+        if ($this->_newName !== null && $mode !== Scisr::MODE_TIMID) {
             $dir = dirname($this->_newName);
             if (!is_dir($dir)) {
                 $success = mkdir($dir, 0775, true);
@@ -172,6 +206,52 @@ class Scisr_File
     }
 
     /**
+     * Merge two arrays of changes.
+     * None of the php array functions quite hits the combination of recursion
+     * and overwriting that we need here, so I rolled my own.
+     * @param array $changes1 the first array of changes
+     * @param array $changes2 the second array of changes
+     * @return array the merged changes.
+     */
+    protected static function mergeChanges($changes1, $changes2)
+    {
+        $result = array();
+        $keys = array_merge(array_keys($changes1), array_keys($changes2));
+        foreach ($keys as $key) {
+            if (!isset($changes1[$key])) {
+                $result[$key] = $changes2[$key];
+            } else if (!isset($changes2[$key])) {
+                $result[$key] = $changes1[$key];
+            } else {
+                $result[$key] = $changes2[$key] + $changes1[$key];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Get the number of edits which were not applied to this file
+     * @return int
+     */
+    public function getNumChangesNotProcessed()
+    {
+        $sum = 0;
+        foreach ($this->_changesNotProcessed as $line) {
+            $sum += count($line);
+        }
+        return $sum;
+    }
+
+    /**
+     * Get a list of lines that had edits which were not actually applied
+     * @return array
+     */
+    public function getLinesNotProcessed()
+    {
+        return array_keys($this->_changesNotProcessed);
+    }
+
+    /**
      * Reconcile edit requests for a line.
      * Handles benign conflicts automatically.
      * @param array an array of edit requests for a line, as stored in $this->changes
@@ -179,11 +259,11 @@ class Scisr_File
      */
     private function reconcileEdits($lineChanges)
     {
-        $lineEdits = array();
+        $goodChanges = array();
         foreach ($lineChanges as $startCol => $edit) {
-            $lineEdits = $this->checkNewEditForConflicts($edit, $startCol, $lineEdits);
+            $goodChanges = $this->checkNewEditForConflicts($edit, $startCol, $goodChanges);
         }
-        return $lineEdits;
+        return $goodChanges;
     }
 
     /**
@@ -224,6 +304,47 @@ class Scisr_File
         }
         $previousEdits[$startCol] = $newEdit;
         return $previousEdits;
+    }
+
+    /**
+     * Reconcile edit notifications for a line, always removing from the first array
+     * @param array $lineChanges an array of edit requests for a line
+     * @param array $masterChanges an array of edit requests for the line that
+     * will always win if there is a conflict
+     * @return array all edits contained in $lineChanges that did not conflict
+     * with other items in that list or in $masterChanges
+     */
+    private function reconcileNonEdits($lineChanges, $masterChanges)
+    {
+        $goodChanges = array();
+        foreach ($lineChanges as $startCol => $edit) {
+            if ($this->doesEditConflict($edit, $startCol, $masterChanges)) {
+                continue;
+            }
+            $goodChanges = $this->checkNewEditForConflicts($edit, $startCol, $goodChanges);
+        }
+        return $goodChanges;
+    }
+
+    /**
+     * See if an edit conflicts with the given list of edit requests
+     * @param array $newEdit an edit request, as stored in $this->changes[][]
+     * @param int $startCol the start column of $newEdit
+     * @param array $existingEdits the list of existing edit requests
+     * @return boolean true if $newEdit conflicts with something in $existingEdits
+     */
+    private function doesEditConflict($newEdit, $startCol, $existingEdits)
+    {
+        $length = $newEdit[0];
+        $endCol = $startCol + $length - 1;
+        foreach ($existingEdits as $oldStartCol => $oldEdit) {
+            $oldEndCol = $oldStartCol + $oldEdit[0] - 1;
+            // Ignore unless this edit request conflicts
+            if ($oldEndCol >= $startCol && $oldStartCol <= $endCol) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

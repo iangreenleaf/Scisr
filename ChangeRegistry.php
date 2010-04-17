@@ -54,14 +54,8 @@ class Scisr_ChangeRegistry
      */
     public static function addChange($filename, $line, $column, $length, $replacement, $tentative=false)
     {
-        if ($tentative && self::get('aggressive') !== true
-            || self::get('timid') === true
-        ) {
-            return self::addNotification($filename, $line);
-        }
-
         $file = self::getFile($filename);
-        $file->addEdit($line, $column, $length, $replacement);
+        $file->addEdit($line, $column, $length, $replacement, $tentative);
         self::setFile($file);
     }
 
@@ -106,37 +100,12 @@ class Scisr_ChangeRegistry
     }
 
     /**
-     * Add a notification about a possible change
-     *
-     * This method and the 'aggressiveMode' setting do leak a bit of business
-     * logic out of the Scisr class into this class. However, I think the code 
-     * is cleanest this way, at least for now.
-     *
-     * @param string $filename the filename
-     * @param int $line the line number that our change begins on
-     */
-    protected static function addNotification($filename, $line)
-    {
-        $changes = self::get('storedNotifications');
-        if (!is_array($changes)) {
-            $changes = array();
-        }
-        $changes[$filename][] = $line;
-        self::set('storedNotifications', $changes);
-    }
-
-    /**
      * Set a file to be renamed
      * @param string $oldName the path to the file to be renamed
      * @param string $newName the new path to give it
      */
     public static function addRename($oldName, $newName)
     {
-        // Don't rename the file if we're in timid mode
-        if (self::get('timid') === true) {
-            return;
-        }
-
         $file = self::getFile($oldName);
         $file->rename($newName);
         self::setFile($file);
