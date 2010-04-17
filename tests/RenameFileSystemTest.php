@@ -75,11 +75,12 @@ class RenameFileSystemTest extends Scisr_Tests_MultipleFileTestCase
 	}
 
     public function testRenameFileAltersIncludesSwitchPlaces() {
-		$this->markTestIncomplete('Feature is not yet implemented');
         $this->populateDir(dirname(__FILE__) . '/_files/renameFileIncludesFixture', $this->test_dir);
         chdir($this->test_dir);
 
 		$this->doRenameFile('otherfolder/stuff.php', 'stuff.php');
+        // This is kinda hacky, but we need to clear out the static data since we're not creating a second process
+        Scisr_ChangeRegistry::clearAll();
 		$this->doRenameFile('test.php', 'otherfolder/test.php');
 
         $this->compareDir(dirname(__FILE__) . '/_files/renameFileIncludesFixture-after-rename-3', $this->test_dir);

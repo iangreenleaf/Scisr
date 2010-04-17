@@ -34,6 +34,14 @@ class Scisr_ChangeRegistry
     }
 
     /**
+     * Clear all data stored in the registry
+     */
+    public static function clearAll()
+    {
+        self::$_data = array();
+    }
+
+    /**
      * Set a potential change to a file
      * @param string $filename the filename
      * @param int $line the line number that our change begins on
