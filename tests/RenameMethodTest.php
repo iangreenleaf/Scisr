@@ -1181,10 +1181,16 @@ EOL;
 }
 
 /**
- * @todo document
+ * A simple little mock to help fake a variable type in another file, for testing includes
  */
 class MockSniffer extends Scisr_CodeSniffer
 {
+    /**
+     * Filename of the imaginary file to include. Must be set before we call process().
+     * @var string
+     */
+    public $incFile;
+
     public function process($files, $local=false)
     {
         Scisr_Db_VariableTypes::registerVariableType('$f', 'Foo', $this->incFile, 0, 4);
