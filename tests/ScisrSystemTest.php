@@ -54,10 +54,20 @@ class ScisrSystemTest extends Scisr_Tests_MultipleFileTestCase
         $this->populateDir(dirname(__FILE__) . '/_files/cliFixture', $this->test_dir);
         $args = array('rename-class', 'Foo', 'Bar', $this->test_dir);
         $output = $this->runShellScisr($args, true);
-        $this->assertRegexp('/1 file/i', $output);
+        $this->assertRegexp('/1 file.*not applied/i', $output);
         $this->assertNotRegexp('/test\.php/', $output);
         $this->assertRegexp('/test2\.php/', $output);
-        $this->assertRegexp('/not applied/i', $output);
+    }
+
+    /**
+     * @ticket 24
+     */
+    public function testTentativeChangesDoubleReported() {
+        $this->populateDir(dirname(__FILE__) . '/_files/systemClassFileFixture', $this->test_dir);
+        $args = array('rename-class-file', 'Foo', 'Bar', $this->test_dir);
+        $output = $this->runShellScisr($args, true);
+        $this->assertRegexp('/changed 2 files/i', $output);
+        $this->assertNotRegexp('/not applied/i', $output);
     }
 
     public function testPrintUsageOnBadArgs() {
