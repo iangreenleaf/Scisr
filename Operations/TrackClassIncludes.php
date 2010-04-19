@@ -18,6 +18,7 @@ class Scisr_Operations_TrackClassIncludes
     {
         return array(
             T_NEW,
+            T_PAAMAYIM_NEKUDOTAYIM,
         );
     }
 
@@ -26,7 +27,11 @@ class Scisr_Operations_TrackClassIncludes
         $tokens = $phpcsFile->getTokens();
 
         // Find the class name
-        $classPtr = $phpcsFile->findNext(T_STRING, $stackPtr);
+        if ($tokens[$stackPtr]['code'] == T_NEW) {
+            $classPtr = $phpcsFile->findNext(T_STRING, $stackPtr);
+        } else {
+            $classPtr = $phpcsFile->findPrevious(T_STRING, $stackPtr);
+        }
         $classToken = $tokens[$classPtr];
         $className = $classToken['content'];
 

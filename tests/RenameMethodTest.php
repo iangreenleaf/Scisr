@@ -1145,6 +1145,23 @@ EOL;
         $this->renameAndCompareWithIncludes($orig, $expected, dirname($this->test_file) . '/any_filename.php');
     }
 
+    /**
+     * @ticket 20
+     */
+    public function testIncludeFileWhenClassUsedStatically() {
+        $orig = <<<EOL
+<?php
+\$z = ThisOtherClass::foo();
+\$z->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+\$z = ThisOtherClass::foo();
+\$z->baz();
+EOL;
+        $this->renameAndCompareWithIncludes($orig, $expected, dirname($this->test_file) . '/any_filename.php');
+    }
+
     private function renameAndCompareWithIncludes($orig, $expected, $includedFile) {
         $this->populateFile($orig);
 
