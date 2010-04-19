@@ -8,6 +8,12 @@ class Scisr_Operations_TrackClassIncludes
     extends Scisr_Operations_AbstractVariableTypeOperation
 {
 
+    /**
+     * A list of filenames with arrays of classes called within those files.
+     * @var array
+     */
+    private $_files = array();
+
     public function register()
     {
         return array(
@@ -24,9 +30,24 @@ class Scisr_Operations_TrackClassIncludes
         $classToken = $tokens[$classPtr];
         $className = $classToken['content'];
 
-        $filename = Scisr_Db_Classes::getClassFile($className);
-        if ($filename !== null) {
-            Scisr_Db_FileIncludes::registerFileInclude($phpcsFile->getFileName(), $filename);
+        $this->_files[$phpcsFile->getFilename()][] = $className;
+    }
+
+    /**
+     * A callback to register all the includes from classes we found.
+     * Performed as a callback so that full class=>file information is
+     * available to us.
+     */
+    public function registerIncludes()
+    {
+        foreach ($this->_files as $filename => $classes) {
+            $classes = array_unique($classes);
+            foreach ($classes as $class) {
+                $include = Scisr_Db_Classes::getClassFile($class);
+                if ($include !== null) {
+                    Scisr_Db_FileIncludes::registerFileInclude($filename, $include);
+                }
+            }
         }
     }
 

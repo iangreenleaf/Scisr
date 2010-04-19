@@ -127,7 +127,10 @@ class Scisr
         $listeners[] = new Scisr_Operations_TrackCommentVariableTypes();
         $listeners[] = new Scisr_Operations_TrackIncludedFiles();
         $listeners[] = new Scisr_Operations_TrackClasses();
-        $listeners[] = new Scisr_Operations_TrackClassIncludes();
+        $includesOp = new Scisr_Operations_TrackClassIncludes();
+        $this->_firstPassCallbacks[] = array(array($includesOp, 'registerIncludes'), array());
+        $listeners[] = $includesOp;
+
         return $listeners;
     }
 
