@@ -15,7 +15,7 @@ class Scisr_Db_FileIncludes
         // Yes, I know this is not the most efficient or normalized. But I'm lazy.
         $create = <<<EOS
 CREATE TABLE IF NOT EXISTS FileIncludes(file text, included_file text);
-CREATE INDEX IF NOT EXISTS FileIncludes_index_file ON FileIncludes (file);
+CREATE UNIQUE INDEX IF NOT EXISTS FileIncludes_index_file ON FileIncludes (file, included_file);
 EOS;
         $db->exec($create);
     }
@@ -30,7 +30,7 @@ EOS;
         $db = Scisr_Db::getDb();
 
         $insert = <<<EOS
-INSERT INTO FileIncludes (file, included_file) VALUES (?, ?)
+INSERT OR IGNORE INTO FileIncludes (file, included_file) VALUES (?, ?)
 EOS;
         $insSt = $db->prepare($insert);
         $insSt->execute(array($filename, $includedFilename));

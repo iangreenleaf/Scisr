@@ -1195,6 +1195,17 @@ EOL;
         $this->renameAndCompare($orig, $expected, 'Foo', 'bar', 'baz', false, true);
     }
 
+    /**
+     * This isn't really a test of rename-method, but there's nowhere else good
+     * to put it at the moment.
+     */
+    public function testIncludeFileRepeatedly() {
+        Scisr_Db_FileIncludes::init();
+        Scisr_Db_FileIncludes::registerFileInclude('/x/y/myfile.php', '/x/z/otherfile.php');
+        Scisr_Db_FileIncludes::registerFileInclude('/x/y/myfile.php', '/x/z/otherfile.php');
+        $this->assertSame(array('/x/z/otherfile.php'), Scisr_Db_FileIncludes::getIncludedFiles('/x/y/myfile.php'));
+    }
+
 }
 
 /**
