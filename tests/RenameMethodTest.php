@@ -1128,6 +1128,23 @@ EOL;
         );
     }
 
+    /**
+     * @ticket 20
+     */
+    public function testIncludeFileWhenClassUsed() {
+        $orig = <<<EOL
+<?php
+\$z = new ThisOtherClass();
+\$z->foo()->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+\$z = new ThisOtherClass();
+\$z->foo()->baz();
+EOL;
+        $this->renameAndCompareWithIncludes($orig, $expected, dirname($this->test_file) . '/any_filename.php');
+    }
+
     private function renameAndCompareWithIncludes($orig, $expected, $includedFile) {
         $this->populateFile($orig);
 
@@ -1181,7 +1198,7 @@ EOL;
 }
 
 /**
- * A simple little mock to help fake a variable type in another file, for testing includes
+ * A simple little mock to help fake variable types in another file, for testing includes
  */
 class MockSniffer extends Scisr_CodeSniffer
 {
@@ -1194,6 +1211,8 @@ class MockSniffer extends Scisr_CodeSniffer
     public function process($files, $local=false)
     {
         Scisr_Db_VariableTypes::registerVariableType('$f', 'Foo', $this->incFile, 0, 4);
+        Scisr_Db_VariableTypes::registerVariableType('ThisOtherClass->*foo', 'Foo', $this->incFile, 0, 8);
+        Scisr_Db_Classes::registerClass('ThisOtherClass', $this->incFile);
         parent::process($files, $local);
     }
 }

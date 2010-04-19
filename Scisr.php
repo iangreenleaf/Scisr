@@ -127,6 +127,7 @@ class Scisr
         $listeners[] = new Scisr_Operations_TrackCommentVariableTypes();
         $listeners[] = new Scisr_Operations_TrackIncludedFiles();
         $listeners[] = new Scisr_Operations_TrackClasses();
+        $listeners[] = new Scisr_Operations_TrackClassIncludes();
         return $listeners;
     }
 
