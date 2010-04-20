@@ -221,6 +221,36 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
     }
 
     /**
+     * Resolve the subject of a static method call to the most typed object we can
+     * @param PHP_CodeSniffer_File $phpcsFile
+     * @param int $stackPtr a pointer to the T_PAAMAYIM_NEKUDOTAYIM token
+     * (the "::" symbol)
+     * @return string the class this method was called on
+     */
+    protected function resolveStaticSubject($phpcsFile, $stackPtr)
+    {
+        $tokens = $phpcsFile->getTokens();
+        $classPtr = $phpcsFile->findPrevious(array(T_STRING, T_SELF, T_PARENT), $stackPtr);
+        $classInfo = $tokens[$classPtr];
+        $className = $classInfo['content'];
+        if (($className == 'self' || $className == 'parent')
+            && ($classDefPtr = array_search(T_CLASS, $classInfo['conditions'])) !== false
+        ) {
+            $newClassPtr = $phpcsFile->findNext(T_STRING, $classDefPtr);
+            $newClassName = $tokens[$newClassPtr]['content'];
+            if ($className == 'self') {
+                return $newClassName;
+            } else {
+                $parent = Scisr_Db_Classes::getParent($newClassName);
+                if ($parent !== null) {
+                    return $parent;
+                }
+            }
+        }
+        return $className;
+    }
+
+    /**
      * Resolve a set of variable tokens to the most typed object we can
      * @param int $startPtr a pointer to the first token
      * @param int $endPtr a pointer to the last token

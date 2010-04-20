@@ -1077,6 +1077,126 @@ EOL;
         $this->renameAndCompare($orig, $expected, 'Foo', 'bar', 'baz', false, true);
     }
 
+    public function testRenameStaticSelf() {
+        $orig = <<<EOL
+<?php
+class Foo {
+    public function quark() {
+        self::bar();
+    }
+}
+class NewFoo extends Foo {
+    public function quark() {
+        self::bar();
+    }
+}
+EOL;
+        $expected = <<<EOL
+<?php
+class Foo {
+    public function quark() {
+        self::baz();
+    }
+}
+class NewFoo extends Foo {
+    public function quark() {
+        self::baz();
+    }
+}
+EOL;
+        $this->renameAndCompare($orig, $expected, 'Foo', 'bar', 'baz', false, true);
+    }
+
+    public function testRenameStaticSelfWithNoInheritance() {
+        $orig = <<<EOL
+<?php
+class Foo {
+    public function quark() {
+        self::bar();
+    }
+}
+class NewFoo extends Foo {
+    public function quark() {
+        self::bar();
+    }
+}
+EOL;
+        $expected = <<<EOL
+<?php
+class Foo {
+    public function quark() {
+        self::baz();
+    }
+}
+class NewFoo extends Foo {
+    public function quark() {
+        self::bar();
+    }
+}
+EOL;
+        $this->renameAndCompare($orig, $expected, 'Foo', 'bar', 'baz', false, false);
+    }
+
+    public function testRenameParent() {
+        $orig = <<<EOL
+<?php
+class NewFoo extends Foo {
+    public function bar() {
+        parent::bar();
+    }
+}
+class Quark extends NewFoo {
+    public function bar() {
+        parent::bar();
+    }
+}
+EOL;
+        $expected = <<<EOL
+<?php
+class NewFoo extends Foo {
+    public function baz() {
+        parent::baz();
+    }
+}
+class Quark extends NewFoo {
+    public function baz() {
+        parent::baz();
+    }
+}
+EOL;
+        $this->renameAndCompare($orig, $expected, 'Foo', 'bar', 'baz', false, true);
+    }
+
+    public function testRenameParentWithNoInheritance() {
+        $orig = <<<EOL
+<?php
+class NewFoo extends Foo {
+    public function bar() {
+        parent::bar();
+    }
+}
+class Quark extends NewFoo {
+    public function bar() {
+        parent::bar();
+    }
+}
+EOL;
+        $expected = <<<EOL
+<?php
+class NewFoo extends Foo {
+    public function bar() {
+        parent::baz();
+    }
+}
+class Quark extends NewFoo {
+    public function bar() {
+        parent::bar();
+    }
+}
+EOL;
+        $this->renameAndCompare($orig, $expected, 'Foo', 'bar', 'baz', false, false);
+    }
+
     /**
      * @dataProvider includeTypeProvider
      */

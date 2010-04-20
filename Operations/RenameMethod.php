@@ -40,9 +40,7 @@ class Scisr_Operations_RenameMethod
         }
 
         if ($tokens[$stackPtr]['code'] == T_PAAMAYIM_NEKUDOTAYIM) {
-            $classPtr = $phpcsFile->findPrevious(T_STRING, $stackPtr);
-            $classInfo = $tokens[$classPtr];
-            $className = $classInfo['content'];
+            $className = $this->resolveStaticSubject($phpcsFile, $stackPtr);
             // If it's the name we're looking for, register it
             if ($className == $this->class) {
                 Scisr_ChangeRegistry::addChange(

@@ -24,6 +24,13 @@ CREATE TABLE IF NOT EXISTS ClassRelationships(class text, is_a text);
 CREATE INDEX IF NOT EXISTS ClassRelationships_index_is_a ON ClassRelationships (is_a);
 EOS;
         $db->exec($create);
+
+        // That's right, my DB is denormalized
+        $create = <<<EOS
+CREATE TABLE IF NOT EXISTS Parents(class text, parent text);
+CREATE UNIQUE INDEX IF NOT EXISTS Parents_index_class ON Parents (class);
+EOS;
+        $db->exec($create);
     }
 
     /**
@@ -50,7 +57,16 @@ EOS;
      */
     public static function registerClassExtends($className, $extendsClass)
     {
+        // First register the generic relationship
         self::registerClassRelationship($className, $extendsClass);
+
+        $db = Scisr_Db::getDb();
+        // Now insert this assignment
+        $insert = <<<EOS
+INSERT INTO Parents (class, parent) VALUES (?, ?)
+EOS;
+        $insSt = $db->prepare($insert);
+        $insSt->execute(array($className, $extendsClass));
     }
 
     /**
@@ -131,6 +147,28 @@ EOS;
             }
         }
         return $children;
+    }
+
+    /**
+     * Get the parent of this class
+     * @param string the class name
+     * @return string|null the name of this class' parent, or null if none exists
+     */
+    public static function getParent($className)
+    {
+        $db = Scisr_Db::getDb();
+        $select = <<<EOS
+SELECT parent FROM Parents WHERE class = ?
+EOS;
+        $st = $db->prepare($select);
+        $st->execute(array($className));
+        $result = $st->fetchColumn();
+
+        if ($result === false) {
+            return null;
+        }
+
+        return $result;
     }
 
 }
