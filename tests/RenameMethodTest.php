@@ -511,6 +511,55 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    /**
+     * This is a question of taste, since there's no "right" way to handle
+     * this kind of conflict. I choose to give PHPDoc types more weight than
+     * the guesses made by the static typer.
+     */
+    public function testPHPDocReturnOverridesReturnStatement() {
+        $orig = <<<EOL
+<?php
+class Quark {
+    /**
+     * @return Quack
+     */
+    function a() {
+        return new Foo();
+    }
+    /**
+     * @return Foo
+     */
+    function b() {
+        return new Quack();
+    }
+}
+\$q = new Quark();
+\$q->a()->bar();
+\$q->b()->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+class Quark {
+    /**
+     * @return Quack
+     */
+    function a() {
+        return new Foo();
+    }
+    /**
+     * @return Foo
+     */
+    function b() {
+        return new Quack();
+    }
+}
+\$q = new Quark();
+\$q->a()->bar();
+\$q->b()->baz();
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
 	public function testRenameFunctionParamWithTypeHint() {
         $orig = <<<EOL
 <?php
