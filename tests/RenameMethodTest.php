@@ -415,6 +415,102 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    public function testRenameFromActualFunctionReturn() {
+        $orig = <<<EOL
+<?php
+function quark(\$param) {
+    \$f = new Foo();
+    return \$f;
+}
+
+\$eff = quark(1);
+\$eff->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+function quark(\$param) {
+    \$f = new Foo();
+    return \$f;
+}
+
+\$eff = quark(1);
+\$eff->baz();
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
+    public function testRenameFromActualMethodReturn() {
+        $orig = <<<EOL
+<?php
+class Quark {
+    function q(\$param) {
+        return new Foo();
+    }
+}
+\$q = new Quark();
+\$eff = \$q->q();
+\$eff->bar();
+Quark::q()->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+class Quark {
+    function q(\$param) {
+        return new Foo();
+    }
+}
+\$q = new Quark();
+\$eff = \$q->q();
+\$eff->baz();
+Quark::q()->baz();
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
+    public function testRenameFromComplicatedReturnValue() {
+        $orig = <<<EOL
+<?php
+class Quark {
+    function a(Quack \$duck) {
+        \$x = \$duck;
+        \$y = \$x->getF();
+        return \$y;
+    }
+    function b() {
+        return \$this->a(new Quack());
+    }
+}
+class Quack {
+    function getF() {
+        return new Foo();
+    }
+}
+\$q = new Quark();
+\$q->b()->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+class Quark {
+    function a(Quack \$duck) {
+        \$x = \$duck;
+        \$y = \$x->getF();
+        return \$y;
+    }
+    function b() {
+        return \$this->a(new Quack());
+    }
+}
+class Quack {
+    function getF() {
+        return new Foo();
+    }
+}
+\$q = new Quark();
+\$q->b()->baz();
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
 	public function testRenameFunctionParamWithTypeHint() {
         $orig = <<<EOL
 <?php

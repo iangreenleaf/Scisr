@@ -136,4 +136,13 @@ EOL;
         $this->parseCode($code);
     }
 
+    public function testIgnoreMisplacedReturn() {
+        $code = <<<EOL
+<?php
+// This is actually "valid" PHP
+return "Something";
+EOL;
+        $this->parseCode($code);
+    }
+
 }
