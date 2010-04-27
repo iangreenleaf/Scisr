@@ -19,7 +19,6 @@ class Scisr_Operations_TrackVariableTypes
         );
     }
 
-    //TODO take out resolveFullVariableType from this class
     public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
     {
         $varName = null;
@@ -27,21 +26,12 @@ class Scisr_Operations_TrackVariableTypes
         $varPtr = $phpcsFile->findPrevious(array(T_WHITESPACE), $stackPtr - 1, null, true);
 
         if ($tokens[$varPtr]['code'] != T_VARIABLE) {
-            $varPtr = $this->getStartOfVar($varPtr, $tokens);
-            $varName = $this->resolveFullVariableType($varPtr, $stackPtr - 1, $phpcsFile);
+            $varName = $this->resolveFullVariableType($varPtr, $phpcsFile, false);
         }
 
         $nextPtr = $phpcsFile->findNext(array(T_WHITESPACE), $stackPtr + 1, null, true);
         $nextToken = $tokens[$nextPtr];
-        if ($nextToken['code'] == T_NEW) {
-            // Find the class name
-            $classPtr = $phpcsFile->findNext(T_STRING, $nextPtr);
-            $classToken = $tokens[$classPtr];
-            $className = $classToken['content'];
-        } else if ($nextToken['code'] == T_VARIABLE || $nextToken['code'] == T_STRING) {
-            $endPtr = $this->getEndOfVar($nextPtr, $tokens);
-            $className = $this->resolveFullVariableType($nextPtr, $endPtr, $phpcsFile);
-        }
+        $className = $this->resolveFullVariableType($nextPtr, $phpcsFile);
 
         if (isset($className) && $className !== null) {
             $this->setVariableType($varPtr, $className, $phpcsFile, $varName);

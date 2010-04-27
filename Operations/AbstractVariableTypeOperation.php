@@ -252,15 +252,34 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_Cod
 
     /**
      * Resolve a set of variable tokens to the most typed object we can
-     * @param int $startPtr a pointer to the first token
-     * @param int $endPtr a pointer to the last token
+     * @param int $ptr a pointer to the first or last token of the variable.
+     * Must not be whitespace.
      * @param PHP_CodeSniffer_File $phpcsFile
+     * @param boolean $lookForward If true, we are starting at the beginning of 
+     * the variable and moving forwards. If false, we are starting at the end 
+     * and moving backwards. Defaults to true.
      * @return string a type name or a partially-resolved string, such as
      * "Foo->unknownVar->property".
      */
-    protected function resolveFullVariableType($startPtr, $endPtr, $phpcsFile)
+    protected function resolveFullVariableType($ptr, $phpcsFile, $lookForward=true)
     {
         $tokens = $phpcsFile->getTokens();
+
+        if ($lookForward) {
+            // Special treatment for class instantiations
+            if ($tokens[$ptr]['code'] == T_NEW) {
+                $classPtr = $phpcsFile->findNext(T_STRING, $ptr);
+                $classToken = $tokens[$classPtr];
+                $className = $classToken['content'];
+                return $className;
+            }
+            $startPtr = $ptr;
+            $endPtr = $this->getEndOfVar($ptr, $tokens);
+        } else {
+            $endPtr = $ptr;
+            $startPtr = $this->getStartOfVar($ptr, $tokens);
+        }
+
         $soFar = '';
         $currPtr = $startPtr;
         do {
