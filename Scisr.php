@@ -66,6 +66,16 @@ class Scisr
      */
     private $_mode;
 
+    /**
+     * @var Scisr_ChangeRegistry
+     */
+    private $_changeRegistry;
+
+    /**
+     * @var Scisr_Operations_Factory
+     */
+    private $_operationsFactory;
+
     public function __construct($output=null)
     {
         $this->setEditMode(self::MODE_CONSERVATIVE);
@@ -75,6 +85,7 @@ class Scisr
         $this->_output = $output;
         $this->_sniffer = new Scisr_CodeSniffer();
         $this->_changeRegistry = new Scisr_ChangeRegistry();
+        $this->_operationsFactory = new Scisr_Operations_Factory($this->_changeRegistry);
     }
 
     /**
@@ -122,14 +133,14 @@ class Scisr
     protected function getFirstPassListeners()
     {
         $listeners = array();
-        $listeners[] = new Scisr_Operations_TrackGlobalVariables($this->_changeRegistry);
-        $listeners[] = new Scisr_Operations_TrackVariableTypes($this->_changeRegistry);
-        $listeners[] = new Scisr_Operations_TrackVariableTypeHints($this->_changeRegistry);
-        $listeners[] = new Scisr_Operations_TrackCommentVariableTypes($this->_changeRegistry);
-        $listeners[] = new Scisr_Operations_TrackIncludedFiles($this->_changeRegistry);
-        $listeners[] = new Scisr_Operations_TrackClasses($this->_changeRegistry);
-        $listeners[] = new Scisr_Operations_TrackReturnStatementTypes($this->_changeRegistry);
-        $includesOp = new Scisr_Operations_TrackClassIncludes($this->_changeRegistry);
+        $listeners[] = $this->_operationsFactory->getOperation('Scisr_Operations_TrackGlobalVariables');
+        $listeners[] = $this->_operationsFactory->getOperation('Scisr_Operations_TrackVariableTypes');
+        $listeners[] = $this->_operationsFactory->getOperation('Scisr_Operations_TrackVariableTypeHints');
+        $listeners[] = $this->_operationsFactory->getOperation('Scisr_Operations_TrackCommentVariableTypes');
+        $listeners[] = $this->_operationsFactory->getOperation('Scisr_Operations_TrackIncludedFiles');
+        $listeners[] = $this->_operationsFactory->getOperation('Scisr_Operations_TrackClasses');
+        $listeners[] = $this->_operationsFactory->getOperation('Scisr_Operations_TrackReturnStatementTypes');
+        $includesOp = $this->_operationsFactory->getOperation('Scisr_Operations_TrackClassIncludes');
         $this->_firstPassCallbacks[] = array(array($includesOp, 'registerIncludes'), array());
         $listeners[] = $includesOp;
 
@@ -143,10 +154,10 @@ class Scisr
      */
     public function setRenameClass($oldClass, $newClass)
     {
-        $this->_listeners[] = new Scisr_Operations_RenameClass($this->_changeRegistry, $oldClass, $newClass);
-        $this->_listeners[] = new Scisr_Operations_ChangeClassNameComments($this->_changeRegistry, $oldClass, $newClass);
-        $this->_listeners[] = new Scisr_Operations_ChangeCommentWords($this->_changeRegistry, $oldClass, $newClass);
-        $this->_listeners[] = new Scisr_Operations_ChangeStringWords($this->_changeRegistry, $oldClass, $newClass);
+        $this->_listeners[] = $this->_operationsFactory->getOperation('Scisr_Operations_RenameClass', $oldClass, $newClass);
+        $this->_listeners[] = $this->_operationsFactory->getOperation('Scisr_Operations_ChangeClassNameComments', $oldClass, $newClass);
+        $this->_listeners[] = $this->_operationsFactory->getOperation('Scisr_Operations_ChangeCommentWords', $oldClass, $newClass);
+        $this->_listeners[] = $this->_operationsFactory->getOperation('Scisr_Operations_ChangeStringWords', $oldClass, $newClass);
     }
 
     /**
@@ -161,15 +172,15 @@ class Scisr
         if ($withInheritance) {
             $this->_firstPassCallbacks[] = array(array($this, 'doRenameChildMethods'), array($class, $oldMethod, $newMethod));
         }
-        $this->_listeners[] = new Scisr_Operations_RenameMethod($this->_changeRegistry, $class, $oldMethod, $newMethod);
+        $this->_listeners[] = $this->_operationsFactory->getOperation('Scisr_Operations_RenameMethod', $class, $oldMethod, $newMethod);
 
         // Look for matches in comments and strings
-        $this->_listeners[] = new Scisr_Operations_ChangeCommentWords($this->_changeRegistry, $oldMethod, $newMethod);
-        $this->_listeners[] = new Scisr_Operations_ChangeStringWords($this->_changeRegistry, $oldMethod, $newMethod);
+        $this->_listeners[] = $this->_operationsFactory->getOperation('Scisr_Operations_ChangeCommentWords', $oldMethod, $newMethod);
+        $this->_listeners[] = $this->_operationsFactory->getOperation('Scisr_Operations_ChangeStringWords', $oldMethod, $newMethod);
         $fullOldString = "$class(->|::)$oldMethod";
         $fullNewString = "$class\\1$newMethod";
-        $this->_listeners[] = new Scisr_Operations_ChangeCommentWords($this->_changeRegistry, $fullOldString, $fullNewString, false);
-        $this->_listeners[] = new Scisr_Operations_ChangeStringWords($this->_changeRegistry, $fullOldString, $fullNewString, false);
+        $this->_listeners[] = $this->_operationsFactory->getOperation('Scisr_Operations_ChangeCommentWords', $fullOldString, $fullNewString, false);
+        $this->_listeners[] = $this->_operationsFactory->getOperation('Scisr_Operations_ChangeStringWords', $fullOldString, $fullNewString, false);
 
         $this->_firstPassRequired = true;
     }
@@ -193,7 +204,7 @@ class Scisr
      */
     public function setRenameFile($oldFilePath, $newFilePath)
     {
-        $this->_listeners[] = new Scisr_Operations_RenameFile($this->_changeRegistry, $oldFilePath, $newFilePath);
+        $this->_listeners[] = $this->_operationsFactory->getOperation('Scisr_Operations_RenameFile', $oldFilePath, $newFilePath);
         if (!file_exists($oldFilePath)) {
             $msg = 'does not exist, so will not be moved.';
         } else if (!is_writeable($oldFilePath)) {
