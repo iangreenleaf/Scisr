@@ -1,9 +1,6 @@
 <?php
 require_once 'SingleFileTest.php';
 
-/**
- * @runTestsInSeparateProcesses
- */
 class FileTest extends Scisr_SingleFileTest
 {
 

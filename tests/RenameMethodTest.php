@@ -1,9 +1,6 @@
 <?php
 require_once 'SingleFileTest.php';
 
-/**
- * @runTestsInSeparateProcesses
- */
 class RenameMethodTest extends Scisr_SingleFileTest
 {
 

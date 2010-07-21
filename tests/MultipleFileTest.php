@@ -2,10 +2,9 @@
 require_once 'Scisr_TestCase.php';
 
 /**
- * @runTestsInSeparateProcesses
  * @todo This test case uses shell commands. Rework with some recursive PHP funcs.
  */
-class Scisr_Tests_MultipleFileTestCase extends Scisr_TestCase
+abstract class Scisr_Tests_MultipleFileTestCase extends Scisr_TestCase
 {
     public function setUp() {
         parent::setUp();

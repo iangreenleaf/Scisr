@@ -6,7 +6,6 @@ require_once 'Scisr_TestCase.php';
  * testing getStartOfVar(), and are depending on the functional test cases for 
  * the other functionality of this class. We should probably have it one way or 
  * the other, not in-between like this.
- * @runTestsInSeparateProcesses
  */
 class AbstractVariableTypeTest extends Scisr_TestCase
 {

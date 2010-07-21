@@ -1,9 +1,6 @@
 <?php
 require_once 'MultipleFileTest.php';
 
-/**
- * @runTestsInSeparateProcesses
- */
 class ScisrSystemTest extends Scisr_Tests_MultipleFileTestCase
 {
 

@@ -1,9 +1,6 @@
 <?php
 require_once 'Scisr_TestCase.php';
 
-/**
- * @runTestsInSeparateProcesses
- */
 class CLITest extends Scisr_TestCase
 {
 

@@ -11,6 +11,8 @@ class Scisr_TestCase extends PHPUnit_Framework_TestCase
 
     public function tearDown() {
         Scisr_Db::clearDb();
+        Scisr_ChangeRegistry::clearAll();
+        chdir(dirname(__FILE__));
     }
 
 }

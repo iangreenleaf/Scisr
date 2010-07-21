@@ -1,12 +1,8 @@
 <?php
 require_once 'MultipleFileTest.php';
 
-/**
- * @runTestsInSeparateProcesses
- */
 class RenameClassFileSystemTest extends Scisr_Tests_MultipleFileTestCase
 {
-
     /**
      * @dataProvider classFileProvider
      */
@@ -86,5 +82,4 @@ class RenameClassFileSystemTest extends Scisr_Tests_MultipleFileTestCase
 
         $this->compareDir(dirname(__FILE__) . '/_files/classFileFixture-dir-after-rename', $this->test_dir);
     }
-
 }

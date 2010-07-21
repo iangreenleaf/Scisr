@@ -1,9 +1,6 @@
 <?php
 require_once 'MultipleFileTest.php';
 
-/**
- * @runTestsInSeparateProcesses
- */
 class RenameClassSystemTest extends Scisr_Tests_MultipleFileTestCase
 {
 

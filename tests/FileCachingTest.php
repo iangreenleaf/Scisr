@@ -2,8 +2,6 @@
 require_once 'SingleFileTest.php';
 
 /**
- * @runTestsInSeparateProcesses
- *
  * Test caching of parser results
  *
  * Here's the deal: info gathered from the first pass may be cached, because no 
