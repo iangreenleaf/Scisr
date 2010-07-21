@@ -3,14 +3,15 @@
 /**
  * An operation to change the name of a class
  */
-class Scisr_Operations_RenameClass implements PHP_CodeSniffer_Sniff
+class Scisr_Operations_RenameClass extends Scisr_Operations_AbstractChangeOperation implements PHP_CodeSniffer_Sniff
 {
 
     public $oldName;
     public $newName;
 
-    public function __construct($oldName, $newName)
+    public function __construct(Scisr_ChangeRegistry $changeRegistry, $oldName, $newName)
     {
+        parent::__construct($changeRegistry);
         $this->oldName = $oldName;
         $this->newName = $newName;
     }
@@ -58,7 +59,7 @@ class Scisr_Operations_RenameClass implements PHP_CodeSniffer_Sniff
         $className = $tokenInfo['content'];
         // If it's the name we're looking for, register it
         if ($className == $this->oldName) {
-            Scisr_ChangeRegistry::addChange(
+            $this->_changeRegistry->addChange(
                 $phpcsFile->getFileName(),
                 $tokenInfo['line'],
                 $tokenInfo['column'],

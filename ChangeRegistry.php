@@ -11,16 +11,16 @@ class Scisr_ChangeRegistry
      * Stores the raw data we've been given
      * @var array
      */
-    private static $_data;
+    private $_data;
 
     /**
      * Set a value
      * @param string $name the name of the value
      * @param mixed $value the value
      */
-    public static function set($name, $value)
+    public function set($name, $value)
     {
-        self::$_data[$name] = $value;
+        $this->_data[$name] = $value;
     }
 
     /**
@@ -28,9 +28,9 @@ class Scisr_ChangeRegistry
      * @param string $name the name of the value
      * @return mixed the value stored for this name
      */
-    public static function get($name)
+    public function get($name)
     {
-        return (isset(self::$_data[$name]) ? self::$_data[$name] : null);
+        return (isset($this->_data[$name]) ? $this->_data[$name] : null);
     }
 
     /**
@@ -38,7 +38,6 @@ class Scisr_ChangeRegistry
      */
     public static function clearAll()
     {
-        self::$_data = array();
     }
 
     /**
@@ -52,11 +51,11 @@ class Scisr_ChangeRegistry
      * sure about" - for example, a word match found in a string. Changes marked 
      * tentative will only be acted upon if we are in "aggressive" mode.
      */
-    public static function addChange($filename, $line, $column, $length, $replacement, $tentative=false)
+    public function addChange($filename, $line, $column, $length, $replacement, $tentative=false)
     {
-        $file = self::getFile($filename);
+        $file = $this->getFile($filename);
         $file->addEdit($line, $column, $length, $replacement, $tentative);
-        self::setFile($file);
+        $this->setFile($file);
     }
 
     /**
@@ -64,9 +63,9 @@ class Scisr_ChangeRegistry
      * @param string $filename the filename
      * @return Scisr_File
      */
-    protected static function getFile($filename)
+    protected function getFile($filename)
     {
-        $changes = self::getChanges();
+        $changes = $this->getChanges();
         // We just store our pending changes as file objects themselves. If one
         // doesn't exist yet for this file, create it
         if (!isset($changes[$filename])) {
@@ -79,20 +78,20 @@ class Scisr_ChangeRegistry
      * Save the stored file object
      * @param Scisr_File the file to save
      */
-    protected static function setFile($file)
+    protected function setFile($file)
     {
-        $changes = self::getChanges();
+        $changes = $this->getChanges();
         $changes[$file->filename] = $file;
-        self::set('storedChanges', $changes);
+        $this->set('storedChanges', $changes);
     }
 
     /**
      * Get stored file changes
      * @return array(Scisr_File)
      */
-    private static function getChanges()
+    private function getChanges()
     {
-        $changes = self::get('storedChanges');
+        $changes = $this->get('storedChanges');
         if (!is_array($changes)) {
             $changes = array();
         }
@@ -104,11 +103,11 @@ class Scisr_ChangeRegistry
      * @param string $oldName the path to the file to be renamed
      * @param string $newName the new path to give it
      */
-    public static function addRename($oldName, $newName)
+    public function addRename($oldName, $newName)
     {
-        $file = self::getFile($oldName);
+        $file = $this->getFile($oldName);
         $file->rename($newName);
-        self::setFile($file);
+        $this->setFile($file);
     }
 
 }

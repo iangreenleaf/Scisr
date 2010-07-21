@@ -11,8 +11,9 @@ class Scisr_Operations_RenameMethod
     public $oldName;
     public $newName;
 
-    public function __construct($class, $oldName, $newName)
+    public function __construct(Scisr_ChangeRegistry $changeRegistry, $class, $oldName, $newName)
     {
+        parent::__construct($changeRegistry);
         $this->class = $class;
         $this->oldName = $oldName;
         $this->newName = $newName;
@@ -43,7 +44,7 @@ class Scisr_Operations_RenameMethod
             $className = $this->resolveStaticSubject($phpcsFile, $stackPtr);
             // If it's the name we're looking for, register it
             if ($className == $this->class) {
-                Scisr_ChangeRegistry::addChange(
+                $this->_changeRegistry->addChange(
                     $phpcsFile->getFileName(),
                     $methodInfo['line'],
                     $methodInfo['column'],
@@ -58,7 +59,7 @@ class Scisr_Operations_RenameMethod
                 $classPtr = $phpcsFile->findNext(T_STRING, $classDefPtr);
                 $classInfo = $tokens[$classPtr];
                 if ($classInfo['content'] == $this->class) {
-                    Scisr_ChangeRegistry::addChange(
+                    $this->_changeRegistry->addChange(
                         $phpcsFile->getFileName(),
                         $methodInfo['line'],
                         $methodInfo['column'],
@@ -73,7 +74,7 @@ class Scisr_Operations_RenameMethod
             $type = $this->resolveFullVariableType($varPtr, $phpcsFile, false);
 
             if ($type == $this->class) {
-                Scisr_ChangeRegistry::addChange(
+                $this->_changeRegistry->addChange(
                     $phpcsFile->getFileName(),
                     $methodInfo['line'],
                     $methodInfo['column'],

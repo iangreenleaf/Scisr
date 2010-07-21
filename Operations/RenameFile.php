@@ -9,8 +9,9 @@ class Scisr_Operations_RenameFile extends Scisr_Operations_AbstractFileOperation
     public $oldName;
     public $newName;
 
-    public function __construct($oldName, $newName)
+    public function __construct(Scisr_ChangeRegistry $changeRegistry, $oldName, $newName)
     {
+        parent::__construct($changeRegistry);
         $this->oldName = Scisr_File::getAbsolutePath($oldName);
         $this->newName = Scisr_File::getAbsolutePath($newName);
     }
@@ -35,7 +36,7 @@ class Scisr_Operations_RenameFile extends Scisr_Operations_AbstractFileOperation
         }
         // Add the change if we found one
         if ($addChange) {
-            Scisr_ChangeRegistry::addChange(
+            $this->_changeRegistry->addChange(
                 $phpcsFile->getFileName(),
                 $line,
                 $column,

@@ -3,7 +3,7 @@
 /**
  * Change a word by regexp match
  */
-abstract class Scisr_Operations_AbstractPatternMatchOperation implements PHP_CodeSniffer_Sniff
+abstract class Scisr_Operations_AbstractPatternMatchOperation extends Scisr_Operations_AbstractChangeOperation implements PHP_CodeSniffer_Sniff
 {
 
     public $oldString;
@@ -19,8 +19,9 @@ abstract class Scisr_Operations_AbstractPatternMatchOperation implements PHP_Cod
      * @param boolean $tentative whether the changes we detect should be
      * considered tentative
      */
-    public function __construct($oldString, $newString, $tentative=true)
+    public function __construct(Scisr_ChangeRegistry $changeRegistry, $oldString, $newString, $tentative=true)
     {
+        parent::__construct($changeRegistry);
         $this->oldString = $oldString;
         $this->newString = $newString;
         $this->tentative = $tentative;
@@ -42,7 +43,7 @@ abstract class Scisr_Operations_AbstractPatternMatchOperation implements PHP_Cod
             $offset = $match[1];
             $oldStringMatch = $match[0];
             $newString = preg_replace("/$this->oldString/", $this->newString, $oldStringMatch);
-            Scisr_ChangeRegistry::addChange(
+            $this->_changeRegistry->addChange(
                 $phpcsFile->getFileName(),
                 $tokenInfo['line'],
                 $tokenInfo['column'] + $offset,

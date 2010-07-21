@@ -3,7 +3,7 @@
 /**
  * An operation to change the name of a class
  */
-abstract class Scisr_Operations_AbstractFileOperation implements PHP_CodeSniffer_Sniff
+abstract class Scisr_Operations_AbstractFileOperation extends Scisr_Operations_AbstractChangeOperation implements PHP_CodeSniffer_Sniff
 {
 
     public function register()

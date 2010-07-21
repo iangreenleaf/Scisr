@@ -20,7 +20,7 @@ include "Foo.php"
 EOL;
         $this->populateFile($code);
         // We're using the include file sniff simply because it's easy
-        $mock = $this->getMock('Scisr_Operations_TrackIncludedFiles', array('process'));
+        $mock = $this->getSniff();
         // Sniff should be activated three times: twice the first run (once on 
         // each pass), and only once the second (second pass only)
         $mock->expects($this->exactly(1))->method('process');
@@ -37,7 +37,7 @@ EOL;
 include "Foo.php"
 EOL;
         $this->populateFile($code);
-        $mock = $this->getMock('Scisr_Operations_TrackIncludedFiles', array('process'));
+        $mock = $this->getSniff();
         $mock->expects($this->exactly(2))->method('process');
         $this->runWithMock($mock);
         touch($this->test_file);
@@ -59,13 +59,18 @@ EOL;
         $s->setRenameClassFile('Foo', 'Bar');
         $s->addFile($this->test_file);
         $s->run();
-        $mock = $this->getMock('Scisr_Operations_TrackIncludedFiles', array('process'));
+        $mock = $this->getSniff();
         $mock->expects($this->exactly(1))->method('process');
         $this->runWithMock($mock);
     }
 
     public function testDontKeepStaleResults() {
         $this->markTestIncomplete();
+    }
+
+    private function getSniff()
+    {
+        return $this->getMock('Scisr_Operations_TrackIncludedFiles', array('process'), array(), '', false);
     }
 
     private function runWithMock($mock) {

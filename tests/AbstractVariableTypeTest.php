@@ -128,7 +128,6 @@ class AbstractVariableTypeTest extends Scisr_TestCase
         $a[] = array($php . ' array($a,SOMECONST);', '$a', '$a');
         return $a;
     }
-
 }
 
 /**
@@ -139,6 +138,11 @@ class AbstractVariableTypeTest extends Scisr_TestCase
  */
 class AbstractVariableTypeTester extends Scisr_Operations_AbstractVariableTypeOperation
 {
+    public function __construct()
+    {
+        parent::__construct(new Scisr_ChangeRegistry);
+    }
+
     public function exposeGetStartOfVar($ptr, $tokens)
     {
         return $this->getStartOfVar($ptr, $tokens);

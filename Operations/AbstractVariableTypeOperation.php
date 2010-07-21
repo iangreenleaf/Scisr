@@ -12,7 +12,7 @@ define('SCISR_SCOPE_GLOBAL', 0);
  * Scisr_Db_VariableTypes storage class, since that may change formats,
  * and this has domain knowledge about CodeSniffer.
  */
-abstract class Scisr_Operations_AbstractVariableTypeOperation implements PHP_CodeSniffer_Sniff
+abstract class Scisr_Operations_AbstractVariableTypeOperation extends Scisr_Operations_AbstractChangeOperation implements PHP_CodeSniffer_Sniff
 {
 
     /**

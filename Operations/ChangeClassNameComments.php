@@ -11,8 +11,9 @@ class Scisr_Operations_ChangeClassNameComments
     public $oldName;
     public $newName;
 
-    public function __construct($oldName, $newName)
+    public function __construct(Scisr_ChangeRegistry $changeRegistry, $oldName, $newName)
     {
+        parent::__construct($changeRegistry);
         $this->oldName = $oldName;
         $this->newName = $newName;
     }
@@ -44,7 +45,7 @@ class Scisr_Operations_ChangeClassNameComments
             if (in_array($name, $wordTypes) && $value == $this->oldName) {
                 $column = $columns[$i];
                 // Now register the change
-                Scisr_ChangeRegistry::addChange(
+                $this->_changeRegistry->addChange(
                     $this->_phpcsFile->getFileName(),
                     $line,
                     $column,
