@@ -116,7 +116,7 @@ class RenameFileTest extends Scisr_SingleFileTest
      * @dataProvider relativePathProvider
      */
     public function testPathRelativeTo($path, $base, $expected, $relativeExpected) {
-        $o = new Scisr_Operations_RenameFile(new Scisr_ChangeRegistry, new Scisr_Db_Classes(), new Scisr_Db_FileIncludes(), 'dummy', 'dummy');
+        $o = new Scisr_Operations_RenameFile(new Scisr_ChangeRegistry, 'dummy', 'dummy');
         $this->assertSame($expected, $o->pathRelativeTo($path, $base, false));
         $this->assertSame($relativeExpected, $o->pathRelativeTo($path, $base, true));
     }

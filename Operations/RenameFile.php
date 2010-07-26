@@ -5,13 +5,13 @@
  */
 class Scisr_Operations_RenameFile extends Scisr_Operations_AbstractFileOperation
 {
-
+    private $_changeRegistry;
     public $oldName;
     public $newName;
 
-    public function __construct(Scisr_ChangeRegistry $changeRegistry, Scisr_Db_Classes $dbClasses, Scisr_Db_FileIncludes $dbFileIncludes, $oldName, $newName)
+    public function __construct(Scisr_ChangeRegistry $changeRegistry, $oldName, $newName)
     {
-        parent::__construct($changeRegistry, $dbClasses, $dbFileIncludes);
+        $this->_changeRegistry = $changeRegistry;
         $this->oldName = Scisr_File::getAbsolutePath($oldName);
         $this->newName = Scisr_File::getAbsolutePath($newName);
     }
