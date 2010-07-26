@@ -21,14 +21,14 @@ class Scisr_Operations_TrackReturnStatementTypes
 
         $nextPtr = $phpcsFile->findNext(array(T_WHITESPACE), $stackPtr + 1, null, true);
         $nextToken = $tokens[$nextPtr];
-        $className = $this->resolveFullVariableType($nextPtr, $phpcsFile);
+        $className = $this->_variableTypes->resolveFullVariableType($nextPtr, $phpcsFile);
 
         if (isset($className) && $className !== null
             && ($funcDefPtr = array_search(T_FUNCTION, $tokens[$stackPtr]['conditions'])) !== false
         ) {
             $funcPtr = $phpcsFile->findNext(T_STRING, $funcDefPtr);
             $funcName = '*' . $tokens[$funcPtr]['content'];
-            $this->setVariableType($funcPtr, $className, $phpcsFile, $funcName);
+            $this->_variableTypes->setVariableType($funcPtr, $className, $phpcsFile, $funcName);
         }
 
     }

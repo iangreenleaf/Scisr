@@ -102,6 +102,7 @@ class Scisr
         $this->_dbFileIncludes = new Scisr_Db_FileIncludes();
         $this->_dbClasses = new Scisr_Db_Classes();
         $this->_dbVariableTypes = new Scisr_Db_VariableTypes();
+        $this->_variableTypes = new Scisr_Operations_VariableTypes($this->_dbClasses, $this->_dbFileIncludes, $this->_dbVariableTypes);
         $this->_changeRegistry = new Scisr_ChangeRegistry();
         $this->_sniffer = new Scisr_CodeSniffer($this->_dbFiles);
         $this->_operationsFactory = new Scisr_Operations_Factory(array(
@@ -109,7 +110,8 @@ class Scisr
             $this->_dbFiles,
             $this->_dbFileIncludes,
             $this->_dbClasses,
-            $this->_dbVariableTypes
+            $this->_dbVariableTypes,
+            $this->_variableTypes
         ));
     }
 

@@ -22,6 +22,6 @@ class Scisr_Operations_TrackGlobalVariables
         $tokens = $phpcsFile->getTokens();
         $varPtr = $phpcsFile->findNext(T_VARIABLE, $stackPtr);
         $varToken = $tokens[$varPtr];
-        $this->setGlobal($varPtr, $phpcsFile);
+        $this->_variableTypes->setGlobal($varPtr, $phpcsFile);
     }
 }

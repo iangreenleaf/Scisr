@@ -7,7 +7,6 @@ class Scisr_Operations_TrackCommentVariableTypes
     extends Scisr_Operations_AbstractTrackVariableTypeOperation
     implements PHP_CodeSniffer_Sniff
 {
-
     protected function processVar($var, $commentPtr, $phpcsFile)
     {
         $varPtr = $phpcsFile->findNext(T_VARIABLE, $commentPtr);
@@ -16,7 +15,7 @@ class Scisr_Operations_TrackCommentVariableTypes
             return false;
         }
 
-        $this->setVariableType($varPtr, $var->getContent(), $phpcsFile, $var->getVarName());
+        $this->_variableTypes->setVariableType($varPtr, $var->getContent(), $phpcsFile, $var->getVarName());
     }
 
     protected function processParam($param, $commentPtr, $phpcsFile)
@@ -48,7 +47,7 @@ class Scisr_Operations_TrackCommentVariableTypes
             $varPtr = $commentPtr;
         }
 
-        $this->setVariableType($varPtr, $param->getType(), $phpcsFile, $param->getVarName(), $funcPtr);
+        $this->_variableTypes->setVariableType($varPtr, $param->getType(), $phpcsFile, $param->getVarName(), $funcPtr);
     }
 
     protected function processReturn($return, $commentPtr, $phpcsFile)
@@ -66,7 +65,7 @@ class Scisr_Operations_TrackCommentVariableTypes
 
         // We identify this as a function type by prepending a '*' to the name
         $funcName = '*' . $tokens[$funcNamePtr]['content'];
-        $this->setVariableType($funcNamePtr, $return->getValue(), $phpcsFile, $funcName);
+        $this->_variableTypes->setVariableType($funcNamePtr, $return->getValue(), $phpcsFile, $funcName);
     }
 
 }

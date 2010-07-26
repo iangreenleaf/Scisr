@@ -26,7 +26,7 @@ class Scisr_Operations_TrackVariableTypeHints
                 $classNamePtr = $paramInfo['type_hint'];
                 $className = $tokens[$classNamePtr]['content'];
                 $varPtr = $paramInfo['var'];
-                $this->setVariableType($varPtr, $className, $phpcsFile, null, $stackPtr);
+                $this->_variableTypes->setVariableType($varPtr, $className, $phpcsFile, null, $stackPtr);
             }
         }
 

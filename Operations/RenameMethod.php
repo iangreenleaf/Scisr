@@ -8,12 +8,15 @@ class Scisr_Operations_RenameMethod
     implements PHP_CodeSniffer_Sniff
 {
 
+    private $_changeRegistry;
+
     public $oldName;
     public $newName;
 
-    public function __construct(Scisr_ChangeRegistry $changeRegistry, Scisr_Db_Classes $dbClasses, Scisr_Db_FileIncludes $dbFileIncludes, Scisr_Db_VariableTypes $dbVariableTypes, $class, $oldName, $newName)
+    public function __construct(Scisr_ChangeRegistry $changeRegistry, Scisr_Operations_VariableTypes $variableTypes, $class, $oldName, $newName)
     {
-        parent::__construct($changeRegistry, $dbClasses, $dbFileIncludes, $dbVariableTypes);
+        parent::__construct($variableTypes);
+        $this->_changeRegistry = $changeRegistry;
         $this->class = $class;
         $this->oldName = $oldName;
         $this->newName = $newName;
@@ -41,7 +44,7 @@ class Scisr_Operations_RenameMethod
         }
 
         if ($tokens[$stackPtr]['code'] == T_PAAMAYIM_NEKUDOTAYIM) {
-            $className = $this->resolveStaticSubject($phpcsFile, $stackPtr);
+            $className = $this->_variableTypes->resolveStaticSubject($phpcsFile, $stackPtr);
             // If it's the name we're looking for, register it
             if ($className == $this->class) {
                 $this->_changeRegistry->addChange(
@@ -71,7 +74,7 @@ class Scisr_Operations_RenameMethod
         } else if ($tokens[$stackPtr]['code'] == T_OBJECT_OPERATOR) {
 
             $varPtr = $phpcsFile->findPrevious(array(T_WHITESPACE), $stackPtr - 1, null, true);
-            $type = $this->resolveFullVariableType($varPtr, $phpcsFile, false);
+            $type = $this->_variableTypes->resolveFullVariableType($varPtr, $phpcsFile, false);
 
             if ($type == $this->class) {
                 $this->_changeRegistry->addChange(

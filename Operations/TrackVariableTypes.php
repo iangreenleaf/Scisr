@@ -26,15 +26,15 @@ class Scisr_Operations_TrackVariableTypes
         $varPtr = $phpcsFile->findPrevious(array(T_WHITESPACE), $stackPtr - 1, null, true);
 
         if ($tokens[$varPtr]['code'] != T_VARIABLE) {
-            $varName = $this->resolveFullVariableType($varPtr, $phpcsFile, false);
+            $varName = $this->_variableTypes->resolveFullVariableType($varPtr, $phpcsFile, false);
         }
 
         $nextPtr = $phpcsFile->findNext(array(T_WHITESPACE), $stackPtr + 1, null, true);
         $nextToken = $tokens[$nextPtr];
-        $className = $this->resolveFullVariableType($nextPtr, $phpcsFile);
+        $className = $this->_variableTypes->resolveFullVariableType($nextPtr, $phpcsFile);
 
         if (isset($className) && $className !== null) {
-            $this->setVariableType($varPtr, $className, $phpcsFile, $varName);
+            $this->_variableTypes->setVariableType($varPtr, $className, $phpcsFile, $varName);
         }
     }
 

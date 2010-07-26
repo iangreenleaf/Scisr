@@ -14,7 +14,7 @@ class AbstractVariableTypeTest extends Scisr_TestCase
      * @dataProvider specificityProvider
      */
     public function testGetVariableSpecificity($name, $specificity) {
-        $this->assertEquals($specificity, Scisr_Operations_AbstractVariableTypeOperation::getVariableSpecificity($name));
+        $this->assertEquals($specificity, Scisr_Operations_VariableTypes::getVariableSpecificity($name));
     }
 
     public function specificityProvider() {
@@ -136,11 +136,11 @@ class AbstractVariableTypeTest extends Scisr_TestCase
  * This class' only purpose is to extend Scisr_Operations_AbstractVariableTypeOperation
  * and provide a public interface to the protected methods for testing purposes.
  */
-class AbstractVariableTypeTester extends Scisr_Operations_AbstractVariableTypeOperation
+class AbstractVariableTypeTester extends Scisr_Operations_VariableTypes
 {
     public function __construct()
     {
-        parent::__construct(new Scisr_ChangeRegistry, new Scisr_Db_Classes, new Scisr_Db_FileIncludes, new Scisr_Db_VariableTypes);
+        parent::__construct(new Scisr_Db_Classes, new Scisr_Db_FileIncludes, new Scisr_Db_VariableTypes);
     }
 
     public function exposeGetStartOfVar($ptr, $tokens)
