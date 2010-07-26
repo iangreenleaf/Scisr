@@ -14,7 +14,7 @@ class Scisr_Db_Files
     /**
      * Set up the DB table we are going to use
      */
-    public static function init()
+    public function init()
     {
         $db = Scisr_Db::getDb();
         $create = <<<EOS
@@ -27,7 +27,7 @@ EOS;
      * Register a file as having been parsed
      * @param string $filename the file that was parsed
      */
-    public static function registerFile($filename)
+    public function registerFile($filename)
     {
         $db = Scisr_Db::getDb();
 
@@ -50,7 +50,7 @@ EOS;
      * @return int|null a UNIX timestamp, or null if this file has not been 
      * parsed before
      */
-    public static function getTimeParsed($filename)
+    public function getTimeParsed($filename)
     {
         $db = Scisr_Db::getDb();
 

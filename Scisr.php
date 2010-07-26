@@ -76,6 +76,16 @@ class Scisr
      */
     private $_operationsFactory;
 
+    /**
+     * @var Scisr_Db_Files
+     */
+    private $_dbFiles;
+
+    /**
+     * @var Scisr_Db_Classes
+     */
+    private $_dbClasses;
+
     public function __construct($output=null)
     {
         $this->setEditMode(self::MODE_CONSERVATIVE);
@@ -83,11 +93,13 @@ class Scisr
             $output = new Scisr_Output_Null();
         }
         $this->_output = $output;
-        $this->_sniffer = new Scisr_CodeSniffer();
-        $this->_changeRegistry = new Scisr_ChangeRegistry();
+        $this->_dbFiles = new Scisr_Db_Files();
         $this->_dbClasses = new Scisr_Db_Classes();
+        $this->_changeRegistry = new Scisr_ChangeRegistry();
+        $this->_sniffer = new Scisr_CodeSniffer($this->_dbFiles);
         $this->_operationsFactory = new Scisr_Operations_Factory(array(
             $this->_changeRegistry,
+            $this->_dbFiles,
             $this->_dbClasses
         ));
     }
@@ -306,7 +318,7 @@ class Scisr
     {
         Scisr_Db_VariableTypes::init();
         Scisr_Db_FileIncludes::init();
-        Scisr_Db_Files::init();
+        $this->_dbFiles->init();
         $this->_dbClasses->init();
 
         $sniffer = $this->_sniffer;

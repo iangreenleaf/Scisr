@@ -4,6 +4,7 @@
  */
 class Scisr_CodeSniffer extends PHP_CodeSniffer
 {
+    private $_dbFiles;
 
     /**
      * If we can cache the results of process()
@@ -11,8 +12,9 @@ class Scisr_CodeSniffer extends PHP_CodeSniffer
      */
     private $cacheable = false;
 
-    public function __construct($verbosity=0, $tabWidth=0)
+    public function __construct(Scisr_Db_Files $dbFiles, $verbosity=0, $tabWidth=0)
     {
+        $this->_dbFiles = $dbFiles;
         // PHP_CodeSniffer messes up the cwd, so restore it after we construct
         $cwd = getcwd();
         parent::__construct($verbosity, $tabWidth);
@@ -53,7 +55,7 @@ class Scisr_CodeSniffer extends PHP_CodeSniffer
     {
         if ($this->_cacheable) {
             // If we have cached results and they're not stale, don't bother processing
-            $cacheTime = Scisr_Db_Files::getTimeParsed($file);
+            $cacheTime = $this->_dbFiles->getTimeParsed($file);
             $mtime = filemtime($file);
             if ($cacheTime !== null && $cacheTime > $mtime) {
                 return;
@@ -63,7 +65,7 @@ class Scisr_CodeSniffer extends PHP_CodeSniffer
         parent::processFile($file, $contents);
 
         if ($this->_cacheable) {
-            Scisr_Db_Files::registerFile($file);
+            $this->_dbFiles->registerFile($file);
         }
     }
 }
