@@ -85,7 +85,9 @@ class Scisr
         $this->_output = $output;
         $this->_sniffer = new Scisr_CodeSniffer();
         $this->_changeRegistry = new Scisr_ChangeRegistry();
-        $this->_operationsFactory = new Scisr_Operations_Factory($this->_changeRegistry);
+        $this->_operationsFactory = new Scisr_Operations_Factory(array(
+            $this->_changeRegistry
+        ));
     }
 
     /**

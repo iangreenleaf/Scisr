@@ -21,9 +21,17 @@
  */
 class Scisr_Operations_Factory
 {
-    public function __construct(Scisr_ChangeRegistry $changeRegistry)
+    /**
+     * @var array
+     */
+    private $_collaborators;
+
+    public function __construct(array $collaborators)
     {
-        $this->_changeRegistry = $changeRegistry;
+        foreach ($collaborators as $object) {
+            $className = get_class($object);
+            $this->_collaborators[$className] = $object;
+        }
     }
 
     /**
@@ -35,12 +43,32 @@ class Scisr_Operations_Factory
         $parameters = func_get_args();
         $className = array_shift($parameters);
         $rc = new ReflectionClass($className);
-        if ($rc->getConstructor() !== null) {
-            array_unshift($parameters, $this->_changeRegistry);
+        $constructor = $rc->getConstructor();
+        if ($constructor !== null) {
+            $parameters = $this->_fillInParameters($parameters, $constructor);
             return $rc->newInstanceArgs($parameters);
         } else {
             return $rc->newInstance();
         }
+    }
+
+    /**
+     * @param array $parameters
+     * @param ReflectionMethod      method with type hints
+     * @return array                parameters with collabotors filled in
+     */
+    protected function _fillInParameters(array $parameters, $method) {
+        $signature = array_reverse($method->getParameters(), true);
+        foreach ($signature as $parameter) {
+            $typeHint = $parameter->getClass();
+            if ($typeHint !== null) {
+                $className = $typeHint->getName();
+                if (isset($this->_collaborators[$className])) {
+                    array_unshift($parameters, $this->_collaborators[$className]);
+                }
+            }
+        }
+        return $parameters;
     }
 }
 
