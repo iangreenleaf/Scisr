@@ -5,14 +5,23 @@
  * containing that class.
  */
 class Scisr_Operations_TrackClassIncludes
-    extends Scisr_Operations_AbstractVariableTypeOperation
+    implements PHP_CodeSniffer_Sniff
 {
+    private $_dbClasses;
+    private $_dbFileIncludes;
 
     /**
      * A list of filenames with arrays of classes called within those files.
      * @var array
      */
     private $_files = array();
+
+    public function __construct(Scisr_Db_Classes $dbClasses, Scisr_Db_FileIncludes $dbFileIncludes)
+    {
+        $this->_dbClasses = $dbClasses;
+        $this->_dbFileIncludes = $dbFileIncludes;
+    }
+
 
     public function register()
     {
