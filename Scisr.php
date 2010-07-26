@@ -82,6 +82,11 @@ class Scisr
     private $_dbFiles;
 
     /**
+     * @var Scisr_Db_FileIncludes
+     */
+    private $_dbFileIncludes;
+
+    /**
      * @var Scisr_Db_Classes
      */
     private $_dbClasses;
@@ -94,12 +99,14 @@ class Scisr
         }
         $this->_output = $output;
         $this->_dbFiles = new Scisr_Db_Files();
+        $this->_dbFileIncludes = new Scisr_Db_FileIncludes();
         $this->_dbClasses = new Scisr_Db_Classes();
         $this->_changeRegistry = new Scisr_ChangeRegistry();
         $this->_sniffer = new Scisr_CodeSniffer($this->_dbFiles);
         $this->_operationsFactory = new Scisr_Operations_Factory(array(
             $this->_changeRegistry,
             $this->_dbFiles,
+            $this->_dbFileIncludes,
             $this->_dbClasses
         ));
     }
@@ -317,7 +324,7 @@ class Scisr
     public function run()
     {
         Scisr_Db_VariableTypes::init();
-        Scisr_Db_FileIncludes::init();
+        $this->_dbFileIncludes->init();
         $this->_dbFiles->init();
         $this->_dbClasses->init();
 

@@ -1479,10 +1479,11 @@ EOL;
      * to put it at the moment.
      */
     public function testIncludeFileRepeatedly() {
-        Scisr_Db_FileIncludes::init();
-        Scisr_Db_FileIncludes::registerFileInclude('/x/y/myfile.php', '/x/z/otherfile.php');
-        Scisr_Db_FileIncludes::registerFileInclude('/x/y/myfile.php', '/x/z/otherfile.php');
-        $this->assertSame(array('/x/z/otherfile.php'), Scisr_Db_FileIncludes::getIncludedFiles('/x/y/myfile.php'));
+        $dbFileIncludes = new Scisr_Db_FileIncludes();
+        $dbFileIncludes->init();
+        $dbFileIncludes->registerFileInclude('/x/y/myfile.php', '/x/z/otherfile.php');
+        $dbFileIncludes->registerFileInclude('/x/y/myfile.php', '/x/z/otherfile.php');
+        $this->assertSame(array('/x/z/otherfile.php'), $dbFileIncludes->getIncludedFiles('/x/y/myfile.php'));
     }
 
 }

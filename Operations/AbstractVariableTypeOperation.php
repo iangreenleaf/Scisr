@@ -47,7 +47,7 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation extends Scisr_Oper
         $result = Scisr_Db_VariableTypes::getVariableType($varName, $phpcsFile->getFileName(), $scopeOpen, $varPtr);
         if ($result === null) {
             // If not, we'll look in any included files
-            $includedFiles = Scisr_Db_FileIncludes::getIncludedFiles($phpcsFile->getFileName());
+            $includedFiles = $this->_dbFileIncludes->getIncludedFiles($phpcsFile->getFileName());
             //TODO we could do one query with filenames joined - we would need to 
             // ensure correct ordering, though
             foreach ($includedFiles as $file) {

@@ -9,7 +9,7 @@ class Scisr_Db_FileIncludes
     /**
      * Set up the DB table we are going to use
      */
-    public static function init()
+    public function init()
     {
         $db = Scisr_Db::getDb();
         // Yes, I know this is not the most efficient or normalized. But I'm lazy.
@@ -25,7 +25,7 @@ EOS;
      * @param string $filename the file we're in
      * @param string $includedFilename the file being included
      */
-    public static function registerFileInclude($filename, $includedFilename)
+    public function registerFileInclude($filename, $includedFilename)
     {
         $db = Scisr_Db::getDb();
 
@@ -41,7 +41,7 @@ EOS;
      * @param string $filename the file we're in
      * @return array(string) an array of filenames that this file includes
      */
-    public static function getIncludedFiles($filename)
+    public function getIncludedFiles($filename)
     {
         $db = Scisr_Db::getDb();
 

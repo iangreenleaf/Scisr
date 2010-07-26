@@ -50,7 +50,7 @@ class Scisr_Operations_TrackClassIncludes
             foreach ($classes as $class) {
                 $include = $this->_dbClasses->getClassFile($class);
                 if ($include !== null) {
-                    Scisr_Db_FileIncludes::registerFileInclude($filename, $include);
+                    $this->_dbFileIncludes->registerFileInclude($filename, $include);
                 }
             }
         }
