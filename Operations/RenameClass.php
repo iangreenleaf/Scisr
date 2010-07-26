@@ -9,9 +9,9 @@ class Scisr_Operations_RenameClass extends Scisr_Operations_AbstractChangeOperat
     public $oldName;
     public $newName;
 
-    public function __construct(Scisr_ChangeRegistry $changeRegistry, Scisr_Db_Classes $dbClasses, $oldName, $newName)
+    public function __construct(Scisr_ChangeRegistry $changeRegistry, $oldName, $newName)
     {
-        parent::__construct($changeRegistry, $dbClasses);
+        parent::__construct($changeRegistry);
         $this->oldName = $oldName;
         $this->newName = $newName;
     }

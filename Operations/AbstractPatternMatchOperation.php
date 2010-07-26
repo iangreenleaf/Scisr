@@ -19,9 +19,9 @@ abstract class Scisr_Operations_AbstractPatternMatchOperation extends Scisr_Oper
      * @param boolean $tentative whether the changes we detect should be
      * considered tentative
      */
-    public function __construct(Scisr_ChangeRegistry $changeRegistry, Scisr_Db_Classes $dbClasses, $oldString, $newString, $tentative=true)
+    public function __construct(Scisr_ChangeRegistry $changeRegistry, $oldString, $newString, $tentative=true)
     {
-        parent::__construct($changeRegistry, $dbClasses);
+        parent::__construct($changeRegistry);
         $this->oldString = $oldString;
         $this->newString = $newString;
         $this->tentative = $tentative;
