@@ -11,9 +11,9 @@ class Scisr_Operations_RenameMethod
     public $oldName;
     public $newName;
 
-    public function __construct(Scisr_ChangeRegistry $changeRegistry, Scisr_Db_Classes $dbClasses, Scisr_Db_FileIncludes $dbFileIncludes, $class, $oldName, $newName)
+    public function __construct(Scisr_ChangeRegistry $changeRegistry, Scisr_Db_Classes $dbClasses, Scisr_Db_FileIncludes $dbFileIncludes, Scisr_Db_VariableTypes $dbVariableTypes, $class, $oldName, $newName)
     {
-        parent::__construct($changeRegistry, $dbClasses, $dbFileIncludes);
+        parent::__construct($changeRegistry, $dbClasses, $dbFileIncludes, $dbVariableTypes);
         $this->class = $class;
         $this->oldName = $oldName;
         $this->newName = $newName;

@@ -12,7 +12,7 @@ class Scisr_Db_VariableTypes
      *
      * Sets up the DB table we are going to use
      */
-    public static function init()
+    public function init()
     {
         $db = Scisr_Db::getDb();
         $create = <<<EOS
@@ -39,7 +39,7 @@ EOS;
      * @param array $scopeOpen the stack pointer to the beginning of the current scope
      * @param int $varPtr a pointer to the beginning of the variable
      */
-    public static function registerVariableType($variable, $type, $filename, $scopeOpen, $varPtr)
+    public function registerVariableType($variable, $type, $filename, $scopeOpen, $varPtr)
     {
         $db = Scisr_Db::getDb();
 
@@ -83,7 +83,7 @@ EOS;
      * @param array $scopeOpen the stack pointer to the beginning of the current scope
      * @param int $varPtr a pointer to the beginning of the variable
      */
-    public static function registerGlobalVariable($variable, $filename, $scopeOpen, $varPtr)
+    public function registerGlobalVariable($variable, $filename, $scopeOpen, $varPtr)
     {
         $db = Scisr_Db::getDb();
 
@@ -102,7 +102,7 @@ EOS;
      * @param int $varPtr a pointer to the beginning of the variable
      * @return string|null the type name registered at this location, or null if none
      */
-    public static function checkVariableDefinition($filename, $varPtr)
+    public function checkVariableDefinition($filename, $varPtr)
     {
         $db = Scisr_Db::getDb();
 
@@ -127,7 +127,7 @@ EOS;
      * @param int $varPtr a pointer to the beginning of the variable
      * @return string|null the class name, or null if we don't know
      */
-    public static function getVariableType($variable, $filename, $scopeOpen, $varPtr)
+    public function getVariableType($variable, $filename, $scopeOpen, $varPtr)
     {
         $db = Scisr_Db::getDb();
 
@@ -159,7 +159,7 @@ EOS;
      * @param int $varPtr a pointer to the beginning of the variable
      * @return boolean true if it is global
      */
-    public static function isGlobalVariable($variable, $filename, $scopeOpen, $varPtr)
+    public function isGlobalVariable($variable, $filename, $scopeOpen, $varPtr)
     {
         $db = Scisr_Db::getDb();
 

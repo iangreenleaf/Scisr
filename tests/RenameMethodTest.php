@@ -1428,7 +1428,7 @@ EOL;
         $this->populateFile($orig);
 
         $s = new Scisr();
-        $sniffer = new MockSniffer($s->getFactory()->getCollaborator('Scisr_Db_Classes'));
+        $sniffer = new MockSniffer($s->getFactory()->getCollaborator('Scisr_Db_Classes'), $s->getFactory()->getCollaborator('Scisr_Db_VariableTypes'));
         $sniffer->incFile = $includedFile;
         $sniffer->test_file = $this->test_file;
         $s->setSniffer($sniffer);
@@ -1499,15 +1499,16 @@ class MockSniffer extends Scisr_CodeSniffer
      */
     public $incFile;
 
-    public function __construct(Scisr_Db_Classes $dbClasses)
+    public function __construct(Scisr_Db_Classes $dbClasses, Scisr_Db_VariableTypes $dbVariableTypes)
     {
         $this->_dbClasses = $dbClasses;
+        $this->_dbVariableTypes = $dbVariableTypes;
     }
 
     public function process($files, $local=false)
     {
-        Scisr_Db_VariableTypes::registerVariableType('$f', 'Foo', $this->incFile, 0, 4);
-        Scisr_Db_VariableTypes::registerVariableType('ThisOtherClass->*foo', 'Foo', $this->incFile, 0, 8);
+        $this->_dbVariableTypes->registerVariableType('$f', 'Foo', $this->incFile, 0, 4);
+        $this->_dbVariableTypes->registerVariableType('ThisOtherClass->*foo', 'Foo', $this->incFile, 0, 8);
         $this->_dbClasses->registerClass('ThisOtherClass', $this->incFile);
         parent::process($files, $local);
     }

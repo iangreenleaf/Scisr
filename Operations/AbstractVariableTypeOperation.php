@@ -14,6 +14,13 @@ define('SCISR_SCOPE_GLOBAL', 0);
  */
 abstract class Scisr_Operations_AbstractVariableTypeOperation extends Scisr_Operations_AbstractChangeOperation implements PHP_CodeSniffer_Sniff
 {
+    protected $_dbVariableTypes;
+    
+    public function __construct(Scisr_ChangeRegistry $changeRegistry, Scisr_Db_Classes $dbClasses, Scisr_Db_FileIncludes $dbFileIncludes, Scisr_Db_VariableTypes $dbVariableTypes)
+    {
+        parent::__construct($changeRegistry, $dbClasses, $dbFileIncludes);
+        $this->_dbVariableTypes = $dbVariableTypes;
+    }
 
     /**
      * Get the type of a variable
@@ -44,14 +51,14 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation extends Scisr_Oper
         $scopeOpen = $this->getScopeOwner($varPtr, $phpcsFile, $varName);
 
         // If we find the type in this file, return it
-        $result = Scisr_Db_VariableTypes::getVariableType($varName, $phpcsFile->getFileName(), $scopeOpen, $varPtr);
+        $result = $this->_dbVariableTypes->getVariableType($varName, $phpcsFile->getFileName(), $scopeOpen, $varPtr);
         if ($result === null) {
             // If not, we'll look in any included files
             $includedFiles = $this->_dbFileIncludes->getIncludedFiles($phpcsFile->getFileName());
             //TODO we could do one query with filenames joined - we would need to 
             // ensure correct ordering, though
             foreach ($includedFiles as $file) {
-                $result = Scisr_Db_VariableTypes::getVariableType($varName, $file, $scopeOpen, $varPtr);
+                $result = $this->_dbVariableTypes->getVariableType($varName, $file, $scopeOpen, $varPtr);
                 if ($result !== null) {
                     break;
                 }
@@ -107,7 +114,7 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation extends Scisr_Oper
 
         // If a type has already been set for this variable that is more 
         // specific than this type, we don't overwrite it
-        $existing = Scisr_Db_VariableTypes::checkVariableDefinition($phpcsFile->getFileName(), $varPtr);
+        $existing = $this->_dbVariableTypes->checkVariableDefinition($phpcsFile->getFileName(), $varPtr);
         if ($existing !== null) {
             $existingSpecificity = self::getVariableSpecificity($existing);
             $typeSpecificity = self::getVariableSpecificity($type);
@@ -120,7 +127,7 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation extends Scisr_Oper
             return;
         }
 
-        Scisr_Db_VariableTypes::registerVariableType($varName, $type, $phpcsFile->getFileName(), $scopeOpen, $varPtr);
+        $this->_dbVariableTypes->registerVariableType($varName, $type, $phpcsFile->getFileName(), $scopeOpen, $varPtr);
     }
 
     /**
@@ -169,7 +176,7 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation extends Scisr_Oper
         $tokens = $phpcsFile->getTokens();
         $varName = $tokens[$varPtr]['content'];
         $scopeOpen = $this->getScopeOwner($varPtr, $phpcsFile, $varName);
-        Scisr_Db_VariableTypes::registerGlobalVariable($varName, $phpcsFile->getFileName(), $scopeOpen, $varPtr);
+        $this->_dbVariableTypes->registerGlobalVariable($varName, $phpcsFile->getFileName(), $scopeOpen, $varPtr);
     }
 
     /**
@@ -217,7 +224,7 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation extends Scisr_Oper
         // Get the lowermost scope
         $scopeOpen = $scopes[count($scopes) - 1];
 
-        return Scisr_Db_VariableTypes::isGlobalVariable($name, $filename, $scopeOpen, $varPtr);
+        return $this->_dbVariableTypes->isGlobalVariable($name, $filename, $scopeOpen, $varPtr);
     }
 
     /**
