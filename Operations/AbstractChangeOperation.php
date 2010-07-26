@@ -7,9 +7,11 @@
 abstract class Scisr_Operations_AbstractChangeOperation
 {
     protected $_changeRegistry;
+    protected $_dbClasses;
 
-    public function __construct(Scisr_ChangeRegistry $changeRegistry)
+    public function __construct(Scisr_ChangeRegistry $changeRegistry, Scisr_Db_classes $dbClasses)
     {
         $this->_changeRegistry = $changeRegistry;
+        $this->_dbClasses = $dbClasses;
     }
 }

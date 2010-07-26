@@ -22,6 +22,14 @@ class FactoryTest extends PHPUnit_Framework_TestCase
         $operation = $factory->getOperation('Scisr_Operations_Dummy', $splQueue);
         $this->assertTrue($operation instanceof Scisr_Operations_Dummy);
     }
+
+    public function testReturnsCollaboratorsForManualWiring()
+    {
+        $factory = new Scisr_Operations_Factory(array(
+            $stdClass = new stdClass
+        ));
+        $this->assertSame($stdClass, $factory->getCollaborator('stdClass'));
+    }
 }
 
 class Scisr_Operations_Dummy {

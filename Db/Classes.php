@@ -10,7 +10,7 @@ class Scisr_Db_Classes
      *
      * Sets up the DB table we are going to use
      */
-    public static function init()
+    public function init()
     {
         $db = Scisr_Db::getDb();
         $create = <<<EOS
@@ -38,7 +38,7 @@ EOS;
      * @param string $className the name of the class
      * @param string $filename the file we're in
      */
-    public static function registerClass($className, $filename)
+    public function registerClass($className, $filename)
     {
         $db = Scisr_Db::getDb();
 
@@ -55,10 +55,10 @@ EOS;
      * @param string $className the name of the class
      * @param string $extendsClass the name of the class being extended
      */
-    public static function registerClassExtends($className, $extendsClass)
+    public function registerClassExtends($className, $extendsClass)
     {
         // First register the generic relationship
-        self::registerClassRelationship($className, $extendsClass);
+        $this->registerClassRelationship($className, $extendsClass);
 
         $db = Scisr_Db::getDb();
         // Now insert this assignment
@@ -75,10 +75,10 @@ EOS;
      * @param array(string) $implements an array of names of
      * interfaces being implemented
      */
-    public static function registerClassImplements($className, $implements)
+    public function registerClassImplements($className, $implements)
     {
         foreach ($implements as $interface) {
-            self::registerClassRelationship($className, $interface);
+            $this->registerClassRelationship($className, $interface);
         }
     }
 
@@ -105,7 +105,7 @@ EOS;
      * @return string|null the filename, or null if we can't find this class
      * @todo what if there is more than one entry?
      */
-    public static function getClassFile($className)
+    public function getClassFile($className)
     {
         $db = Scisr_Db::getDb();
 
@@ -124,7 +124,7 @@ EOS;
      * @param string the class or interface name
      * @return array(string) the names of all child classes
      */
-    public static function getChildClasses($className)
+    public function getChildClasses($className)
     {
         $db = Scisr_Db::getDb();
         $select = <<<EOS
@@ -143,7 +143,7 @@ EOS;
             $child = $row['class'];
             if (!in_array($child, $children)) {
                 $children[] = $child;
-                $children = array_merge($children, self::getChildClasses($child));
+                $children = array_merge($children, $this->getChildClasses($child));
             }
         }
         return $children;
@@ -154,7 +154,7 @@ EOS;
      * @param string the class name
      * @return string|null the name of this class' parent, or null if none exists
      */
-    public static function getParent($className)
+    public function getParent($className)
     {
         $db = Scisr_Db::getDb();
         $select = <<<EOS

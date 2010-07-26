@@ -5,6 +5,12 @@
  */
 class Scisr_Operations_TrackClasses implements PHP_CodeSniffer_Sniff
 {
+    private $_dbClasses;
+
+    public function __construct(Scisr_Db_Classes $dbClasses)
+    {
+        $this->_dbClasses = $dbClasses;
+    }
 
     public function register()
     {
@@ -16,16 +22,16 @@ class Scisr_Operations_TrackClasses implements PHP_CodeSniffer_Sniff
     public function process(PHP_CodeSniffer_File $phpcsFile, $stackPtr)
     {
         $className = $phpcsFile->getDeclarationName($stackPtr);
-        Scisr_Db_Classes::registerClass($className, $phpcsFile->getFilename());
+        $this->_dbClasses->registerClass($className, $phpcsFile->getFilename());
 
         $extends = $phpcsFile->findExtendedClassName($stackPtr);
         if ($extends !== false) {
-            Scisr_Db_Classes::registerClassExtends($className, $extends);
+            $this->_dbClasses->registerClassExtends($className, $extends);
         }
 
         $implements = $phpcsFile->findImplementsClassName($stackPtr);
         if (count($implements) > 0) {
-            Scisr_Db_Classes::registerClassImplements($className, $implements);
+            $this->_dbClasses->registerClassImplements($className, $implements);
         }
     }
 

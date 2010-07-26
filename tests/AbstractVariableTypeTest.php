@@ -140,7 +140,7 @@ class AbstractVariableTypeTester extends Scisr_Operations_AbstractVariableTypeOp
 {
     public function __construct()
     {
-        parent::__construct(new Scisr_ChangeRegistry);
+        parent::__construct(new Scisr_ChangeRegistry, new Scisr_Db_Classes);
     }
 
     public function exposeGetStartOfVar($ptr, $tokens)

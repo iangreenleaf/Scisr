@@ -20,6 +20,11 @@ class Scisr_CodeSniffer extends PHP_CodeSniffer
         $this->setAllowedFileExtensions(array('php', 'inc', 'html'));
     }
 
+    public function __destruct()
+    {
+        // no need to reset cwd
+    }
+
     /**
      * Add a listener
      * @param PHP_CodeSniffer_Sniff the listener to add. Unlike

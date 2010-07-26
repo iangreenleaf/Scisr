@@ -36,6 +36,15 @@ class Scisr_Operations_Factory
 
     /**
      * @param string $className
+     * @return object
+     */
+    public function getCollaborator($className)
+    {
+        return $this->_collaborators[$className];
+    }
+
+    /**
+     * @param string $className
      * Other parameters follow.
      * @return PHP_CodeSniffer_Sniff
      */

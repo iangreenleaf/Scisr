@@ -85,9 +85,16 @@ class Scisr
         $this->_output = $output;
         $this->_sniffer = new Scisr_CodeSniffer();
         $this->_changeRegistry = new Scisr_ChangeRegistry();
+        $this->_dbClasses = new Scisr_Db_Classes();
         $this->_operationsFactory = new Scisr_Operations_Factory(array(
-            $this->_changeRegistry
+            $this->_changeRegistry,
+            $this->_dbClasses
         ));
+    }
+
+    public function getFactory()
+    {
+        return $this->_operationsFactory;
     }
 
     /**
@@ -193,7 +200,7 @@ class Scisr
      */
     protected function doRenameChildMethods($class, $oldMethod, $newMethod)
     {
-        $classes = Scisr_Db_Classes::getChildClasses($class);
+        $classes = $this->_dbClasses->getChildClasses($class);
         foreach ($classes as $child) {
             $this->setRenameMethod($child, $oldMethod, $newMethod, false);
         }
@@ -239,7 +246,7 @@ class Scisr
      */
     protected function doRenameClassFile($oldClass, $newClass)
     {
-        $oldFilePath = Scisr_Db_Classes::getClassFile($oldClass);
+        $oldFilePath = $this->_dbClasses->getClassFile($oldClass);
         if ($oldFilePath !== null) {
             $pieces = explode('_', $oldClass);
             foreach (array_keys($this->getAllowedFileExtensions()) as $ext) {
@@ -300,7 +307,7 @@ class Scisr
         Scisr_Db_VariableTypes::init();
         Scisr_Db_FileIncludes::init();
         Scisr_Db_Files::init();
-        Scisr_Db_Classes::init();
+        $this->_dbClasses->init();
 
         $sniffer = $this->_sniffer;
 

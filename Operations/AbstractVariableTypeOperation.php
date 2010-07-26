@@ -241,7 +241,7 @@ abstract class Scisr_Operations_AbstractVariableTypeOperation extends Scisr_Oper
             if ($className == 'self') {
                 return $newClassName;
             } else {
-                $parent = Scisr_Db_Classes::getParent($newClassName);
+                $parent = $this->_dbClasses->getParent($newClassName);
                 if ($parent !== null) {
                     return $parent;
                 }
