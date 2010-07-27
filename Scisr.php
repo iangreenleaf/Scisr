@@ -98,7 +98,7 @@ class Scisr
             $output = new Scisr_Output_Null();
         }
         $this->_output = $output;
-        $$db = Scisr_Db::getDb();
+        $db = Scisr_Db::getDb();
         $this->_dbFiles = new Scisr_Db_Files($db);
         $this->_dbFileIncludes = new Scisr_Db_FileIncludes($db);
         $this->_dbClasses = new Scisr_Db_Classes($db);
@@ -114,6 +114,11 @@ class Scisr
             $this->_dbVariableTypes,
             $this->_variableTypes
         ));
+    }
+
+    public static function createScisr()
+    {
+        return new Scisr();
     }
 
     public function getFactory()
