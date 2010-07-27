@@ -91,13 +91,10 @@ class Scisr
      */
     private $_dbClasses;
 
-    public function __construct($output=null)
+    public function __construct()
     {
         $this->setEditMode(self::MODE_CONSERVATIVE);
-        if ($output === null) {
-            $output = new Scisr_Output_Null();
-        }
-        $this->_output = $output;
+        $this->_output = new Scisr_Output_Null();
         $db = Scisr_Db::getDb();
         $this->_dbFiles = new Scisr_Db_Files($db);
         $this->_dbFileIncludes = new Scisr_Db_FileIncludes($db);
@@ -114,6 +111,11 @@ class Scisr
             $this->_dbVariableTypes,
             $this->_variableTypes
         ));
+    }
+
+    public function setOutput($output)
+    {
+        $this->_output = $output;
     }
 
     public static function createScisr()

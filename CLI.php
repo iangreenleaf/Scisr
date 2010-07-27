@@ -33,7 +33,8 @@ class Scisr_CLI implements Scisr_Output
             $output = new Scisr_Output_CLI();
         }
         $this->output = $output;
-        $this->scisr = new Scisr($this->output);
+        $this->scisr = Scisr::createScisr();
+        $this->scisr->setOutput($this->output);
     }
 
     /**
