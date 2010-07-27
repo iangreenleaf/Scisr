@@ -9,7 +9,7 @@ class RenameClassFileSystemTest extends Scisr_Tests_MultipleFileTestCase
     public function testRenameClassFileAndCompareFile($oldName, $newName, $oldFile, $newFile) {
         $this->populateDir(dirname(__FILE__) . '/_files/classFileFixture', $this->test_dir);
 
-        $s = Scisr::createScisr();
+        $s = $this->getScisr();
         $s->setRenameClassFile($oldName, $newName);
         $s->addFile($this->test_dir . '/' . $oldFile);
         $s->run();
@@ -28,7 +28,7 @@ class RenameClassFileSystemTest extends Scisr_Tests_MultipleFileTestCase
     public function testDontRenameClassFileWithoutAllowedExtension() {
         $this->populateDir(dirname(__FILE__) . '/_files/classFileFixture', $this->test_dir);
 
-        $s = Scisr::createScisr();
+        $s = $this->getScisr();
         $s->setRenameClassFile('MyOtherClass', 'NewClass');
         $s->setAllowedFileExtensions(array('php'));
         $s->addFile($this->test_dir);
@@ -41,7 +41,7 @@ class RenameClassFileSystemTest extends Scisr_Tests_MultipleFileTestCase
     public function testRenameClassFileWithFunnyExtension() {
         $this->populateDir(dirname(__FILE__) . '/_files/classFileFixture', $this->test_dir);
 
-        $s = Scisr::createScisr();
+        $s = $this->getScisr();
         $s->setRenameClassFile('StrangeClass', 'StrangeQuark');
         $s->setAllowedFileExtensions(array('php', 'foo'));
         $s->addFile($this->test_dir);
@@ -53,7 +53,7 @@ class RenameClassFileSystemTest extends Scisr_Tests_MultipleFileTestCase
     public function testRenameDirWithNamespacing() {
         $this->populateDir(dirname(__FILE__) . '/_files/classFileNamespacedFixture', $this->test_dir);
 
-        $s = Scisr::createScisr();
+        $s = $this->getScisr();
         $s->setRenameClassFile('Foo_Bar_Quark', 'Foo_Baz_Quack');
         $s->addFile($this->test_dir);
         $s->run();
@@ -64,7 +64,7 @@ class RenameClassFileSystemTest extends Scisr_Tests_MultipleFileTestCase
     public function testDontCreateDirNamespacingIfOriginalIsnt() {
         $this->populateDir(dirname(__FILE__) . '/_files/classFileNamespacedFixture2', $this->test_dir);
 
-        $s = Scisr::createScisr();
+        $s = $this->getScisr();
         $s->setRenameClassFile('Foo_Bar_Quark', 'Foo_Baz_Quack');
         $s->addFile($this->test_dir);
         $s->run();
@@ -75,7 +75,7 @@ class RenameClassFileSystemTest extends Scisr_Tests_MultipleFileTestCase
     public function testRenameClassFileAndCompareDir() {
         $this->populateDir(dirname(__FILE__) . '/_files/classFileFixture-dir', $this->test_dir);
 
-        $s = Scisr::createScisr();
+        $s = $this->getScisr();
         $s->setRenameClassFile('Foo', 'Baz');
         $s->addFile($this->test_dir);
         $s->run();

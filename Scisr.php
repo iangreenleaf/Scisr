@@ -106,9 +106,11 @@ class Scisr
         $this->_output = $output;
     }
 
-    public static function createScisr($className = 'Scisr')
+    public static function createScisr($className = 'Scisr', $db = null)
     {
-        $db = Scisr_Db::getDb();
+        if ($db === null) {
+            $db = Scisr_Db::getDb();
+        }
         $dbFiles = new Scisr_Db_Files($db);
         $dbFiles->init();
         $dbFileIncludes = new Scisr_Db_FileIncludes($db);

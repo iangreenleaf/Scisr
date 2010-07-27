@@ -7,7 +7,7 @@ class RenameClassSystemTest extends Scisr_Tests_MultipleFileTestCase
     public function testRenameClassAndCompareFile() {
         $this->populateDir(dirname(__FILE__) . '/_files/cliFixture', $this->test_dir);
 
-        $s = Scisr::createScisr();
+        $s = $this->getScisr();
         $s->setRenameClass('Foo', 'Baz');
         $s->addFile($this->test_dir . '/test.php');
         $s->run();
@@ -18,7 +18,7 @@ class RenameClassSystemTest extends Scisr_Tests_MultipleFileTestCase
     public function testRenameClassAndCompareFileWithRelativeDir() {
         $this->populateDir(dirname(__FILE__) . '/_files/cliFixture', $this->test_dir);
 
-        $s = Scisr::createScisr();
+        $s = $this->getScisr();
         $s->setRenameClass('Foo', 'Baz');
         $s->addFile($this->rel_test_dir . '/test.php');
         $s->run();
@@ -29,7 +29,7 @@ class RenameClassSystemTest extends Scisr_Tests_MultipleFileTestCase
     public function testRenameClassAndCompareDir() {
         $this->populateDir(dirname(__FILE__) . '/_files/cliFixture', $this->test_dir);
 
-        $s = Scisr::createScisr();
+        $s = $this->getScisr();
         $s->setRenameClass('Foo', 'Baz');
         $s->addFile($this->test_dir);
         $s->run();

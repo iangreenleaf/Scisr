@@ -7,7 +7,7 @@ class RenameClassFileTest extends Scisr_SingleFileTest
     public function renameAndCompare($original, $expected, $oldname='Foo', $newname='Baz', $oldfile='Foo.php', $newfile='Baz.php', $aggressive=false) {
         $this->populateFile($original);
 
-        $s = Scisr::createScisr();
+        $s = $this->getScisr();
         if ($aggressive) {
             $s->setEditMode(Scisr::MODE_AGGRESSIVE);
         }
