@@ -109,7 +109,8 @@ class Scisr
     public static function createScisr($className = 'Scisr', $db = null)
     {
         if ($db === null) {
-            $db = Scisr_Db::getDb();
+            $db_path = dirname(__FILE__) . '/cache.db';
+            $db = new PDO("sqlite:$db_path", null, null, array(PDO::ATTR_PERSISTENT => true));
         }
         $dbFiles = new Scisr_Db_Files($db);
         $dbFiles->init();

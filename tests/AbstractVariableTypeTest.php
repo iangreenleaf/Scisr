@@ -55,7 +55,7 @@ class AbstractVariableTypeTest extends Scisr_TestCase
         }
         $expectedEndPtr += $endPtrOffset;
         // Fire up the tester
-        $tester = new AbstractVariableTypeTester();
+        $tester = new AbstractVariableTypeTester($this->getDb());
         $endPtr = $tester->exposeGetEndOfVar($startPtr, $tokens);
 
         $this->assertEquals($expectedEndPtr, $endPtr);
@@ -75,7 +75,7 @@ class AbstractVariableTypeTest extends Scisr_TestCase
         }
         $endPtr += $endPtrOffset;
         // Fire up the tester
-        $tester = new AbstractVariableTypeTester();
+        $tester = new AbstractVariableTypeTester($this->getDb());
         $startPtr = $tester->exposeGetStartOfVar($endPtr, $tokens);
 
         $this->assertEquals($startContent, $tokens[$startPtr]['content']);
@@ -138,9 +138,8 @@ class AbstractVariableTypeTest extends Scisr_TestCase
  */
 class AbstractVariableTypeTester extends Scisr_Operations_VariableTypes
 {
-    public function __construct()
+    public function __construct($db)
     {
-        $db = Scisr_Db::getDb();
         parent::__construct(new Scisr_Db_Classes($db), new Scisr_Db_FileIncludes($db), new Scisr_Db_VariableTypes($db));
     }
 
