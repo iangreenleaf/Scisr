@@ -91,26 +91,14 @@ class Scisr
      */
     private $_dbClasses;
 
-    public function __construct()
+    public function __construct(Scisr_ChangeRegistry $changeRegistry, Scisr_CodeSniffer $sniffer, Scisr_Db_Classes $dbClasses, Scisr_Operations_Factory $operationsFactory)
     {
         $this->setEditMode(self::MODE_CONSERVATIVE);
         $this->_output = new Scisr_Output_Null();
-        $db = Scisr_Db::getDb();
-        $this->_dbFiles = new Scisr_Db_Files($db);
-        $this->_dbFileIncludes = new Scisr_Db_FileIncludes($db);
-        $this->_dbClasses = new Scisr_Db_Classes($db);
-        $this->_dbVariableTypes = new Scisr_Db_VariableTypes($db);
-        $this->_variableTypes = new Scisr_Operations_VariableTypes($this->_dbClasses, $this->_dbFileIncludes, $this->_dbVariableTypes);
-        $this->_changeRegistry = new Scisr_ChangeRegistry();
-        $this->_sniffer = new Scisr_CodeSniffer($this->_dbFiles);
-        $this->_operationsFactory = new Scisr_Operations_Factory(array(
-            $this->_changeRegistry,
-            $this->_dbFiles,
-            $this->_dbFileIncludes,
-            $this->_dbClasses,
-            $this->_dbVariableTypes,
-            $this->_variableTypes
-        ));
+        $this->_dbClasses = $dbClasses;
+        $this->_changeRegistry = $changeRegistry;
+        $this->_sniffer = $sniffer;
+        $this->_operationsFactory = $operationsFactory;
     }
 
     public function setOutput($output)
@@ -118,9 +106,30 @@ class Scisr
         $this->_output = $output;
     }
 
-    public static function createScisr()
+    public static function createScisr($className = 'Scisr')
     {
-        return new Scisr();
+        $db = Scisr_Db::getDb();
+        $dbFiles = new Scisr_Db_Files($db);
+        $dbFiles->init();
+        $dbFileIncludes = new Scisr_Db_FileIncludes($db);
+        $dbFileIncludes->init();
+        $dbClasses = new Scisr_Db_Classes($db);
+        $dbClasses->init();
+        $dbVariableTypes = new Scisr_Db_VariableTypes($db);
+        $dbVariableTypes->init();
+        $variableTypes = new Scisr_Operations_VariableTypes($dbClasses, $dbFileIncludes, $dbVariableTypes);
+        $changeRegistry = new Scisr_ChangeRegistry();
+        $sniffer = new Scisr_CodeSniffer($dbFiles);
+        $operationsFactory = new Scisr_Operations_Factory(array(
+            $changeRegistry,
+            $dbFiles,
+            $dbFileIncludes,
+            $dbClasses,
+            $dbVariableTypes,
+            $variableTypes
+        ));
+
+        return new $className($changeRegistry, $sniffer, $dbClasses, $operationsFactory);
     }
 
     public function getFactory()
@@ -335,11 +344,6 @@ class Scisr
      */
     public function run()
     {
-        $this->_dbVariableTypes->init();
-        $this->_dbFileIncludes->init();
-        $this->_dbFiles->init();
-        $this->_dbClasses->init();
-
         $sniffer = $this->_sniffer;
 
         // If we need to, make a read-only pass to populate our type information

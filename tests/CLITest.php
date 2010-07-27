@@ -8,7 +8,7 @@ class CLITest extends Scisr_TestCase
      * @dataProvider ignoreOptProvider
      */
     public function testSetIgnore($args, $patterns) {
-        $mock = $this->getMock('Scisr');
+        $mock = $this->getScisrMock();
         $mock->expects($this->once())
             ->method('setRenameClass')
             ->with($this->equalTo('Foo'), $this->equalTo('Baz'));
@@ -37,7 +37,7 @@ class CLITest extends Scisr_TestCase
      * @dataProvider extensionsOptProvider
      */
     public function testSetExtensions($args, $patterns) {
-        $mock = $this->getMock('Scisr');
+        $mock = $this->getScisrMock();
         $mock->expects($this->once())
             ->method('setRenameClass')
             ->with($this->equalTo('Foo'), $this->equalTo('Baz'));
@@ -66,7 +66,7 @@ class CLITest extends Scisr_TestCase
      * @dataProvider aggressiveOptProvider
      */
     public function testSetAggressive($args) {
-        $mock = $this->getMock('Scisr');
+        $mock = $this->getScisrMock();
         $mock->expects($this->once())
             ->method('setRenameClass')
             ->with($this->equalTo('Foo'), $this->equalTo('Baz'));
@@ -94,7 +94,7 @@ class CLITest extends Scisr_TestCase
      * @dataProvider timidOptProvider
      */
     public function testSetTimid($args) {
-        $mock = $this->getMock('Scisr');
+        $mock = $this->getScisrMock();
         $mock->expects($this->once())
             ->method('setRenameClass')
             ->with($this->equalTo('Foo'), $this->equalTo('Baz'));
@@ -122,7 +122,7 @@ class CLITest extends Scisr_TestCase
      * @dataProvider inheritanceOptProvider
      */
     public function testSetNoInheritance($args) {
-        $mock = $this->getMock('Scisr');
+        $mock = $this->getScisrMock();
         $mock->expects($this->once())
             ->method('setRenameMethod')
             ->with($this->equalTo('Foo'), $this->equalTo('bar'), $this->equalTo('baz'), $this->equalTo(false));
@@ -144,7 +144,7 @@ class CLITest extends Scisr_TestCase
      * @dataProvider nonValueArgsProvider
      */
     public function testDontAllowValuesToNonValueArg($args) {
-        $stub = $this->getMock('Scisr');
+        $stub = $this->getScisrMock();
         $output = new Scisr_Output_String();
         $c = new Scisr_CLI($output);
         $c->setScisr($stub);
@@ -162,7 +162,7 @@ class CLITest extends Scisr_TestCase
     }
 
     public function testGiveMultipleFiles() {
-        $mock = $this->getMock('Scisr');
+        $mock = $this->getScisrMock();
         $mock->expects($this->once())
             ->method('setRenameClass')
             ->with($this->equalTo('Foo'), $this->equalTo('Baz'));
@@ -179,7 +179,7 @@ class CLITest extends Scisr_TestCase
     }
 
     public function testRenameClass() {
-        $mock = $this->getMock('Scisr');
+        $mock = $this->getScisrMock();
         $mock->expects($this->once())
             ->method('setRenameClass')
             ->with($this->equalTo('Foo'), $this->equalTo('Baz'));
@@ -196,7 +196,7 @@ class CLITest extends Scisr_TestCase
     }
 
     public function testRenameMethod() {
-        $mock = $this->getMock('Scisr');
+        $mock = $this->getScisrMock();
         $mock->expects($this->once())
             ->method('setRenameMethod')
             ->with($this->equalTo('Foo'), $this->equalTo('bar'), $this->equalTo('baz'), $this->equalTo(true));
@@ -213,7 +213,7 @@ class CLITest extends Scisr_TestCase
     }
 
     public function testRenameFile() {
-        $mock = $this->getMock('Scisr');
+        $mock = $this->getScisrMock();
         $mock->expects($this->once())
             ->method('setRenameFile')
             ->with($this->equalTo('mydir/foo.php'), $this->equalTo('mydir/newdir/bar.php'));
@@ -230,7 +230,7 @@ class CLITest extends Scisr_TestCase
     }
 
     public function testRenameClassFile() {
-        $mock = $this->getMock('Scisr');
+        $mock = $this->getScisrMock();
         $mock->expects($this->once())
             ->method('setRenameClassFile')
             ->with($this->equalTo('Foo'), $this->equalTo('Baz'));
@@ -251,7 +251,7 @@ class CLITest extends Scisr_TestCase
      */
     public function testDontRunOnBadArgs($args) {
         array_unshift($args, 'scisr_executable');
-        $mock = $this->getMock('Scisr');
+        $mock = $this->getScisrMock();
         $mock->expects($this->never())
             ->method('run')
             ->will($this->returnValue(true));
@@ -275,6 +275,11 @@ class CLITest extends Scisr_TestCase
             array(array('rename-class', '--unrecognized', 'baz', 'file.php')),
             array(array('rename-class', 'bar', '-z', 'file.php')),
         );
+    }
+
+    public function getScisrMock()
+    {
+        return $this->getMock('Scisr', array(), array(), '', false);
     }
 
 }

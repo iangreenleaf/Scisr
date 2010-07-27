@@ -74,7 +74,7 @@ EOL;
     }
 
     private function runWithMock($mock) {
-        $s = new Scisr_FileTest();
+        $s = Scisr::createScisr('Scisr_FileTest');
         $s->setFirstPassListener($mock);
         $s->addFile($this->test_file);
         $s->run();
