@@ -55,7 +55,7 @@ EOL;
 include "Foo.php"
 EOL;
         $this->populateFile($code);
-        $s = new Scisr();
+        $s = Scisr::createScisr();
         $s->setRenameClassFile('Foo', 'Bar');
         $s->addFile($this->test_file);
         $s->run();

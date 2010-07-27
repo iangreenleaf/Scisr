@@ -7,7 +7,7 @@ class RenameMethodTest extends Scisr_SingleFileTest
     public function renameAndCompare($original, $expected, $class='Foo', $oldmethod='bar', $newmethod='baz', $aggressive=false, $inheritance=false) {
         $this->populateFile($original);
 
-        $s = new Scisr();
+        $s = Scisr::createScisr();
         if ($aggressive) {
             $s->setEditMode(Scisr::MODE_AGGRESSIVE);
         }
@@ -1427,7 +1427,7 @@ EOL;
     private function renameAndCompareWithIncludes($orig, $expected, $includedFile) {
         $this->populateFile($orig);
 
-        $s = new Scisr();
+        $s = Scisr::createScisr();
         $sniffer = new MockSniffer($s->getFactory()->getCollaborator('Scisr_Db_Classes'), $s->getFactory()->getCollaborator('Scisr_Db_VariableTypes'));
         $sniffer->incFile = $includedFile;
         $sniffer->test_file = $this->test_file;

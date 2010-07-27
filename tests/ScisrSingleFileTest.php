@@ -7,12 +7,12 @@ class ScisrTest extends Scisr_SingleFileTest
     public function parseCode($code) {
         $this->populateFile($code);
 
-        $s = new Scisr();
+        $s = Scisr::createScisr();
         $s->setRenameClass('dummy', 'dummy2');
         $s->addFile($this->test_file);
         $s->run();
 
-        $s = new Scisr();
+        $s = Scisr::createScisr();
         $s->setRenameMethod('DummyClass', 'dummy', 'dummy2', false);
         $s->addFile($this->test_file);
         $s->run();

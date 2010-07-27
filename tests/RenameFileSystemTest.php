@@ -40,7 +40,7 @@ class RenameFileSystemTest extends Scisr_Tests_MultipleFileTestCase
     public function testDontMoveFileInTimidMode() {
         $this->populateDir(dirname(__FILE__) . '/_files/renameFileFixture', $this->test_dir);
 
-        $s = new Scisr();
+        $s = Scisr::createScisr();
         $s->setEditMode(Scisr::MODE_TIMID);
         $s->setRenameFile($this->test_dir . '/test2.php', $this->test_dir . '/otherfolder/things.php');
         $s->addFile($this->test_dir);
@@ -84,7 +84,7 @@ class RenameFileSystemTest extends Scisr_Tests_MultipleFileTestCase
     }
 
 	public function doRenameFile($old, $new) {
-        $s = new Scisr();
+        $s = Scisr::createScisr();
         $s->setRenameFile($old, $new);
         $s->addFile($this->test_dir);
         $s->run();

@@ -7,7 +7,7 @@ class RenameMethodSystemTest extends Scisr_Tests_MultipleFileTestCase
     public function testRenameMethodAndCompareFile() {
         $this->populateDir(dirname(__FILE__) . '/_files/cliFixture', $this->test_dir);
 
-        $s = new Scisr();
+        $s = Scisr::createScisr();
         $s->setRenameMethod('Foo', 'bar', 'quark', false);
         $s->addFile($this->test_dir . '/test.php');
         $s->run();
@@ -18,7 +18,7 @@ class RenameMethodSystemTest extends Scisr_Tests_MultipleFileTestCase
     public function testRenameMethodAndCompareDir() {
         $this->populateDir(dirname(__FILE__) . '/_files/cliFixture', $this->test_dir);
 
-        $s = new Scisr();
+        $s = Scisr::createScisr();
         $s->setRenameMethod('Foo', 'bar', 'quark', false);
         $s->addFile($this->test_dir);
         $s->run();
@@ -29,7 +29,7 @@ class RenameMethodSystemTest extends Scisr_Tests_MultipleFileTestCase
     public function testRenameMethodWithIncludedFile() {
         $this->populateDir(dirname(__FILE__) . '/_files/renameMethodWithIncludesFixture', $this->test_dir);
 
-        $s = new Scisr();
+        $s = Scisr::createScisr();
         $s->setRenameMethod('Foo', 'bar', 'baz', false);
         $s->addFile($this->test_dir);
         $s->run();
@@ -40,7 +40,7 @@ class RenameMethodSystemTest extends Scisr_Tests_MultipleFileTestCase
     public function testClassInclusionOrder() {
         $this->populateDir(dirname(__FILE__) . '/_files/renameMethodWithClassFixture', $this->test_dir);
 
-        $s = new Scisr();
+        $s = Scisr::createScisr();
         $s->setRenameMethod('Foo', 'bar', 'baz', false);
         // We want to force an ordering here
         $s->addFile($this->test_dir . '/a.php');
