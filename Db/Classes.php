@@ -3,7 +3,7 @@
 /**
  * Stores information about classes
  */
-class Scisr_Db_Classes
+class Scisr_Db_Classes extends Scisr_Db_Dao
 {
     /**
      * Do any necessary setup
@@ -12,25 +12,24 @@ class Scisr_Db_Classes
      */
     public function init()
     {
-        $db = Scisr_Db::getDb();
         $create = <<<EOS
 CREATE TABLE IF NOT EXISTS Classes(filename text, class text);
 CREATE INDEX IF NOT EXISTS Classes_index_filename ON Classes (class);
 EOS;
-        $db->exec($create);
+        $this->_db->exec($create);
 
         $create = <<<EOS
 CREATE TABLE IF NOT EXISTS ClassRelationships(class text, is_a text);
 CREATE INDEX IF NOT EXISTS ClassRelationships_index_is_a ON ClassRelationships (is_a);
 EOS;
-        $db->exec($create);
+        $this->_db->exec($create);
 
         // That's right, my DB is denormalized
         $create = <<<EOS
 CREATE TABLE IF NOT EXISTS Parents(class text, parent text);
 CREATE UNIQUE INDEX IF NOT EXISTS Parents_index_class ON Parents (class);
 EOS;
-        $db->exec($create);
+        $this->_db->exec($create);
     }
 
     /**
@@ -40,13 +39,11 @@ EOS;
      */
     public function registerClass($className, $filename)
     {
-        $db = Scisr_Db::getDb();
-
         // Now insert this assignment
         $insert = <<<EOS
 INSERT INTO Classes (filename, class) VALUES (?, ?)
 EOS;
-        $insSt = $db->prepare($insert);
+        $insSt = $this->_db->prepare($insert);
         $insSt->execute(array($filename, $className));
     }
 
@@ -60,12 +57,11 @@ EOS;
         // First register the generic relationship
         $this->registerClassRelationship($className, $extendsClass);
 
-        $db = Scisr_Db::getDb();
         // Now insert this assignment
         $insert = <<<EOS
 INSERT INTO Parents (class, parent) VALUES (?, ?)
 EOS;
-        $insSt = $db->prepare($insert);
+        $insSt = $this->_db->prepare($insert);
         $insSt->execute(array($className, $extendsClass));
     }
 
@@ -87,15 +83,13 @@ EOS;
      * @param string $className the name of the class
      * @param string $isA the name of the class or interface it extends or implements
      */
-    private static function registerClassRelationship($className, $isA)
+    private function registerClassRelationship($className, $isA)
     {
-        $db = Scisr_Db::getDb();
-
         // Now insert this assignment
         $insert = <<<EOS
 INSERT INTO ClassRelationships (class, is_a) VALUES (?, ?)
 EOS;
-        $insSt = $db->prepare($insert);
+        $insSt = $this->_db->prepare($insert);
         $insSt->execute(array($className, $isA));
     }
 
@@ -107,12 +101,10 @@ EOS;
      */
     public function getClassFile($className)
     {
-        $db = Scisr_Db::getDb();
-
         $select = <<<EOS
 SELECT filename FROM Classes WHERE class = ? LIMIT 1
 EOS;
-        $st = $db->prepare($select);
+        $st = $this->_db->prepare($select);
         $st->execute(array($className));
         $result = $st->fetch();
 
@@ -126,11 +118,10 @@ EOS;
      */
     public function getChildClasses($className)
     {
-        $db = Scisr_Db::getDb();
         $select = <<<EOS
 SELECT class FROM ClassRelationships WHERE is_a = ?
 EOS;
-        $st = $db->prepare($select);
+        $st = $this->_db->prepare($select);
         $st->execute(array($className));
         $result = $st->fetchAll();
 
@@ -156,11 +147,10 @@ EOS;
      */
     public function getParent($className)
     {
-        $db = Scisr_Db::getDb();
         $select = <<<EOS
 SELECT parent FROM Parents WHERE class = ?
 EOS;
-        $st = $db->prepare($select);
+        $st = $this->_db->prepare($select);
         $st->execute(array($className));
         $result = $st->fetchColumn();
 

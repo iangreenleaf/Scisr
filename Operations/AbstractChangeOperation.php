@@ -1,8 +1,10 @@
 <?php
 
 /**
- * This class concentrate the wiring code for the ChangeRegistry instance needed 
+ * This class concentrates the wiring code for the ChangeRegistry instance needed 
  * in some Operations.
+ *
+ * @author Giorgio Sironi <piccoloprincipeazzurro@gmail.com>
  */
 abstract class Scisr_Operations_AbstractChangeOperation
 {

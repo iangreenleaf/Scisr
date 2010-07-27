@@ -3,7 +3,7 @@
 /**
  * Stores information about file includes
  */
-class Scisr_Db_FileIncludes
+class Scisr_Db_FileIncludes extends Scisr_Db_Dao
 {
 
     /**
@@ -11,13 +11,12 @@ class Scisr_Db_FileIncludes
      */
     public function init()
     {
-        $db = Scisr_Db::getDb();
         // Yes, I know this is not the most efficient or normalized. But I'm lazy.
         $create = <<<EOS
 CREATE TABLE IF NOT EXISTS FileIncludes(file text, included_file text);
 CREATE UNIQUE INDEX IF NOT EXISTS FileIncludes_index_file ON FileIncludes (file, included_file);
 EOS;
-        $db->exec($create);
+        $this->_db->exec($create);
     }
 
     /**
@@ -27,12 +26,10 @@ EOS;
      */
     public function registerFileInclude($filename, $includedFilename)
     {
-        $db = Scisr_Db::getDb();
-
         $insert = <<<EOS
 INSERT OR IGNORE INTO FileIncludes (file, included_file) VALUES (?, ?)
 EOS;
-        $insSt = $db->prepare($insert);
+        $insSt = $this->_db->prepare($insert);
         $insSt->execute(array($filename, $includedFilename));
     }
 
@@ -43,12 +40,10 @@ EOS;
      */
     public function getIncludedFiles($filename)
     {
-        $db = Scisr_Db::getDb();
-
         $select = <<<EOS
 SELECT included_file FROM FileIncludes WHERE file = ?
 EOS;
-        $st = $db->prepare($select);
+        $st = $this->_db->prepare($select);
         $st->execute(array($filename));
         $result = $st->fetchAll(PDO::FETCH_COLUMN);
         return $result;

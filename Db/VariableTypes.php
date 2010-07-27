@@ -5,7 +5,7 @@
  *
  * Basically a very rudimentary static model
  */
-class Scisr_Db_VariableTypes
+class Scisr_Db_VariableTypes extends Scisr_Db_Dao
 {
     /**
      * Do any necessary setup
@@ -14,21 +14,20 @@ class Scisr_Db_VariableTypes
      */
     public function init()
     {
-        $db = Scisr_Db::getDb();
         $create = <<<EOS
 CREATE TABLE IF NOT EXISTS VariableTypes(filename text, scopeopen integer, variable text, type text, variable_pointer integer);
 CREATE INDEX IF NOT EXISTS VariableTypes_index_filename ON VariableTypes (filename);
 CREATE UNIQUE INDEX IF NOT EXISTS VariableTypes_index_filename_var_ptr ON VariableTypes (filename, variable_pointer);
 CREATE INDEX IF NOT EXISTS VariableTypes_index_filename_var_scope ON VariableTypes (filename, scopeopen, variable);
 EOS;
-        $db->exec($create);
+        $this->_db->exec($create);
         $create = <<<EOS
 CREATE TABLE GlobalVariables(filename text, scopeopen integer, variable text, variable_pointer integer);
 CREATE INDEX IF NOT EXISTS GlobalVariables_index_filename ON GlobalVariables (filename);
 CREATE UNIQUE INDEX IF NOT EXISTS GlobalVariables_index_filename_var_ptr ON GlobalVariables (filename, variable_pointer);
 CREATE INDEX IF NOT EXISTS GlobalVariables_index_filename_var_scope ON GlobalVariables (filename, scopeopen, variable);
 EOS;
-        $db->exec($create);
+        $this->_db->exec($create);
     }
 
     /**
@@ -41,20 +40,18 @@ EOS;
      */
     public function registerVariableType($variable, $type, $filename, $scopeOpen, $varPtr)
     {
-        $db = Scisr_Db::getDb();
-
         // First delete any previous assignments in this scope
         $delete = <<<EOS
 DELETE FROM VariableTypes WHERE filename = ? AND variable_pointer = ?
 EOS;
-        $delSt = $db->prepare($delete);
+        $delSt = $this->_db->prepare($delete);
         $delSt->execute(array($filename, $varPtr));
 
         // Update any partially typed entries
         $select = <<<EOS
 SELECT variable, variable_pointer FROM VariableTypes WHERE variable LIKE ? AND filename = ? AND scopeopen = ?
 EOS;
-        $querySt = $db->prepare($select);
+        $querySt = $this->_db->prepare($select);
         $querySt->execute(array($variable . '->_%', $filename, $scopeOpen));
         while (($result = $querySt->fetch()) !== false) {
             $varPtr = $result['variable_pointer'];
@@ -63,7 +60,7 @@ EOS;
             $update = <<<EOS
 UPDATE VariableTypes SET variable = ? WHERE filename = ? AND variable_pointer = ?
 EOS;
-            $upSt = $db->prepare($update);
+            $upSt = $this->_db->prepare($update);
             $upSt->execute(array($newVarName, $filename, $varPtr));
         }
 
@@ -71,7 +68,7 @@ EOS;
         $insert = <<<EOS
 INSERT INTO VariableTypes (filename, scopeopen, variable, type, variable_pointer) VALUES (?, ?, ?, ?, ?)
 EOS;
-        $insSt = $db->prepare($insert);
+        $insSt = $this->_db->prepare($insert);
         $insSt->execute(array($filename, $scopeOpen, $variable, $type, $varPtr));
 
     }
@@ -85,13 +82,11 @@ EOS;
      */
     public function registerGlobalVariable($variable, $filename, $scopeOpen, $varPtr)
     {
-        $db = Scisr_Db::getDb();
-
         // Now insert this assignment
         $insert = <<<EOS
 INSERT INTO GlobalVariables (filename, scopeopen, variable, variable_pointer) VALUES (?, ?, ?, ?)
 EOS;
-        $insSt = $db->prepare($insert);
+        $insSt = $this->_db->prepare($insert);
         $insSt->execute(array($filename, $scopeOpen, $variable, $varPtr));
     }
 
@@ -104,12 +99,10 @@ EOS;
      */
     public function checkVariableDefinition($filename, $varPtr)
     {
-        $db = Scisr_Db::getDb();
-
         $sql = <<<EOS
 SELECT type FROM VariableTypes WHERE filename = ? AND variable_pointer = ?
 EOS;
-        $st = $db->prepare($sql);
+        $st = $this->_db->prepare($sql);
         $st->execute(array($filename, $varPtr));
         $result = $st->fetch();
         if ($result === false) {
@@ -129,12 +122,10 @@ EOS;
      */
     public function getVariableType($variable, $filename, $scopeOpen, $varPtr)
     {
-        $db = Scisr_Db::getDb();
-
         $select = <<<EOS
 SELECT type FROM VariableTypes WHERE filename = ? AND variable = ? AND scopeopen = ? AND variable_pointer <= ? ORDER BY variable_pointer DESC LIMIT 1
 EOS;
-        $st = $db->prepare($select);
+        $st = $this->_db->prepare($select);
         $st->execute(array($filename, $variable, $scopeOpen, $varPtr));
         $result = $st->fetch();
 
@@ -143,7 +134,7 @@ EOS;
             $select = <<<EOS
 SELECT type FROM VariableTypes WHERE filename = ? AND variable = ? AND scopeopen = ? AND variable_pointer > ? ORDER BY variable_pointer DESC LIMIT 1
 EOS;
-            $st = $db->prepare($select);
+            $st = $this->_db->prepare($select);
             $st->execute(array($filename, $variable, $scopeOpen, $varPtr));
             $result = $st->fetch();
         }
@@ -161,12 +152,10 @@ EOS;
      */
     public function isGlobalVariable($variable, $filename, $scopeOpen, $varPtr)
     {
-        $db = Scisr_Db::getDb();
-
         $select = <<<EOS
 SELECT COUNT(*) FROM GlobalVariables WHERE filename = ? AND variable = ? AND scopeopen = ? LIMIT 1
 EOS;
-        $st = $db->prepare($select);
+        $st = $this->_db->prepare($select);
         $st->execute(array($filename, $variable, $scopeOpen));
         $result = $st->fetch();
         return $result['COUNT(*)'] > 0;

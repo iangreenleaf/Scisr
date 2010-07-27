@@ -1479,7 +1479,7 @@ EOL;
      * to put it at the moment.
      */
     public function testIncludeFileRepeatedly() {
-        $dbFileIncludes = new Scisr_Db_FileIncludes();
+        $dbFileIncludes = new Scisr_Db_FileIncludes(Scisr_Db::getDb());
         $dbFileIncludes->init();
         $dbFileIncludes->registerFileInclude('/x/y/myfile.php', '/x/z/otherfile.php');
         $dbFileIncludes->registerFileInclude('/x/y/myfile.php', '/x/z/otherfile.php');

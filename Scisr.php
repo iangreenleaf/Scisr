@@ -98,10 +98,11 @@ class Scisr
             $output = new Scisr_Output_Null();
         }
         $this->_output = $output;
-        $this->_dbFiles = new Scisr_Db_Files();
-        $this->_dbFileIncludes = new Scisr_Db_FileIncludes();
-        $this->_dbClasses = new Scisr_Db_Classes();
-        $this->_dbVariableTypes = new Scisr_Db_VariableTypes();
+        $$db = Scisr_Db::getDb();
+        $this->_dbFiles = new Scisr_Db_Files($db);
+        $this->_dbFileIncludes = new Scisr_Db_FileIncludes($db);
+        $this->_dbClasses = new Scisr_Db_Classes($db);
+        $this->_dbVariableTypes = new Scisr_Db_VariableTypes($db);
         $this->_variableTypes = new Scisr_Operations_VariableTypes($this->_dbClasses, $this->_dbFileIncludes, $this->_dbVariableTypes);
         $this->_changeRegistry = new Scisr_ChangeRegistry();
         $this->_sniffer = new Scisr_CodeSniffer($this->_dbFiles);
