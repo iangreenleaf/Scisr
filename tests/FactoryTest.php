@@ -7,7 +7,7 @@ class FactoryTest extends PHPUnit_Framework_TestCase
     {
         $factory = new Scisr_Operations_Factory(array(
             $stdClass = new stdClass,
-            $splQueue = new SplQueue
+            $arrayObject = new ArrayObject
         ));
         $operation = $factory->getOperation('Scisr_Operations_Dummy');
         $this->assertTrue($operation instanceof Scisr_Operations_Dummy);
@@ -18,8 +18,8 @@ class FactoryTest extends PHPUnit_Framework_TestCase
         $factory = new Scisr_Operations_Factory(array(
             $stdClass = new stdClass
         ));
-        $splQueue = new SplQueue;
-        $operation = $factory->getOperation('Scisr_Operations_Dummy', $splQueue);
+        $arrayObject = new ArrayObject;
+        $operation = $factory->getOperation('Scisr_Operations_Dummy', $arrayObject);
         $this->assertTrue($operation instanceof Scisr_Operations_Dummy);
     }
 
@@ -33,5 +33,5 @@ class FactoryTest extends PHPUnit_Framework_TestCase
 }
 
 class Scisr_Operations_Dummy {
-    public function __construct(stdClass $a, SplQueue $b) { }
+    public function __construct(stdClass $a, ArrayObject $b) { }
 }
