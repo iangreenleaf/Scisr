@@ -400,39 +400,40 @@ class Scisr_Operations_VariableTypes
 
     /**
      * Step forward in the token stack.
-     * @param int $currPtr the beginning position in the stack
-     * @param array $tokens the token stack
-     * @param array $ignore an array of token codes to be ignored
-     * @return int a pointer to the next token, ignoring any given types and 
-     * skipping over parenthesized statements (this will halt on the open 
-     * parenthesis, but not on the matching close parenthesis)
+     * This will halt on the open parenthesis, but not on the matching
+     * close parenthesis.
+     * @see step()
      */
     private function stepForward($currPtr, $tokens, $ignore)
     {
-        do {
-            $currPtr = $this->hopParens(true, $currPtr, $tokens);
-            $currPtr++;
-        } while (in_array($tokens[$currPtr]['code'], $ignore));
-
-        return $currPtr;
+        return $this->step(true, $currPtr, $tokens, $ignore);
     }
 
     /**
      * Step backward in the token stack.
-     * @param int $currPtr the beginning position in the stack
-     * @param array $tokens the token stack
-     * @param array $ignore an array of token codes to be ignored
-     * @return int a pointer to the previous token, ignoring any given types and 
-     * skipping over parenthesized statements (this will halt on the close 
-     * parenthesis, but not on the matching open parenthesis)
+     * This will halt on the close parenthesis, but not on the matching
+     * open parenthesis.
+     * @see step()
      */
     private function stepBackward($currPtr, $tokens, $ignore)
     {
-        do {
-            $currPtr = $this->hopParens(false, $currPtr, $tokens);
-            $currPtr--;
-        } while (in_array($tokens[$currPtr]['code'], $ignore));
+        return $this->step(false, $currPtr, $tokens, $ignore);
+    }
 
+    /**
+     * @param boolean $forward move forward or backwards in the token stack?
+     * @param int $currPtr the beginning position in the stack
+     * @param array $tokens the token stack
+     * @param array $ignore an array of token codes to be ignored
+     * @return int a pointer to the next or previous token, ignoring any given types and 
+     * skipping over parenthesized statements (this will halt on the close 
+     * parenthesis, but not on the matching open parenthesis)
+     */
+    private function step($forward, $currPtr, $tokens, $ignore) {
+        do {
+            $currPtr = $this->hopParens($forward, $currPtr, $tokens);
+            $currPtr += ($forward ? 1 : -1);
+        } while (in_array($tokens[$currPtr]['code'], $ignore));
         return $currPtr;
     }
 
