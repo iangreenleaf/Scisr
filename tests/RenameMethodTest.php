@@ -412,6 +412,54 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    public function testDontConfuseArrayVariable() {
+        $orig = <<<EOL
+<?php
+\$f[] = new Foo();
+\$f->bar();
+\$g[\$foo] = new Foo();
+\$g->bar();
+\$foo->bar();
+EOL;
+        $this->renameAndCompare($orig, $orig);
+    }
+
+    public function testRenameFromArray() {
+        $orig = <<<EOL
+<?php
+\$f[] = new Foo();
+\$f[0]->bar();
+\$g[\$foo] = new Foo();
+\$g[\$foo]->bar();
+\$xzy[]->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+\$f[] = new Foo();
+\$f[0]->baz();
+\$g[\$foo] = new Foo();
+\$g[\$foo]->baz();
+\$xzy[]->bar();
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
+    public function testRenameFromMultiDimensionalArray() {
+        $orig = <<<EOL
+<?php
+\$f[0][1] = new Foo();
+\$f[0]->bar();
+\$f[0][1]->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+\$f[0][1] = new Foo();
+\$f[0]->bar();
+\$f[0][1]->baz();
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
     public function testRenameFromActualFunctionReturn() {
         $orig = <<<EOL
 <?php

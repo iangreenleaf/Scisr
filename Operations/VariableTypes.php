@@ -329,6 +329,9 @@ class Scisr_Operations_VariableTypes
             if ($currToken['code'] == T_OPEN_PARENTHESIS) {
                 // Mark this as a function
                 $soFar = '*' . $soFar;
+            } else if ($currToken['code'] == T_OPEN_SQUARE_BRACKET) {
+                // Mark this as an array
+                $soFar = '[' . $soFar;
             } else {
                 // Add the token to our string
                 $soFar .= $currToken['content'];
@@ -347,11 +350,8 @@ class Scisr_Operations_VariableTypes
      */
     protected function getStartOfVar($varPtr, $tokens)
     {
-        $startPtr = $this->traverseVar('stepBackward', T_CLOSE_PARENTHESIS, $varPtr, $tokens);
-        // If our ending token is a close paren, hop over to the opener
-        if ($tokens[$startPtr]['code'] == T_CLOSE_PARENTHESIS) {
-            $startPtr = $tokens[$startPtr]['parenthesis_opener'];
-        }
+        $startPtr = $this->traverseVar(false, $varPtr, $tokens);
+        $startPtr = $this->hopParens(false, $startPtr, $tokens);
         return $startPtr;
     }
 
@@ -363,25 +363,30 @@ class Scisr_Operations_VariableTypes
      */
     protected function getEndOfVar($varPtr, $tokens)
     {
-        $endPtr = $this->traverseVar('stepForward', T_OPEN_PARENTHESIS, $varPtr, $tokens);
-        // If our ending token is a open paren, hop over to the closer
-        if ($tokens[$endPtr]['code'] == T_OPEN_PARENTHESIS) {
-            $endPtr = $tokens[$endPtr]['parenthesis_closer'];
-        }
+        $endPtr = $this->traverseVar(true, $varPtr, $tokens);
+        $endPtr = $this->hopParens(true, $endPtr, $tokens);
         return $endPtr;
     }
 
     /**
-     * @param string $traverseMethod the name of this class method to move over 
-     * the token stack
-     * @param int $acceptParen a token constant representing which type of 
-     * parentheses to accept
+     * @param boolean $forward traverse the variable forward or backward?
      * @return int a pointer the the place in the stack that we halted
      */
-    private function traverseVar($traverseMethod, $acceptParen, $varPtr, $tokens)
+    private function traverseVar($forward, $varPtr, $tokens)
     {
         // Tokens we expect to see in a variable
-        $accept = array(T_VARIABLE, T_STRING, T_OBJECT_OPERATOR, T_PAAMAYIM_NEKUDOTAYIM, T_DOLLAR, $acceptParen);
+        $accept = array(T_VARIABLE, T_STRING, T_OBJECT_OPERATOR, T_PAAMAYIM_NEKUDOTAYIM, T_DOLLAR);
+
+        if ($forward) {
+            $traverseMethod = 'stepForward';
+            $accept[] = T_OPEN_PARENTHESIS;
+            $accept[] = T_OPEN_SQUARE_BRACKET;
+        } else {
+            $traverseMethod = 'stepBackward';
+            $accept[] = T_CLOSE_PARENTHESIS;
+            $accept[] = T_CLOSE_SQUARE_BRACKET;
+        }
+
         // Technically initialization isn't necessary, but it prevents an error
         // if we happen to call this on something that isn't a recognized var
         $prevPtr = $varPtr;
@@ -405,9 +410,7 @@ class Scisr_Operations_VariableTypes
     private function stepForward($currPtr, $tokens, $ignore)
     {
         do {
-            if ($tokens[$currPtr]['code'] == T_OPEN_PARENTHESIS) {
-                $currPtr = $tokens[$currPtr]['parenthesis_closer'];
-            }
+            $currPtr = $this->hopParens(true, $currPtr, $tokens);
             $currPtr++;
         } while (in_array($tokens[$currPtr]['code'], $ignore));
 
@@ -426,12 +429,30 @@ class Scisr_Operations_VariableTypes
     private function stepBackward($currPtr, $tokens, $ignore)
     {
         do {
-            if ($tokens[$currPtr]['code'] == T_CLOSE_PARENTHESIS) {
-                $currPtr = $tokens[$currPtr]['parenthesis_opener'];
-            }
+            $currPtr = $this->hopParens(false, $currPtr, $tokens);
             $currPtr--;
         } while (in_array($tokens[$currPtr]['code'], $ignore));
 
+        return $currPtr;
+    }
+
+    private function hopParens($forward, $currPtr, $tokens)
+    {
+        if ($forward) {
+            $hops = array(
+                T_OPEN_PARENTHESIS => 'parenthesis_closer',
+                T_OPEN_SQUARE_BRACKET => 'bracket_closer',
+            );
+        } else {
+            $hops = array(
+                T_CLOSE_PARENTHESIS => 'parenthesis_opener',
+                T_CLOSE_SQUARE_BRACKET => 'bracket_opener',
+            );
+        }
+        $code = $tokens[$currPtr]['code'];
+        if (in_array($code, array_keys($hops))) {
+            $currPtr = $tokens[$currPtr][$hops[$code]];
+        }
         return $currPtr;
     }
 
