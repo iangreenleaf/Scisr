@@ -114,6 +114,12 @@ class Scisr_Operations_VariableTypes
             $scopeOpen = $this->getScopeOwner($varPtr, $phpcsFile, $varName);
         }
 
+        // Special case: If the type name uses the array syntax, split that out
+        if (preg_match('/array\((.+)\)/', $type, $match) == 1) {
+            $type = $match[1];
+            $varName .= '[';
+        }
+
         // If a type has already been set for this variable that is more 
         // specific than this type, we don't overwrite it
         $existing = $this->_dbVariableTypes->checkVariableDefinition($phpcsFile->getFileName(), $varPtr);
@@ -324,14 +330,16 @@ class Scisr_Operations_VariableTypes
                     $currPtr = $this->stepForward($currPtr, $tokens, array(T_WHITESPACE));
                 }
                 break;
-            }
-
-            if ($currToken['code'] == T_OPEN_PARENTHESIS) {
-                // Mark this as a function
-                $soFar = '*' . $soFar;
             } else if ($currToken['code'] == T_OPEN_SQUARE_BRACKET) {
                 // Mark this as an array
-                $soFar = '[' . $soFar;
+                if ($soFar == '') {
+                    $soFar = '[';
+                    $currPtr = $this->stepForward($currPtr, $tokens, array(T_WHITESPACE));
+                }
+                break;
+            } else if ($currToken['code'] == T_OPEN_PARENTHESIS) {
+                // Mark this as a function
+                $soFar = '*' . $soFar;
             } else {
                 // Add the token to our string
                 $soFar .= $currToken['content'];

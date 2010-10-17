@@ -460,6 +460,111 @@ EOL;
         $this->renameAndCompare($orig, $expected);
     }
 
+    public function testRenameFromArrayRetrievalFunctions() {
+        $this->markTestIncomplete('Not yet implemented.');
+        $orig = <<<EOL
+<?php
+\$a[] = new Foo();
+\$f = array_pop(\$a);
+\$f->bar();
+\$f[5]->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+\$a[] = new Foo();
+\$f = array_pop(\$a);
+\$f->baz();
+\$f[5]->bar();
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
+    public function testRenameFromArrayToArrayFunctions() {
+        $this->markTestIncomplete('Not yet implemented.');
+        $orig = <<<EOL
+<?php
+\$a[] = new Foo();
+\$a2 = array_slice(\$a);
+\$a2->bar();
+\$a2[5]->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+\$a[] = new Foo();
+\$a2 = array_slice(\$a);
+\$a2->bar();
+\$a2[5]->baz();
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
+    public function testArrayFunctionsWithMultiDimensionalArrays() {
+        $this->markTestIncomplete('Not yet implemented.');
+        $orig = <<<EOL
+<?php
+\$a[3][1] = new Foo();
+\$a2 = array_slice(\$a, 1);
+\$a2[1]->bar();
+\$a2[1][5]->bar();
+\$f = array_pop(\$a);
+\$f->bar();
+\$f[5]->bar();
+\$f2 = array_pop(\$a[1]);
+\$f2->bar();
+\$f2[5]->bar();
+EOL;
+        $expected = <<<EOL
+<?php
+\$a[3][1] = new Foo();
+\$a2 = array_slice(\$a, 1);
+\$a2[1]->bar();
+\$a2[1][5]->baz();
+\$f = array_pop(\$a);
+\$f->bar();
+\$f[5]->baz();
+\$f2 = array_pop(\$a[1]);
+\$f2->baz();
+\$f2[5]->bar();
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
+    public function testRenameFromArrayPHPDocType() {
+        $orig = <<<EOL
+<?php
+class Quark {
+    /**
+     * @return array(Foo)
+     */
+    public function getArr(\$param=null) {
+        // STUB
+    }
+    public function doSomething() {
+        \$a = \$this->getArr();
+        \$a->bar();
+        \$a[2]->bar();
+    }
+}
+EOL;
+        $expected = <<<EOL
+<?php
+class Quark {
+    /**
+     * @return array(Foo)
+     */
+    public function getArr(\$param=null) {
+        // STUB
+    }
+    public function doSomething() {
+        \$a = \$this->getArr();
+        \$a->bar();
+        \$a[2]->baz();
+    }
+}
+EOL;
+        $this->renameAndCompare($orig, $expected);
+    }
+
     public function testRenameFromActualFunctionReturn() {
         $orig = <<<EOL
 <?php
