@@ -95,12 +95,12 @@ You will need PHP 5.2.x with the "PDO Extension":http://php.net/manual/en/book.p
 
 Currently Scisr probably only works on Unix-like systems.
 
-# "Download Scisr":http://github.com/youngian/{{ page.github_name }}/archives/{{ page.current_version }}.
+# "Download Scisr":http://github.com/iangreenleaf/{{ page.github_name }}/archives/{{ page.current_version }}.
 # You can run Scisr right from the folder where you unpacked it. Or, if you'd prefer, you can move @scisr.php@ to somewhere in your executable path, and move everything else to a PHP include directory.
 
 h2(#bugs). Report Bugs / Request Features
 
-If you find a bug or would like to request a feature, please "open an issue through GitHub":http://github.com/youngian/{{ page.github_name }}/issues.
+If you find a bug or would like to request a feature, please "open an issue through GitHub":http://github.com/iangreenleaf/{{ page.github_name }}/issues.
 
 h2(#license). License
 
