@@ -11,7 +11,7 @@ class ScisrSystemTest extends Scisr_Tests_MultipleFileTestCase
      * @return string the output of the program
      */
     public function runShellScisr($args, $success) {
-        $scisrExecutable = dirname(__FILE__) . '/../scisr.php';
+        $scisrExecutable = dirname(__FILE__) . '/../scisr';
         $args = implode(' ', $args);
         $output = array();
         $status = 0;

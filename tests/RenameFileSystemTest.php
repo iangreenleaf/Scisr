@@ -41,7 +41,7 @@ class RenameFileSystemTest extends Scisr_Tests_MultipleFileTestCase
         $this->populateDir(dirname(__FILE__) . '/_files/renameFileFixture', $this->test_dir);
 
         $s = $this->getScisr();
-        $s->setEditMode(Scisr::MODE_TIMID);
+        $s->setEditMode(ScisrRunner::MODE_TIMID);
         $s->setRenameFile($this->test_dir . '/test2.php', $this->test_dir . '/otherfolder/things.php');
         $s->addFile($this->test_dir);
         $s->run();

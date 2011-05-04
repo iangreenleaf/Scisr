@@ -1,0 +1,8 @@
+#!/usr/bin/env php
+<?php
+
+require_once('ScisrRunner.php');
+
+$cli = new Scisr_CLI();
+$status = $cli->process();
+exit($status);

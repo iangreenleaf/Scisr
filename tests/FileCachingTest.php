@@ -74,7 +74,7 @@ EOL;
     }
 
     private function runWithMock($mock) {
-        $s = Scisr::createScisr('Scisr_FileTest');
+        $s = ScisrRunner::createRunner('Scisr_FileTest');
         $s->setFirstPassListener($mock);
         $s->addFile($this->test_file);
         $s->run();
@@ -82,7 +82,7 @@ EOL;
 
 }
 
-class Scisr_FileTest extends Scisr
+class Scisr_FileTest extends ScisrRunner
 {
     private $_extraListeners = array();
     public function setFirstPassListener($listener) {

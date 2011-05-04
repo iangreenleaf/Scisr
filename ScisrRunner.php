@@ -19,7 +19,7 @@
 // Turn on error reporting
 error_reporting(E_ALL);
 // Register our autoloader
-spl_autoload_register(array('Scisr', 'scisrAutoload'));
+spl_autoload_register(array('ScisrRunner', 'scisrAutoload'));
 // Include the main CodeSniffer file (this will register its own autoloader as well)
 require_once(dirname(__FILE__) . '/PHP/CodeSniffer.php');
 
@@ -28,7 +28,7 @@ require_once(dirname(__FILE__) . '/PHP/CodeSniffer.php');
  *
  * Coordinates the tasks to take place for the given action(s)
  */
-class Scisr
+class ScisrRunner
 {
 
     const MODE_TIMID = 0;
@@ -106,7 +106,7 @@ class Scisr
         $this->_output = $output;
     }
 
-    public static function createScisr($className = 'Scisr', $db = null)
+    public static function createRunner($className = 'ScisrRunner', $db = null)
     {
         if ($db === null) {
             $db_path = dirname(__FILE__) . '/cache.db';

@@ -13,7 +13,7 @@ EOL;
         $this->populateFile($original);
         $f = new Scisr_File($this->test_file);
         $f->addEdit(2, 9, 2, 'may be', false);
-        $f->process(Scisr::MODE_CONSERVATIVE);
+        $f->process(ScisrRunner::MODE_CONSERVATIVE);
 
         $expected = <<<EOL
 <?php
@@ -30,7 +30,7 @@ EOL;
 
         $this->populateFile($original);
         $f = new Scisr_File($this->test_file);
-        $f->process(Scisr::MODE_CONSERVATIVE);
+        $f->process(ScisrRunner::MODE_CONSERVATIVE);
 
         $this->compareFile($original);
     }
@@ -46,7 +46,7 @@ EOL;
         $f = new Scisr_File($this->test_file);
         $f->addEdit(2, 9, 2, 'may be', false);
         $f->addEdit(3, 4, 6, 'Another', false);
-        $f->process(Scisr::MODE_CONSERVATIVE);
+        $f->process(ScisrRunner::MODE_CONSERVATIVE);
 
         $expected = <<<EOL
 <?php
@@ -71,7 +71,7 @@ EOL;
         $f = new Scisr_File($this->test_file);
         $f->addEdit(2, 12, 5, 'Bazzle', false);
         $f->addEdit(2, 35, 5, 'Bazzle', false);
-        $f->process(Scisr::MODE_CONSERVATIVE);
+        $f->process(ScisrRunner::MODE_CONSERVATIVE);
 
         $expected = <<<EOL
 <?php
@@ -90,7 +90,7 @@ EOL;
         $f = new Scisr_File($this->test_file);
         $f->addEdit(2, 12, 5, 'Foo', false);
         $f->addEdit(2, 35, 5, 'Foo', false);
-        $f->process(Scisr::MODE_CONSERVATIVE);
+        $f->process(ScisrRunner::MODE_CONSERVATIVE);
 
         $expected = <<<EOL
 <?php
@@ -115,7 +115,7 @@ EOL;
         $f->addEdit(2, 35, 5, 'Bazzle', false);
         $f->addEdit(3, 4, 6, 'Another', false);
         $f->addEdit(2, 12, 5, 'Bazzle', false);
-        $f->process(Scisr::MODE_CONSERVATIVE);
+        $f->process(ScisrRunner::MODE_CONSERVATIVE);
 
         $expected = <<<EOL
 <?php
@@ -136,7 +136,7 @@ EOL;
         $f->addEdit(2, 4, 3, 'Replacement', false);
         $f->addEdit(2, 6, 2, 'Foo', false);
         $this->setExpectedException('Exception');
-        $f->process(Scisr::MODE_CONSERVATIVE);
+        $f->process(ScisrRunner::MODE_CONSERVATIVE);
     }
 
     public function testConflictingOffsetsWithOffsetAdjustment() {
@@ -151,7 +151,7 @@ EOL;
         $f->addEdit(2, 4, 3, 'Replacement', false);
         $f->addEdit(2, 6, 2, 'Foo', false);
         $this->setExpectedException('Exception');
-        $f->process(Scisr::MODE_CONSERVATIVE);
+        $f->process(ScisrRunner::MODE_CONSERVATIVE);
     }
 
     public function testNoChangesToFileWhenConflictFound() {
@@ -165,7 +165,7 @@ EOL;
         $f->addEdit(2, 4, 3, 'Replacement', false);
         $f->addEdit(2, 6, 2, 'Foo', false);
         try {
-            $f->process(Scisr::MODE_CONSERVATIVE);
+            $f->process(ScisrRunner::MODE_CONSERVATIVE);
         } catch (Exception $e) {
             // Do nothing
         }
@@ -183,7 +183,7 @@ EOL;
         $f = new Scisr_File($this->test_file);
         $f->addEdit(2, 12, 6, 'something else', false);
         $f->addEdit(2, 18, 1, '!', false);
-        $f->process(Scisr::MODE_CONSERVATIVE);
+        $f->process(ScisrRunner::MODE_CONSERVATIVE);
 
         $expected = <<<EOL
 <?php

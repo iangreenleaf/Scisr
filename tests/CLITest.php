@@ -19,7 +19,7 @@ class CLITest extends Scisr_TestCase
             ->method('run')
             ->will($this->returnValue(true));
         $c = new Scisr_CLI();
-        $c->setScisr($mock);
+        $c->setRunner($mock);
         $c->process($args);
     }
 
@@ -48,7 +48,7 @@ class CLITest extends Scisr_TestCase
             ->method('run')
             ->will($this->returnValue(true));
         $c = new Scisr_CLI();
-        $c->setScisr($mock);
+        $c->setRunner($mock);
         $c->process($args);
     }
 
@@ -72,12 +72,12 @@ class CLITest extends Scisr_TestCase
             ->with($this->equalTo('Foo'), $this->equalTo('Baz'));
         $mock->expects($this->once())
             ->method('setEditMode')
-            ->with($this->equalTo(Scisr::MODE_AGGRESSIVE));
+            ->with($this->equalTo(ScisrRunner::MODE_AGGRESSIVE));
         $mock->expects($this->once())
             ->method('run')
             ->will($this->returnValue(true));
         $c = new Scisr_CLI();
-        $c->setScisr($mock);
+        $c->setRunner($mock);
         $c->process($args);
     }
 
@@ -100,12 +100,12 @@ class CLITest extends Scisr_TestCase
             ->with($this->equalTo('Foo'), $this->equalTo('Baz'));
         $mock->expects($this->once())
             ->method('setEditMode')
-            ->with($this->equalTo(Scisr::MODE_TIMID));
+            ->with($this->equalTo(ScisrRunner::MODE_TIMID));
         $mock->expects($this->once())
             ->method('run')
             ->will($this->returnValue(true));
         $c = new Scisr_CLI();
-        $c->setScisr($mock);
+        $c->setRunner($mock);
         $c->process($args);
     }
 
@@ -130,7 +130,7 @@ class CLITest extends Scisr_TestCase
             ->method('run')
             ->will($this->returnValue(true));
         $c = new Scisr_CLI();
-        $c->setScisr($mock);
+        $c->setRunner($mock);
         $c->process($args);
     }
 
@@ -147,7 +147,7 @@ class CLITest extends Scisr_TestCase
         $stub = $this->getScisrMock();
         $output = new Scisr_Output_String();
         $c = new Scisr_CLI($output);
-        $c->setScisr($stub);
+        $c->setRunner($stub);
         $this->assertNotEquals(0, $c->process($args));
         // Let's make sure it printed a usage message too
         $this->assertRegExp('/error.*does not accept a value/i', $output->getOutput());
@@ -174,7 +174,7 @@ class CLITest extends Scisr_TestCase
             ->will($this->returnValue(true));
         $args = array('scisr_executable', 'rename-class', 'Foo', 'Baz', 'somefile.php', 'some/other/file.foo', 'someDirectory');
         $c = new Scisr_CLI();
-        $c->setScisr($mock);
+        $c->setRunner($mock);
         $c->process($args);
     }
 
@@ -191,7 +191,7 @@ class CLITest extends Scisr_TestCase
             ->will($this->returnValue(true));
         $args = array('scisr_executable', 'rename-class', 'Foo', 'Baz', 'somefile.php');
         $c = new Scisr_CLI();
-        $c->setScisr($mock);
+        $c->setRunner($mock);
         $c->process($args);
     }
 
@@ -208,7 +208,7 @@ class CLITest extends Scisr_TestCase
             ->will($this->returnValue(true));
         $args = array('scisr_executable', 'rename-method', 'Foo', 'bar', 'baz', 'somefile.php');
         $c = new Scisr_CLI();
-        $c->setScisr($mock);
+        $c->setRunner($mock);
         $c->process($args);
     }
 
@@ -225,7 +225,7 @@ class CLITest extends Scisr_TestCase
             ->will($this->returnValue(true));
         $args = array('scisr_executable', 'rename-file', 'mydir/foo.php', 'mydir/newdir/bar.php', 'mydir');
         $c = new Scisr_CLI();
-        $c->setScisr($mock);
+        $c->setRunner($mock);
         $c->process($args);
     }
 
@@ -242,7 +242,7 @@ class CLITest extends Scisr_TestCase
             ->will($this->returnValue(true));
         $args = array('scisr_executable', 'rename-class-file', 'Foo', 'Baz', 'mydir');
         $c = new Scisr_CLI();
-        $c->setScisr($mock);
+        $c->setRunner($mock);
         $c->process($args);
     }
 
@@ -257,7 +257,7 @@ class CLITest extends Scisr_TestCase
             ->will($this->returnValue(true));
         $output = new Scisr_Output_String();
         $c = new Scisr_CLI($output);
-        $c->setScisr($mock);
+        $c->setRunner($mock);
         $c->process($args);
         // Let's make sure it printed a usage message too
         $this->assertRegExp('/usage/i', $output->getOutput());
@@ -279,7 +279,7 @@ class CLITest extends Scisr_TestCase
 
     public function getScisrMock()
     {
-        return $this->getMock('Scisr', array(), array(), '', false);
+        return $this->getMock('ScisrRunner', array(), array(), '', false);
     }
 
 }

@@ -9,7 +9,7 @@ class RenameMethodTest extends Scisr_SingleFileTest
 
         $s = $this->getScisr();
         if ($aggressive) {
-            $s->setEditMode(Scisr::MODE_AGGRESSIVE);
+            $s->setEditMode(ScisrRunner::MODE_AGGRESSIVE);
         }
         $s->setRenameMethod($class, $oldmethod, $newmethod, $inheritance);
         $s->addFile($this->test_file);

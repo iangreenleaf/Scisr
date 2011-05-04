@@ -9,7 +9,7 @@ class RenameClassFileTest extends Scisr_SingleFileTest
 
         $s = $this->getScisr();
         if ($aggressive) {
-            $s->setEditMode(Scisr::MODE_AGGRESSIVE);
+            $s->setEditMode(ScisrRunner::MODE_AGGRESSIVE);
         }
         $s->setRenameClass($oldname, $newname);
         $s->setRenameFile($oldfile, $newfile);

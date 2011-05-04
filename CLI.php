@@ -33,7 +33,7 @@ class Scisr_CLI implements Scisr_Output
             $output = new Scisr_Output_CLI();
         }
         $this->output = $output;
-        $this->scisr = Scisr::createScisr();
+        $this->scisr = ScisrRunner::createRunner();
         $this->scisr->setOutput($this->output);
     }
 
@@ -110,14 +110,14 @@ class Scisr_CLI implements Scisr_Output
             switch ($key) {
             case "a":
             case "aggressive":
-                $this->scisr->setEditMode(Scisr::MODE_AGGRESSIVE);
+                $this->scisr->setEditMode(ScisrRunner::MODE_AGGRESSIVE);
                 break;
             case "no-inheritance":
                 $this->withInheritance = false;
                 break;
             case "t":
             case "timid":
-                $this->scisr->setEditMode(Scisr::MODE_TIMID);
+                $this->scisr->setEditMode(ScisrRunner::MODE_TIMID);
                 break;
             case "i":
             case "ignore":
@@ -145,9 +145,9 @@ class Scisr_CLI implements Scisr_Output
     /**
      * For testing use only. Dependency injection.
      * @ignore
-     * @param Scisr
+     * @param ScisrRunner
      */
-    public function setScisr($scisr)
+    public function setRunner($scisr)
     {
         $this->scisr = $scisr;
     }
@@ -313,10 +313,10 @@ class Scisr_CLI implements Scisr_Output
     {
         $usage = <<<EOL
 Usage:
-  scisr.php rename-class OldName NewName [options] [files]
-  scisr.php rename-method OwningClassName oldMethodName newMethodName [options] [files]
-  scisr.php rename-file old/file_name new/dir/new_file_name [options] [files]
-  scisr.php rename-class-file OldName NewName [options] [files]
+  scisr rename-class OldName NewName [options] [files]
+  scisr rename-method OwningClassName oldMethodName newMethodName [options] [files]
+  scisr rename-file old/file_name new/dir/new_file_name [options] [files]
+  scisr rename-class-file OldName NewName [options] [files]
 
 [files] is any number of files and/or directories to be searched and modified.
 

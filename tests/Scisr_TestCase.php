@@ -1,6 +1,6 @@
 <?php
 require_once 'PHPUnit/Framework.php';
-require_once '../Scisr.php';
+require_once '../ScisrRunner.php';
 
 class Scisr_TestCase extends PHPUnit_Framework_TestCase
 {
@@ -19,9 +19,9 @@ class Scisr_TestCase extends PHPUnit_Framework_TestCase
         return new PDO('sqlite::memory:');
     }
 
-    public function getScisr($className = 'Scisr')
+    public function getScisr($className = 'ScisrRunner')
     {
-        return Scisr::createScisr($className, $this->getDb());
+        return ScisrRunner::createRunner($className, $this->getDb());
     }
 
 }

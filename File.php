@@ -134,17 +134,17 @@ class Scisr_File
 
     /**
      * Process all pending edits to the file
-     * @param int $mode a constant from {@link Scisr} indicating what mode we are running in
+     * @param int $mode a constant from {@link ScisrRunner} indicating what mode we are running in
      * @return boolean true if this file was actually changed
      */
     public function process($mode)
     {
-        if ($mode === Scisr::MODE_AGGRESSIVE) {
+        if ($mode === ScisrRunner::MODE_AGGRESSIVE) {
             // In aggressive mode, all tentative changes get slated for application
             $this->changes = self::mergeChanges($this->tentativeChanges, $this->changes);
             $this->tentativeChanges = array();
         } else {
-            if ($mode == Scisr::MODE_TIMID) {
+            if ($mode == ScisrRunner::MODE_TIMID) {
                 // In timid mode, all changes become tentative
                 $this->tentativeChanges = self::mergeChanges($this->tentativeChanges, $this->changes);
                 $this->changes = array();
@@ -190,7 +190,7 @@ class Scisr_File
         file_put_contents($this->filename, $output);
 
         // If there's a rename pending, do it
-        if ($this->_newName !== null && $mode !== Scisr::MODE_TIMID) {
+        if ($this->_newName !== null && $mode !== ScisrRunner::MODE_TIMID) {
             $dir = dirname($this->_newName);
             if (!is_dir($dir)) {
                 $success = mkdir($dir, 0775, true);
