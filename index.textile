@@ -35,7 +35,7 @@ h2(#usage). Usage
 h3. Rename a class
 
 {% highlight bash %}
-$ scisr.php rename-class OldName NewName [files]
+$ scisr rename-class OldName NewName [files]
 {% endhighlight %}
 
 Rename a class, changing all references to that class in your code and PHPDoc.
@@ -43,7 +43,7 @@ Rename a class, changing all references to that class in your code and PHPDoc.
 h3. Rename a class method
 
 {% highlight bash %}
-$ scisr.php rename-method OwningClassName oldMethodName newMethodName [files]
+$ scisr rename-method OwningClassName oldMethodName newMethodName [files]
 {% endhighlight %}
 
 Rename a class method. Tries to guess variable types so as to only rename methods called on objects of the correct class.
@@ -57,7 +57,7 @@ Additional options:
 h3. Rename a file
 
 {% highlight bash %}
-$ scisr.php rename-file old/file_name new/dir/new_file_name [files]
+$ scisr rename-file old/file_name new/dir/new_file_name [files]
 {% endhighlight %}
 
 Rename a file, and try to modify require and include statements appropriately.
@@ -67,14 +67,14 @@ At the current time, this command is a bit simplistic in which filenames it will
 h3. Rename a class and containing file
 
 {% highlight bash %}
-$ scisr.php rename-class-file OldClassName NewClassName [files]
+$ scisr rename-class-file OldClassName NewClassName [files]
 {% endhighlight %}
 
 Rename a class, and rename the class' file if the name matches (for example, a class named Foo in Foo.php, or a class named Foo_Bar_Baz in Foo/Bar/Baz.inc).
 
 h3. General
 
-The last arguments to @scisr.php@ are any number of directory or file names. These designate the code to be refactored.
+The last arguments to @scisr@ are any number of directory or file names. These designate the code to be refactored.
 
 Additional options:
 
@@ -96,7 +96,7 @@ You will need PHP 5.2.x with the "PDO Extension":http://php.net/manual/en/book.p
 Currently Scisr probably only works on Unix-like systems.
 
 # "Download Scisr":http://github.com/iangreenleaf/{{ page.github_name }}/archives/{{ page.current_version }}.
-# You can run Scisr right from the folder where you unpacked it. Or, if you'd prefer, you can move @scisr.php@ to somewhere in your executable path, and move everything else to a PHP include directory.
+# You can run Scisr right from the folder where you unpacked it. Or, if you'd prefer, you can move @scisr@ to somewhere in your executable path, and move everything else to a PHP include directory.
 
 h2(#bugs). Report Bugs / Request Features
 
