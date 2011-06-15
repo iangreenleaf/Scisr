@@ -271,7 +271,7 @@ class ScisrRunner
         }
     }
     /**
-     * Split a file containing several classes into a set of files  
+     * Split a file containing several classes into a set of files
      * @param string $oldFilePath the path to the file to be split
      * @param string $outputPath the path where the files should be saved
      */
@@ -280,8 +280,6 @@ class ScisrRunner
         $this->_listeners[] = $this->_operationsFactory->getOperation('Scisr_Operations_SplitClassFile', $outputPath);
         if (!is_dir($outputPath) || !is_writeable($outputPath)) {
             $msg = $outputPath . ' is not writeable or a directory.';
-        } else {
-            //$this->_changeRegistry->addSplit($oldFilePath, $outputPath);
         }
 
         if (isset($msg)) {

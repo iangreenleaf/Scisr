@@ -67,7 +67,7 @@ class Scisr_ChangeRegistry
 
       $file = new Scisr_CreateFile($filename, $content);
       $this->setFile($file);
-    
+
     }
 
     /**
@@ -101,7 +101,7 @@ class Scisr_ChangeRegistry
      * Get stored file changes
      * @return array(Scisr_File)
      */
-    private  function getChanges()
+    private function getChanges()
     {
         $changes = $this->get('storedChanges');
         if (!is_array($changes)) {

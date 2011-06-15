@@ -51,17 +51,15 @@ EOL;
         $s->addFile($this->test_file);
         $s->run();
 
-        //$this->compareFile($this->test_file, $original);
         foreach ($expected as $filename => $content) {
             $actual = file_get_contents($this->outputDir . "/" . $filename . ".php" );
-            //         var_dump(array('ac' =>$actual, 'o' => $content));
             $this->assertEquals($actual, $content);
         }
     }
     public function testSplitFilesTwoClasses() {
         $orig = "{$this->start}{$this->baz}\n{$this->bar}";
         $expected = array(
-            'Baz' => $this->baz . "\n", 'Bar' => $this->bar . "\n" ); 
+            'Baz' => $this->baz . "\n", 'Bar' => $this->bar . "\n" );
         $this->splitAndCompare($orig, $expected);
     }
 
@@ -73,9 +71,9 @@ EOL;
 {$this->comment}
 {$this->bar}";
         $expected = array(
-            'Baz' => $this->comment . "\n" . $this->baz . "\n", 
-            'Bar' => $this->comment . "\n". $this->bar . "\n" 
-            ); 
+            'Baz' => $this->comment . "\n" . $this->baz . "\n",
+            'Bar' => $this->comment . "\n". $this->bar . "\n"
+            );
         $this->splitAndCompare($orig, $expected);
     }
 
@@ -88,9 +86,9 @@ EOL;
 {$this->comment}
 {$this->bar}";
         $expected = array(
-            'Baz' => $this->comment . "\n" . $this->baz . "\n", 
-            'Bar' => $this->comment . "\n". $this->bar . "\n" 
-            ); 
+            'Baz' => $this->comment . "\n" . $this->baz . "\n",
+            'Bar' => $this->comment . "\n". $this->bar . "\n"
+            );
         $this->splitAndCompare($orig, $expected);
     }
 
@@ -103,9 +101,9 @@ EOL;
 {$this->comment}
 {$this->bar}";
         $expected = array(
-            'Baz' => $this->comment . "\n" . $this->baz . "\n", 
-            'Bar' => $this->comment . "\n". $this->bar . "\n" 
-            ); 
+            'Baz' => $this->comment . "\n" . $this->baz . "\n",
+            'Bar' => $this->comment . "\n". $this->bar . "\n"
+            );
         touch($this->outputDir . "/Baz.php");
         $this->splitAndCompare($orig, $expected, true);
 
@@ -122,17 +120,15 @@ EOL;
 {$this->comment}
 {$this->bar}";
         $expected = array(
-            'Baz' => $this->comment . "\n" . $this->baz . "\n", 
-            'Bar' => $this->comment . "\n". $this->bar . "\n" 
-            ); 
+            'Baz' => $this->comment . "\n" . $this->baz . "\n",
+            'Bar' => $this->comment . "\n". $this->bar . "\n"
+            );
         touch($this->outputDir . "/Baz.php");
         $this->splitAndCompare($orig, $expected, false);
 
     }
 
-
-
-  function delTree($dir) {
+  private function delTree($dir) {
       if ($dir == "" || $dir == null || $dir == false) {
         throw new Exception("delTree: bad directory path!");
       }
@@ -144,9 +140,9 @@ EOL;
           else
               unlink( $file );
       }
-     
+
       if (is_dir($dir)) rmdir( $dir );
-     
-  } 
+
+  }
 
 }
