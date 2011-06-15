@@ -57,6 +57,18 @@ class Scisr_ChangeRegistry
         $file->addEdit($line, $column, $length, $replacement, $tentative);
         $this->setFile($file);
     }
+    /**
+     * Create a new file.
+     * @param string $filename the filename
+     * @param string $content file content
+     * @param boolean $tentative true if we want to overwrite the file
+     */
+    public function createFile($filename, $content, $tentative = false) {
+
+      $file = new Scisr_CreateFile($filename, $content);
+      $this->setFile($file);
+    
+    }
 
     /**
      * Get the stored file object for a given filename
@@ -89,7 +101,7 @@ class Scisr_ChangeRegistry
      * Get stored file changes
      * @return array(Scisr_File)
      */
-    private function getChanges()
+    private  function getChanges()
     {
         $changes = $this->get('storedChanges');
         if (!is_array($changes)) {
