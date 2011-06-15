@@ -262,6 +262,23 @@ class CLITest extends Scisr_TestCase
         // Let's make sure it printed a usage message too
         $this->assertRegExp('/usage/i', $output->getOutput());
     }
+    public function testSplitClass() {
+        $mock = $this->getScisrMock();
+        $mock->expects($this->once())
+            ->method('setSplitClassFiles')
+            ->with($this->equalTo('Foo'));
+        $mock->expects($this->once())
+            ->method('addFiles')
+            ->with($this->equalTo(array('somefile.php')));
+        $mock->expects($this->once())
+            ->method('run')
+            ->will($this->returnValue(true));
+        $args = array('scisr_executable', 'split-class-files', 'Foo', 'somefile.php');
+        $c = new Scisr_CLI();
+        $c->setRunner($mock);
+        $c->process($args);
+    }
+
 
     public function badArgsProvider() {
         return array(
