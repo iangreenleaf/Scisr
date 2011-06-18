@@ -45,8 +45,7 @@ class Scisr_Operations_RenameClass extends Scisr_Operations_AbstractChangeOperat
             }
         } else if ($tokens[$stackPtr]['code'] == T_PAAMAYIM_NEKUDOTAYIM) {
             $classNamePtr = $phpcsFile->findPrevious(T_STRING, $stackPtr);
-            $this->checkClassNamePtr($classNamePtr, $phpcsFile);
-        } else {
+            $this->checkClassNamePtr($classNamePtr, $phpcsFile);} else {
             $classNamePtr = $phpcsFile->findNext(T_STRING, $stackPtr);
             $this->checkClassNamePtr($classNamePtr, $phpcsFile);
         }

@@ -54,8 +54,8 @@ EOL;
         //$this->compareFile($this->test_file, $original);
         foreach ($expected as $filename => $content) {
             $actual = file_get_contents($this->outputDir . "/" . $filename . ".php" );
-            //         var_dump(array('ac' =>$actual, 'o' => $content));
-            $this->assertEquals($actual, $content);
+                     var_dump(array('ac' =>$actual, 'o' => $content));
+            $this->assertEquals($actual, "<?php\n" . $content);
         }
     }
     public function testSplitFilesTwoClasses() {
@@ -64,6 +64,18 @@ EOL;
             'Baz' => $this->baz . "\n", 'Bar' => $this->bar . "\n" ); 
         $this->splitAndCompare($orig, $expected);
     }
+    public function testSplitFilesTwoClassesNotCommentBetween() {
+        $orig = "{$this->start}
+{$this->comment}
+{$this->baz}\n
+{$this->bar}";
+        $expected = array(
+            'Baz' => $this->comment . "\n" . $this->baz . "\n", 
+            'Bar' => $this->bar . "\n" 
+            ); 
+        $this->splitAndCompare($orig, $expected);
+    }
+
 
 
     public function testSplitFilesTwoClassesWithComments() {

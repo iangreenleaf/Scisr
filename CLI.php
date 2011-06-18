@@ -322,7 +322,7 @@ Usage:
   scisr rename-method OwningClassName oldMethodName newMethodName [options] [files]
   scisr rename-file old/file_name new/dir/new_file_name [options] [files]
   scisr rename-class-file OldName NewName [options] [files]
-  scisr split-class-file OutputDir [options] [files]
+  scisr split-class-files OutputDir [options] [files]
 
 [files] is any number of files and/or directories to be searched and modified.
 

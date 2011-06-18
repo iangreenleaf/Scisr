@@ -64,7 +64,6 @@ class Scisr_ChangeRegistry
      * @param boolean $tentative true if we want to overwrite the file
      */
     public function createFile($filename, $content, $tentative = false) {
-
       $file = new Scisr_CreateFile($filename, $content);
       $this->setFile($file);
     
