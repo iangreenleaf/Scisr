@@ -51,21 +51,9 @@ class Scisr_Operations_SplitClassFile extends Scisr_Operations_AbstractChangeOpe
 
     private function getStartPointer($stackPtr, $phpcsFile)
     {
-        $tokens = $phpcsFile->getTokens();
-
-        for ($i = $stackPtr ; $i > 0 ; $i--) {
-          if (! in_array($tokens[$i-1]['code'], PHP_CodeSniffer_Tokens::$emptyTokens)) {
-            // remove whitespace on top of class
-            while ($tokens[$i]['code'] == T_WHITESPACE && in_array($tokens[$i]['code'], PHP_CodeSniffer_Tokens::$emptyTokens)) {
-              $i++;
-            }
-            return $i;
-          }
-        }
-        throw new Exception("Should not end here!");
-        $start = $phpcsFile->findPrevious(PHP_CodeSniffer_Tokens::$commentTokens, $stackPtr,0, false );
-
-        return ($start && $start < $stackPtr ) ? $start  : $stackPtr;
+        $i = $phpcsFile->findPrevious(PHP_CodeSniffer_Tokens::$emptyTokens, $stackPtr - 1, 0, true );
+        $i = $phpcsFile->findNext(T_WHITESPACE, $i + 1, null, true );
+        return $i;
     }
     /**
      * after the end of the class, comes .. the next class.
