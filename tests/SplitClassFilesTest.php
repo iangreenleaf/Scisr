@@ -38,7 +38,7 @@ EOL;
         mkdir($this->outputDir);
 
     }
-    public function splitAndCompare($original, $expected, $aggressive=false) {
+    public function splitAndCompare($expected, $original, $aggressive=false) {
         $this->populateFile($original);
 
         $s = $this->getScisr();
@@ -53,14 +53,14 @@ EOL;
 
         foreach ($expected as $filename => $content) {
             $actual = file_get_contents($this->outputDir . "/" . $filename . ".php" );
-            $this->assertEquals($actual, "<?php\n" . $content);
+            $this->assertEquals("<?php\n" . $content, $actual);
         }
     }
     public function testSplitFilesTwoClasses() {
         $orig = "{$this->start}{$this->baz}\n{$this->bar}";
         $expected = array(
             'Baz' => $this->baz . "\n", 'Bar' => $this->bar . "\n" );
-        $this->splitAndCompare($orig, $expected);
+        $this->splitAndCompare($expected, $orig);
     }
     public function testSplitFilesTwoClassesNotCommentBetween() {
         $orig = "{$this->start}
@@ -71,7 +71,7 @@ EOL;
             'Baz' => $this->comment . "\n" . $this->baz . "\n",
             'Bar' => $this->bar . "\n"
             );
-        $this->splitAndCompare($orig, $expected);
+        $this->splitAndCompare($expected, $orig);
     }
 
 
@@ -86,7 +86,7 @@ EOL;
             'Baz' => $this->comment . "\n" . $this->baz . "\n",
             'Bar' => $this->comment . "\n". $this->bar . "\n"
             );
-        $this->splitAndCompare($orig, $expected);
+        $this->splitAndCompare($expected, $orig);
     }
 
     public function testSplitFilesTwoClassesWithCommentsAndAFunctionOnTop() {
@@ -101,7 +101,7 @@ EOL;
             'Baz' => $this->comment . "\n" . $this->baz . "\n",
             'Bar' => $this->comment . "\n". $this->bar . "\n"
             );
-        $this->splitAndCompare($orig, $expected);
+        $this->splitAndCompare($expected, $orig);
     }
 
     public function testOverwriteExisting() {
@@ -117,7 +117,7 @@ EOL;
             'Bar' => $this->comment . "\n". $this->bar . "\n"
             );
         touch($this->outputDir . "/Baz.php");
-        $this->splitAndCompare($orig, $expected, true);
+        $this->splitAndCompare($expected, $orig, true);
 
     }
     /**
@@ -136,7 +136,7 @@ EOL;
             'Bar' => $this->comment . "\n". $this->bar . "\n"
             );
         touch($this->outputDir . "/Baz.php");
-        $this->splitAndCompare($orig, $expected, false);
+        $this->splitAndCompare($expected, $orig, false);
 
     }
 
