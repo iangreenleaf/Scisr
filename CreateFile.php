@@ -22,7 +22,7 @@ class Scisr_CreateFile extends Scisr_File {
         file_put_contents($this->filename, $this->content);
     }
 
-    public function addEdit(/* args*/) {
+    public function addEdit($line, $column, $length, $replacement, $tentative) {
         throw new Exception("Unsupported!");
     }
     public function rename(/* args*/) {
