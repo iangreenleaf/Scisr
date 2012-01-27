@@ -1,0 +1,10 @@
+<phpunit>
+<php>
+  <includePath>..:.</includePath>
+</php>
+<testsuites>
+  <testsuite name="Scisr Test Suite">
+    <directory>.</directory>
+  </testsuite>
+</testsuites>
+</phpunit>

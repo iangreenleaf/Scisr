@@ -1,0 +1,10 @@
+<phpunit>
+<php>
+  <includePath>.:tests</includePath>
+</php>
+<testsuites>
+  <testsuite name="Scisr Test Suite">
+    <directory>tests</directory>
+  </testsuite>
+</testsuites>
+</phpunit>
