@@ -4,26 +4,26 @@ require_once 'SingleFileTest.php';
 class SplitClassFilesTest extends Scisr_SingleFileTest
 {
 
-    protected $function = <<<EOL
+    protected $function = "
 /**
  * Some func comment
  */
 function someFunc(\$args) {
   /* a comment !*/
 };
-EOL;
-    protected $baz = <<<EOL
+";
+    protected $baz = "
 class Baz {
     function bar() {
     }
 }
-EOL;
-    protected $bar = <<<EOL
+";
+    protected $bar = "
 class Bar {
     function bar() {
     }
 }
-EOL;
+";
     protected $start = "<?php \n ";
 
     protected $comment = "/** this is a comment about a class */";
