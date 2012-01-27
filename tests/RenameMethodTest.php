@@ -1646,11 +1646,12 @@ class MockSniffer extends Scisr_CodeSniffer
         $this->_dbVariableTypes = $dbVariableTypes;
     }
 
-    public function process($files, $local=false)
+    public function process($files, $local=false, $cacheable=false)
     {
         $this->_dbVariableTypes->registerVariableType('$f', 'Foo', $this->incFile, 0, 4);
         $this->_dbVariableTypes->registerVariableType('ThisOtherClass->*foo', 'Foo', $this->incFile, 0, 8);
         $this->_dbClasses->registerClass('ThisOtherClass', $this->incFile);
+        $this->_cacheable = $cacheable;
         parent::process($files, $local);
     }
 }
