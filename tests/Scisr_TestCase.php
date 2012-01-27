@@ -1,5 +1,4 @@
 <?php
-require_once 'PHPUnit/Framework.php';
 require_once '../ScisrRunner.php';
 
 class Scisr_TestCase extends PHPUnit_Framework_TestCase
