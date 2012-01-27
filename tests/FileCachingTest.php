@@ -40,7 +40,7 @@ EOL;
         $mock = $this->getSniff();
         $mock->expects($this->exactly(2))->method('process');
         $this->runWithMock($mock);
-        touch($this->test_file);
+        touch($this->test_file, time() + 1);
         $this->runWithMock($mock);
     }
 
