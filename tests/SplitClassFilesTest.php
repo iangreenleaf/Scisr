@@ -26,7 +26,7 @@ protected $bar = "class Bar {
     private $outputDir;
     public function setUp() {
         parent::setUp();
-        $this->outputDir = __DIR__ . "/" . "_tmp" . __CLASS__;
+        $this->outputDir = dirname(__FILE__) . "/" . "_tmp" . __CLASS__;
         /* reset test area */
         $this->delTree($this->outputDir) ;
         mkdir($this->outputDir);
