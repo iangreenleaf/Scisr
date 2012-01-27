@@ -63,7 +63,7 @@ class Scisr_Operations_RenameFile extends Scisr_Operations_AbstractFileOperation
     {
         if (Scisr_File::isExplicitlyRelative($actualPath)) {
             if ($currDir === false) {
-                throw new Exception('You provided a relative path without a current dir!');
+                throw new LogicException('You provided a relative path without a current dir!');
             }
             $actualPath = Scisr_File::getAbsolutePath($actualPath, $currDir);
             // Add a trailing slash if it's not there

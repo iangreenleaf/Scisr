@@ -121,9 +121,9 @@ EOL;
 
     }
     /**
-     * @expectedException Exception
+     * @expectedException RuntimeException
      */
-    public function testOverwriteExistingThrowsExceptionIfNotaggressive() {
+    public function testOverwriteExistingThrowsExceptionIfNotAggressive() {
         $orig = "{$this->start}
 {$this->function}
 {$this->comment}

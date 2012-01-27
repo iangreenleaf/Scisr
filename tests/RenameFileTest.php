@@ -159,7 +159,7 @@ class RenameFileTest extends Scisr_SingleFileTest
     }
 
     public function testMatchPathsNoCurrDirError() {
-        $this->setExpectedException('Exception');
+        $this->setExpectedException('LogicException');
         $this->assertSame('DUMMY', Scisr_Operations_RenameFile::matchPaths('/foo/bar', './relative/path'));
     }
 

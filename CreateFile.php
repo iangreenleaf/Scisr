@@ -17,7 +17,7 @@ class Scisr_CreateFile extends Scisr_File {
     public function process($mode)
     {
         if ($mode != ScisrRunner::MODE_AGGRESSIVE && file_exists($this->filename)) {
-            throw new Exception("Cannot overwrite {$this->filename} in timid mode!");
+            throw new RuntimeException("Cannot overwrite {$this->filename} in timid mode!");
         }
         file_put_contents($this->filename, $this->content);
     }
