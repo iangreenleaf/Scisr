@@ -196,13 +196,13 @@ class Scisr_File
                 $success = mkdir($dir, 0775, true);
                 if (!$success) {
                     $err = "Could not create new directory ($dir)";
-                    throw new Exception($err);
+                    throw new RuntimeException($err);
                 }
             }
             $success = rename($this->filename, $this->_newName);
             if (!$success) {
                 $err = "Could not rename file ($this->filename => $this->_newName)";
-                throw new Exception($err);
+                throw new RuntimeException($err);
             }
         }
         return (count($this->changes) > 0);
@@ -301,7 +301,7 @@ class Scisr_File
                 // I don't expect this to ever happen unless a developer makes a mistake,
                 // so we'll just abort messily
                 $err = "We've encountered conflicting edit requests. Cannot continue.";
-                throw new Exception($err);
+                throw new RuntimeException($err);
             }
 
         }

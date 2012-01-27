@@ -135,7 +135,7 @@ EOL;
         $f = new Scisr_File($this->test_file);
         $f->addEdit(2, 4, 3, 'Replacement', false);
         $f->addEdit(2, 6, 2, 'Foo', false);
-        $this->setExpectedException('Exception');
+        $this->setExpectedException('RuntimeException');
         $f->process(ScisrRunner::MODE_CONSERVATIVE);
     }
 
@@ -150,7 +150,7 @@ EOL;
         $f->addEdit(2, 1, 2, '/**/', false);
         $f->addEdit(2, 4, 3, 'Replacement', false);
         $f->addEdit(2, 6, 2, 'Foo', false);
-        $this->setExpectedException('Exception');
+        $this->setExpectedException('RuntimeException');
         $f->process(ScisrRunner::MODE_CONSERVATIVE);
     }
 
