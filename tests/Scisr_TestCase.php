@@ -4,7 +4,10 @@ require_once 'ScisrRunner.php';
 class Scisr_TestCase extends PHPUnit_Framework_TestCase
 {
 
+    private $db;
+
     public function setUp() {
+        $this->db = new PDO('sqlite::memory:');
         chdir(dirname(__FILE__));
     }
 
@@ -15,7 +18,7 @@ class Scisr_TestCase extends PHPUnit_Framework_TestCase
 
     public function getDb()
     {
-        return new PDO('sqlite::memory:');
+        return $this->db;
     }
 
     public function getScisr($className = 'ScisrRunner')
