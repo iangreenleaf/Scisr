@@ -13,6 +13,11 @@ require_once 'SingleFileTest.php';
 class FileCachingTest extends Scisr_SingleFileTest
 {
 
+    public function tearDown() {
+        clearstatcache();
+        parent::tearDown();
+    }
+
     public function testUseCachedFirstPass() {
         $code = <<<EOL
 <?php
@@ -37,8 +42,10 @@ EOL;
         $this->populateFile($code);
         $mock = $this->getSniff();
         $mock->expects($this->exactly(2))->method('process');
+        touch($this->test_file, time() - 1);
         $this->runWithMock($mock);
         touch($this->test_file, time() + 1);
+        clearstatcache();
         $this->runWithMock($mock);
     }
 
